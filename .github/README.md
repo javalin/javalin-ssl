@@ -1,8 +1,9 @@
 [![Chat at https://discord.gg/sgak4e5NKv](https://img.shields.io/badge/chat-on%20Discord-%234cb697)](https://discord.gg/sgak4e5NKv)
-[![CI](https://github.com/tipsy/javalin/workflows/Test%20all%20JDKs%20on%20all%20OSes/badge.svg)](https://github.com/tipsy/javalin/actions)
+![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/javalin/javalin-ssl/Test%20all%20JDKs%20on%20all%20OSes%20and%20Publish/main?label=main&logo=githubactions&logoColor=white)
+![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/javalin/javalin-ssl/Test%20all%20JDKs%20on%20all%20OSes%20and%20Publish/dev?label=dev&logo=githubactions&logoColor=white)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Maven](https://img.shields.io/maven-central/v/io.javalin/javalin.svg)](https://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22io.javalin%22%20AND%20a%3A%22javalin%22)
-
+![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/javalin/javalin-ssl)
+![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/javalin/javalin-ssl?include_prereleases&label=Javalin%20SSL)
 # About Javalin
 
 * [:heart: Sponsor Javalin](https://github.com/sponsors/tipsy)
