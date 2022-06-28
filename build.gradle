@@ -1,0 +1,78 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'jacoco'
+    id "io.freefair.lombok" version "6.4.3"
+
+}
+
+group = 'io.javalin'
+//Must be formatted following the RegEx: /version\s*=\s*'\S+'/g
+version = '0.0.1-SNAPSHOT'
+
+jacocoTestReport {
+    reports {
+        xml.required = true
+        csv.required = false
+    }
+    dependsOn test // tests are required to run before generating the report
+}
+
+
+repositories {
+    mavenCentral()
+    maven {
+        url "https://maven.reposilite.com/snapshots" //Javalin Snapshots
+    }
+}
+
+
+dependencies {
+    def javalin = "5.0.0-SNAPSHOT"
+    compileOnly("io.javalin:javalin:$javalin")
+
+    def junit = "5.7.2"
+    testImplementation("org.junit.jupiter:junit-jupiter-api:$junit")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit")
+
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "zugazagoitia-repo"
+
+            def releasesRepoUrl = uri("https://repo.zugazagoitia.com/releases")
+            def snapshotsRepoUrl = uri("https://repo.zugazagoitia.com/snapshots")
+
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+
+            credentials {
+                username = System.getenv("MAVEN_NAME") ?: property("mavenUser").toString()
+                password = System.getenv("MAVEN_TOKEN") ?: property("mavenPassword").toString()
+            }
+        }
+    }
+    publications {
+        maven(MavenPublication) {
+            groupId = project.group
+            artifactId = rootProject.name
+            version = project.version
+
+            from components.java
+        }
+    }
+}
+
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+    withSourcesJar()
+    withJavadocJar()
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+    //finalizedBy jacocoTestReport
+}
