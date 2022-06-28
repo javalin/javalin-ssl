@@ -8,7 +8,7 @@ plugins {
 
 group = 'io.javalin'
 //Must be formatted following the RegEx: /version\s*=\s*'\S+'/g
-version = '0.0.1-SNAPSHOT'
+version = '0.1.0-SNAPSHOT'
 
 jacocoTestReport {
     reports {
@@ -29,9 +29,17 @@ repositories {
 
 dependencies {
     def javalin = "5.0.0-SNAPSHOT"
-    compileOnly("io.javalin:javalin:$javalin")
-
+    def jetty = "11.0.9"
     def junit = "5.7.2"
+    def sslcontextKickstart = "7.4.4"
+
+    compileOnly("io.javalin:javalin-bundle:$javalin")
+
+    implementation("org.eclipse.jetty.http3:http3-server:$jetty")
+    implementation("io.github.hakky54:sslcontext-kickstart:$sslcontextKickstart")
+    implementation("io.github.hakky54:sslcontext-kickstart-for-jetty:$sslcontextKickstart")
+    implementation("io.github.hakky54:sslcontext-kickstart-for-pem:$sslcontextKickstart")
+
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junit")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit")
 
@@ -74,5 +82,4 @@ java {
 
 tasks.named('test') {
     useJUnitPlatform()
-    //finalizedBy jacocoTestReport
 }
