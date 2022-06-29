@@ -58,7 +58,7 @@ jobs:
           flags: unittests
           verbose: true
   publish:
-    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && github.repository == 'javalin/javalin-ssl'
     needs:
       - test
     name: "🛫 Publish to maven repo"
