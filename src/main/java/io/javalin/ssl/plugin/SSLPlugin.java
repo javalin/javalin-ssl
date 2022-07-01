@@ -32,11 +32,11 @@ public class SSLPlugin implements Plugin {
     @Override
     public void apply(@NotNull Javalin javalin) {
 
-        javalin._conf.server(() -> {
+        javalin.cfg.server(() -> {
             Server server;
 
             //Check if the server has been manually configured
-            server = Objects.requireNonNullElseGet(javalin._conf.inner.server, Server::new);
+            server = Objects.requireNonNullElseGet(javalin.cfg.inner.server, Server::new);
 
             //parseConfig returns a consumer configuring the server.
             createJettyServerPatcher(config).accept(server);
