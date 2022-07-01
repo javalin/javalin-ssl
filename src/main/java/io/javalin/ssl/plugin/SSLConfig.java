@@ -39,18 +39,21 @@ public class SSLConfig {
 
     /**
      * Enables HTTP/3 Support.
+     * <b>Disabled by default because it is not yet working on Jetty.</b>
      */
-    public boolean enableHttp3 = false;
+    public final boolean enableHttp3 = false;
 
     /**
      * Disables the handler that adds an "Alt-Svc" header to any non HTTP/3 response.
+     * <b>Disabled by default because it is not yet working on Jetty.</b>
      */
-    public boolean disableHttp3Upgrade = false;
+    public final boolean disableHttp3Upgrade = false;
 
     /**
      * UDP Port to use on the HTTP/3 connector.
+     * <b>Disabled by default because it is not yet working on Jetty.</b>
      */
-    public int http3Port = 443;
+    public final int http3Port = 443;
 
     public InnerConfig inner = new InnerConfig();
 

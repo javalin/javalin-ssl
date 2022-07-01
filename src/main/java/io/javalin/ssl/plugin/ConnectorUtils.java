@@ -118,7 +118,7 @@ public class ConnectorUtils {
         httpConfiguration.addCustomizer(new SecureRequestCustomizer());
 
         HTTP3ServerConnector connector = new HTTP3ServerConnector(server,
-            createSslContextFactory(config),
+            createSslContextFactory(config), //FIXME: The SSLContextFactory is not properly consumed by the QuicConnector on the jetty side.
             new HTTP3ServerConnectionFactory(httpConfiguration));
 
         connector.setPort(config.http3Port);
