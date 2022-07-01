@@ -38,12 +38,15 @@ public class SSLPlugin implements Plugin {
             //Check if the server has been manually configured
             server = Objects.requireNonNullElseGet(javalin._conf.inner.server, Server::new);
 
-
             //parseConfig returns a consumer configuring the server.
-            parseConfig(config).accept(server);
+            createJettyServerPatcher(config).accept(server);
 
             return server;
         });
+
+        if(config.enableHttp3 && !config.disableHttp3Upgrade){
+            javalin.before(createHttp3UpgradeHandler(config));
+        }
 
     }
 
@@ -53,9 +56,9 @@ public class SSLPlugin implements Plugin {
      * @param config The config to parse.
      * @return A {@link Consumer<Server>} that can be used to configure the server.
      */
-    private static Consumer<Server> parseConfig(SSLConfig config) {
+    private static Consumer<Server> createJettyServerPatcher(SSLConfig config) {
 
-        //TODO: Assert that the config is valid before creating the consumer.
+        //TODO: Assert that the config is valid before creating the consumer, otherwise exceptions will be buried.
 
         return (server) -> {
 

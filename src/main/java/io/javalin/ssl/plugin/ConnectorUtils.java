@@ -1,17 +1,22 @@
 package io.javalin.ssl.plugin;
 
+import io.javalin.http.Handler;
 import nl.altindag.ssl.SSLFactory;
 import nl.altindag.ssl.util.JettySslUtils;
 import nl.altindag.ssl.util.PemUtils;
+import org.conscrypt.Conscrypt;
 import org.eclipse.jetty.alpn.server.ALPNServerConnectionFactory;
 import org.eclipse.jetty.http.UriCompliance;
+import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.http2.server.HTTP2CServerConnectionFactory;
+import org.eclipse.jetty.http2.server.HTTP2ServerConnectionFactory;
 import org.eclipse.jetty.http3.server.HTTP3ServerConnectionFactory;
 import org.eclipse.jetty.http3.server.HTTP3ServerConnector;
 import org.eclipse.jetty.server.*;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 import javax.net.ssl.X509ExtendedKeyManager;
+
 
 public class ConnectorUtils {
 
@@ -72,7 +77,7 @@ public class ConnectorUtils {
 
         if (config.enableHttp2) {
             //The factory for HTTP/2 connections.
-            HTTP2CServerConnectionFactory http2 = new HTTP2CServerConnectionFactory(httpConfiguration);
+            HTTP2ServerConnectionFactory http2 = new HTTP2ServerConnectionFactory(httpConfiguration);
             // The ALPN ConnectionFactory.
             ALPNServerConnectionFactory alpn = new ALPNServerConnectionFactory();
             // The default protocol to use in case there is no negotiation.
@@ -81,7 +86,7 @@ public class ConnectorUtils {
             //TODO: Fine tune the TLS configuration
             SslConnectionFactory tlsHttp2 = new SslConnectionFactory(sslContextFactory, alpn.getProtocol());
 
-            connector = new ServerConnector(server, tlsHttp2, alpn, http11, http2);
+            connector = new ServerConnector(server, tlsHttp2, alpn, http2, http11);
         } else {
             //TODO: Fine tune the TLS configuration
             SslConnectionFactory tls = new SslConnectionFactory(sslContextFactory, http11.getProtocol());
@@ -123,6 +128,16 @@ public class ConnectorUtils {
         return connector;
     }
 
+
+    public static Handler createHttp3UpgradeHandler(SSLConfig config) {
+
+        return context -> {
+            if (!context.protocol().equals(HttpVersion.HTTP_3.asString())) { //If the protocol is HTTP/3, then we don't want to handle it.
+                context.header("Alt-Svc", "h3=\":" + config.http3Port + "\""); //Set the Alt-Svc header to tell the client to use HTTP/3.
+            }
+        };
+    }
+
     /**
      * Helper method to create a {@link SslContextFactory} from the given config.
      *
@@ -148,6 +163,7 @@ public class ConnectorUtils {
         //The sslcontext-kickstart factory
         SSLFactory sslFactory = SSLFactory.builder()
             .withIdentityMaterial(keyManager)
+            .withSecurityProvider(Conscrypt.newProvider())
             .build();
 
         return JettySslUtils.forServer(sslFactory);

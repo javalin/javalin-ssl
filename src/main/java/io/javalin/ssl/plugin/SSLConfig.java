@@ -39,18 +39,18 @@ public class SSLConfig {
 
     /**
      * Enables HTTP/3 Support.
-     * <br>
-     * To initiate an HTTP/3 connection, the server should send an {@code Alt-Svc} header in the response to the client.
-     * For the default port, the header would be {@code Alt-Svc: h3=":843"}
-     *
-     * @see <a href="https://www.eclipse.org/jetty/documentation/jetty-11/programming-guide/index.html#pg-server-http-connector-protocol-http3">Jetty Documentation</a>
      */
-    public boolean enableHttp3 = false; //TODO: Implement
+    public boolean enableHttp3 = false;
 
     /**
-     * Port to use on the HTTP/3 connector.
+     * Disables the handler that adds an "Alt-Svc" header to any non HTTP/3 response.
      */
-    public int http3Port = 843; //TODO: Implement
+    public boolean disableHttp3Upgrade = false;
+
+    /**
+     * UDP Port to use on the HTTP/3 connector.
+     */
+    public int http3Port = 443;
 
     public InnerConfig inner = new InnerConfig();
 
