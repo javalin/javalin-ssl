@@ -2,9 +2,11 @@ package io.javalin.ssl.plugin;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+@SuppressWarnings("unused")
 public class SSLConfig {
 
     /**
@@ -57,21 +59,58 @@ public class SSLConfig {
 
     public InnerConfig inner = new InnerConfig();
 
-
     /**
      * Configuration for the SSL (secure) connector, meant to be accessed using its setters.
      */
     public static class InnerConfig {
+
         /**
-         * Path to the certificate chain file.
+         * Name of the certificate chain PEM file in the classpath.
+         */
+        @Nullable
+        public String pemCertificatesFile = null;
+
+        /**
+         * Name of the private key PEM file in the classpath.
+         */
+        @Nullable
+        public String pemPrivateKeyFile = null;
+
+        /**
+         * Input stream to the certificate chain PEM file.
+         */
+        @Nullable
+        public InputStream pemCertificatesInputStream = null;
+
+        /**
+         * Input stream to the private key PEM file.
+         */
+        @Nullable
+        public InputStream pemPrivateKeyInputStream = null;
+
+        /**
+         * Path to the PEM certificate chain PEM file.
          */
         @Nullable
         public Path pemCertificatesPath = null;
+
         /**
-         * Path to the private key file.
+         * Path to the private key PEM file.
          */
         @Nullable
         public Path pemPrivateKeyPath = null;
+
+        /**
+         * Certificate chain as a PEM encoded string.
+         */
+        @Nullable
+        public String pemCertificatesString = null;
+
+        /**
+         * Private key as a PEM encoded string.
+         */
+        @Nullable
+        public String pemPrivateKeyString = null;
 
         /**
          * Password for the private key.
@@ -97,6 +136,61 @@ public class SSLConfig {
     public void setPemPrivateKeyPath(String pemPrivateKeyPath) {
         inner.pemPrivateKeyPath = Paths.get(pemPrivateKeyPath);
     }
+
+    /**
+     * Set the name of the pem certificate file in the classpath.
+     *
+     * @param pemCertificatesFile The name of the pem certificate file in the classpath.
+     */
+    public void setPemCertificatesFile(String pemCertificatesFile) {
+        inner.pemCertificatesFile = pemCertificatesFile;
+    }
+
+    /**
+     * Set the name of the pem private key file in the classpath.
+     *
+     * @param pemPrivateKeyFile The name of the pem private key file in the classpath.
+     */
+    public void setPemPrivateKeyFile(String pemPrivateKeyFile) {
+        inner.pemPrivateKeyFile = pemPrivateKeyFile;
+    }
+
+    /**
+     * Set the input stream to the pem certificate file.
+     *
+     * @param pemCertificatesInputStream The input stream to the pem certificate file.
+     */
+    public void setPemCertificatesInputStream(InputStream pemCertificatesInputStream) {
+        inner.pemCertificatesInputStream = pemCertificatesInputStream;
+    }
+
+    /**
+     * Set the input stream to the pem private key file.
+     *
+     * @param pemPrivateKeyInputStream The input stream to the pem private key file.
+     */
+    public void setPemPrivateKeyInputStream(InputStream pemPrivateKeyInputStream) {
+        inner.pemPrivateKeyInputStream = pemPrivateKeyInputStream;
+    }
+
+    /**
+     * Set the pem certificate chain as a PEM encoded string.
+     *
+     * @param pemCertificatesString The pem certificate chain as a PEM encoded string.
+     */
+    public void setPemCertificatesString(String pemCertificatesString) {
+        inner.pemCertificatesString = pemCertificatesString;
+    }
+
+    /**
+     * Set the pem private key as a PEM encoded string.
+     *
+     * @param pemPrivateKeyString The pem private key as a PEM encoded string.
+     */
+    public void setPemPrivateKeyString(String pemPrivateKeyString) {
+        inner.pemPrivateKeyString = pemPrivateKeyString;
+    }
+
 
 
 }

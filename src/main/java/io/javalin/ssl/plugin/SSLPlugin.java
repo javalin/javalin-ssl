@@ -2,7 +2,9 @@ package io.javalin.ssl.plugin;
 
 import io.javalin.Javalin;
 import io.javalin.core.plugin.Plugin;
+import io.javalin.ssl.plugin.util.ConnectorFactory;
 import org.eclipse.jetty.server.*;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
@@ -10,7 +12,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import static io.javalin.ssl.plugin.ConnectorUtils.*;
+import static io.javalin.ssl.plugin.util.ConnectorFactory.*;
+import static io.javalin.ssl.plugin.util.SSLUtils.*;
 
 public class SSLPlugin implements Plugin {
 
@@ -32,6 +35,8 @@ public class SSLPlugin implements Plugin {
     @Override
     public void apply(@NotNull Javalin javalin) {
 
+        Consumer<Server> patcher = createJettyServerPatcher(config);
+
         javalin.cfg.server(() -> {
             Server server;
 
@@ -39,7 +44,7 @@ public class SSLPlugin implements Plugin {
             server = Objects.requireNonNullElseGet(javalin.cfg.inner.server, Server::new);
 
             //parseConfig returns a consumer configuring the server.
-            createJettyServerPatcher(config).accept(server);
+            patcher.accept(server);
 
             return server;
         });
@@ -57,23 +62,34 @@ public class SSLPlugin implements Plugin {
      * @return A {@link Consumer<Server>} that can be used to configure the server.
      */
     private static Consumer<Server> createJettyServerPatcher(SSLConfig config) {
-
         //TODO: Assert that the config is valid before creating the consumer, otherwise exceptions will be buried.
+
+        //Created outside the lambda to have exceptions thrown in the correct context.
+        SslContextFactory.Server sslContextFactory;
+
+        if(!config.disableSecure || config.enableHttp3){
+            sslContextFactory =
+                createSslContextFactory(createKeyManager(config), config);
+        } else {
+            sslContextFactory =
+                createSslContextFactory(null, config);
+        }
 
         return (server) -> {
 
             List<Connector> connectorList = new LinkedList<>();
+            ConnectorFactory connectorFactory = new ConnectorFactory(config, server, sslContextFactory);
 
             if (!config.disableInsecure) {
-                connectorList.add(createInsecureConnector(config, server));
+                connectorList.add(connectorFactory.createInsecureConnector());
             }
 
             if (!config.disableSecure) {
-                connectorList.add(createSecureConnector(config, server));
+                connectorList.add(connectorFactory.createSecureConnector());
             }
 
             if (config.enableHttp3) {
-                connectorList.add(createHttp3Connector(config, server));
+                connectorList.add(connectorFactory.createHttp3Connector());
             }
 
             connectorList.forEach(server::addConnector);

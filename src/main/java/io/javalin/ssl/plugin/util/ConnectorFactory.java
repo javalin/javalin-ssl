@@ -1,10 +1,9 @@
-package io.javalin.ssl.plugin;
+package io.javalin.ssl.plugin.util;
 
 import io.javalin.http.Handler;
-import nl.altindag.ssl.SSLFactory;
-import nl.altindag.ssl.util.JettySslUtils;
-import nl.altindag.ssl.util.PemUtils;
-import org.conscrypt.Conscrypt;
+import io.javalin.ssl.plugin.SSLConfig;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.eclipse.jetty.alpn.server.ALPNServerConnectionFactory;
 import org.eclipse.jetty.http.UriCompliance;
 import org.eclipse.jetty.http.HttpVersion;
@@ -15,19 +14,22 @@ import org.eclipse.jetty.http3.server.HTTP3ServerConnector;
 import org.eclipse.jetty.server.*;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
-import javax.net.ssl.X509ExtendedKeyManager;
+@AllArgsConstructor
+@RequiredArgsConstructor
+public class ConnectorFactory {
 
+    private SSLConfig config;
+    private Server server;
 
-public class ConnectorUtils {
+    private SslContextFactory.Server sslContextFactory = null;
+
 
     /**
      * Create and return an insecure connector to the server.
      *
-     * @param config The configuration to use.
-     * @param server The server to apply the connector to.
      * @return The created {@link Connector}.
      */
-    public static ServerConnector createInsecureConnector(SSLConfig config, Server server) {
+    public ServerConnector createInsecureConnector() {
         ServerConnector connector;
 
         //The http configuration object
@@ -56,13 +58,10 @@ public class ConnectorUtils {
     /**
      * Create and apply an SSL connector to the server.
      *
-     * @param config The configuration to use.
-     * @param server The server to apply the connector to.
      * @return The created {@link Connector}.
      */
-    public static ServerConnector createSecureConnector(SSLConfig config, Server server) {
+    public ServerConnector createSecureConnector() {
 
-        SslContextFactory.Server sslContextFactory = createSslContextFactory(config);
 
         ServerConnector connector;
 
@@ -83,12 +82,10 @@ public class ConnectorUtils {
             // The default protocol to use in case there is no negotiation.
             alpn.setDefaultProtocol(http11.getProtocol());
 
-            //TODO: Fine tune the TLS configuration
             SslConnectionFactory tlsHttp2 = new SslConnectionFactory(sslContextFactory, alpn.getProtocol());
 
             connector = new ServerConnector(server, tlsHttp2, alpn, http2, http11);
         } else {
-            //TODO: Fine tune the TLS configuration
             SslConnectionFactory tls = new SslConnectionFactory(sslContextFactory, http11.getProtocol());
 
             connector = new ServerConnector(server, tls, http11);
@@ -105,11 +102,9 @@ public class ConnectorUtils {
     /**
      * Create and apply an HTTP/3 connector to the server.
      *
-     * @param config The configuration to use.
-     * @param server The server to apply the connector to.
      * @return The created {@link Connector}.
      */
-    public static HTTP3ServerConnector createHttp3Connector(SSLConfig config, Server server) {
+    public HTTP3ServerConnector createHttp3Connector() {
 
         //The http configuration object
         HttpConfiguration httpConfiguration = new HttpConfiguration();
@@ -118,7 +113,7 @@ public class ConnectorUtils {
         httpConfiguration.addCustomizer(new SecureRequestCustomizer());
 
         HTTP3ServerConnector connector = new HTTP3ServerConnector(server,
-            createSslContextFactory(config), //FIXME: The SSLContextFactory is not properly consumed by the QuicConnector on the jetty side.
+            sslContextFactory, //FIXME: The SSLContextFactory is not properly consumed by the QuicConnector on the jetty side.
             new HTTP3ServerConnectionFactory(httpConfiguration));
 
         connector.setPort(config.http3Port);
@@ -130,7 +125,6 @@ public class ConnectorUtils {
 
 
     public static Handler createHttp3UpgradeHandler(SSLConfig config) {
-
         return context -> {
             if (!context.protocol().equals(HttpVersion.HTTP_3.asString())) { //If the protocol is HTTP/3, then we don't want to handle it.
                 context.header("Alt-Svc", "h3=\":" + config.http3Port + "\""); //Set the Alt-Svc header to tell the client to use HTTP/3.
@@ -138,34 +132,4 @@ public class ConnectorUtils {
         };
     }
 
-    /**
-     * Helper method to create a {@link SslContextFactory} from the given config.
-     *
-     * @param config The config to use.
-     * @return The created {@link SslContextFactory}.
-     */
-    public static SslContextFactory.Server createSslContextFactory(SSLConfig config) {
-
-        X509ExtendedKeyManager keyManager = null;
-
-        //TODO: Implement support for different loadings of the keystore and formats.
-        if (config.inner.pemCertificatesPath != null && config.inner.pemPrivateKeyPath != null) {
-            if (config.inner.privateKeyPassword == null) {
-                keyManager = PemUtils.loadIdentityMaterial(config.inner.pemCertificatesPath, config.inner.pemPrivateKeyPath);
-            } else {
-                keyManager = PemUtils.loadIdentityMaterial(config.inner.pemCertificatesPath, config.inner.pemPrivateKeyPath, config.inner.privateKeyPassword.toCharArray());
-            }
-        }
-
-        if (keyManager == null) {
-            throw new IllegalArgumentException("Both certificate and private key must be configured!");
-        }
-        //The sslcontext-kickstart factory
-        SSLFactory sslFactory = SSLFactory.builder()
-            .withIdentityMaterial(keyManager)
-            .withSecurityProvider(Conscrypt.newProvider())
-            .build();
-
-        return JettySslUtils.forServer(sslFactory);
-    }
 }
