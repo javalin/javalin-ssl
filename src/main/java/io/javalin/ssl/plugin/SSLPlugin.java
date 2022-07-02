@@ -37,7 +37,7 @@ public class SSLPlugin implements Plugin {
 
         Consumer<Server> patcher = createJettyServerPatcher(config);
 
-        javalin.cfg.server(() -> {
+        javalin.cfg.jetty.server(() -> {
             Server server;
 
             //Check if the server has been manually configured

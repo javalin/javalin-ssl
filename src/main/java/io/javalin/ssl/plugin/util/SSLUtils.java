@@ -42,104 +42,54 @@ public class SSLUtils {
      * @throws SSLConfigException if the key configuration is invalid.
      */
     public static X509ExtendedKeyManager createKeyManager(SSLConfig config) {
-        X509ExtendedKeyManager keyManager = null;
+        X509ExtendedKeyManager keyManager;
 
         //TODO: Implement support for formats other than PEM
-        boolean keyPresent = false;
 
-        //Load pem data from a given path.
-        if (config.inner.pemCertificatesPath != null) {
-            if (config.inner.pemPrivateKeyPath != null) {
-                if (!keyPresent) { //If the key has not been created yet by other means, create it.
-                    if (config.inner.privateKeyPassword == null) {
-                        keyManager = PemUtils.loadIdentityMaterial(config.inner.pemCertificatesPath, config.inner.pemPrivateKeyPath);
-                    } else {
-                        keyManager = PemUtils.loadIdentityMaterial(config.inner.pemCertificatesPath, config.inner.pemPrivateKeyPath, config.inner.privateKeyPassword.toCharArray());
-                    }
-                    keyPresent = true;
-                } else {
-                    throw new SSLConfigException(SSLConfigException.Types.MULTIPLE_IDENTITY_LOADING_OPTIONS);
-                }
-            } else {
-                throw new SSLConfigException(SSLConfigException.Types.MISSING_PRIVATE_KEY);
-            }
-        } else {
-            if (config.inner.pemPrivateKeyPath != null) {
-                throw new SSLConfigException(SSLConfigException.Types.MISSING_CERTIFICATE);
-            }
+        SSLConfig.InnerConfig.IdentityLoadingType identityLoadingType = config.inner.getIdentityLoadingType();
+
+        boolean passwordProtected = config.inner.privateKeyPassword != null;
+
+        switch (identityLoadingType) {
+            case PEM_FILE_PATH:
+                keyManager = passwordProtected ?
+                    PemUtils.loadIdentityMaterial(config.inner.pemCertificatesPath,
+                        config.inner.pemPrivateKeyPath,
+                        config.inner.privateKeyPassword.toCharArray()) :
+                    PemUtils.loadIdentityMaterial(config.inner.pemCertificatesPath,
+                        config.inner.pemPrivateKeyPath);
+                break;
+            case PEM_CLASS_PATH:
+                keyManager = passwordProtected ?
+                    PemUtils.loadIdentityMaterial(config.inner.pemCertificatesFile,
+                        config.inner.pemPrivateKeyFile,
+                        config.inner.privateKeyPassword.toCharArray()) :
+                    PemUtils.loadIdentityMaterial(config.inner.pemCertificatesFile,
+                        config.inner.pemPrivateKeyFile);
+                break;
+            case PEM_STRING:
+                keyManager = passwordProtected ?
+                    PemUtils.parseIdentityMaterial(config.inner.pemCertificatesString,
+                        config.inner.pemPrivateKeyString,
+                        config.inner.privateKeyPassword.toCharArray()) :
+                    PemUtils.parseIdentityMaterial(config.inner.pemCertificatesString,
+                        config.inner.pemPrivateKeyString,
+                        null);
+                break;
+            case PEM_INPUT_STREAM:
+                keyManager = passwordProtected ?
+                    PemUtils.loadIdentityMaterial(config.inner.pemCertificatesInputStream,
+                        config.inner.pemPrivateKeyInputStream,
+                        config.inner.privateKeyPassword.toCharArray()) :
+                    PemUtils.loadIdentityMaterial(config.inner.pemCertificatesInputStream,
+                        config.inner.pemPrivateKeyInputStream);
+                break;
+            case NONE:
+            default:
+                throw new SSLConfigException(SSLConfigException.Types.MISSING_CERT_AND_KEY_FILE);
         }
 
-        //Load pem data from a given string.
-        if (config.inner.pemCertificatesString != null) {
-            if (config.inner.pemPrivateKeyString != null) {
-                if (!keyPresent) { //If the key has not been created yet by other means, create it.
-                    if (config.inner.privateKeyPassword == null) {
-                        keyManager = PemUtils.parseIdentityMaterial(config.inner.pemCertificatesString, config.inner.pemPrivateKeyString,null);
-                    } else {
-                        keyManager = PemUtils.parseIdentityMaterial(config.inner.pemCertificatesString, config.inner.pemPrivateKeyString, config.inner.privateKeyPassword.toCharArray());
-                    }
-                    keyPresent = true;
-                } else {
-                    throw new SSLConfigException(SSLConfigException.Types.MULTIPLE_IDENTITY_LOADING_OPTIONS);
-                }
-            } else {
-                throw new SSLConfigException(SSLConfigException.Types.MISSING_PRIVATE_KEY);
-            }
-        } else {
-            if (config.inner.pemPrivateKeyString != null) {
-                throw new SSLConfigException(SSLConfigException.Types.MISSING_CERTIFICATE);
-            }
-        }
-
-        //Load pem data from a given file.
-        if (config.inner.pemCertificatesFile != null) {
-            if (config.inner.pemPrivateKeyFile != null) {
-                if (!keyPresent) { //If the key has not been created yet by other means, create it.
-                    if (config.inner.privateKeyPassword == null) {
-                        keyManager = PemUtils.loadIdentityMaterial(config.inner.pemCertificatesFile, config.inner.pemPrivateKeyFile);
-                    } else {
-                        keyManager = PemUtils.loadIdentityMaterial(config.inner.pemCertificatesFile, config.inner.pemPrivateKeyFile, config.inner.privateKeyPassword.toCharArray());
-                    }
-                    keyPresent = true;
-                } else {
-                    throw new SSLConfigException(SSLConfigException.Types.MULTIPLE_IDENTITY_LOADING_OPTIONS);
-                }
-            } else {
-                throw new SSLConfigException(SSLConfigException.Types.MISSING_PRIVATE_KEY);
-            }
-        } else {
-            if (config.inner.pemPrivateKeyFile != null) {
-                throw new SSLConfigException(SSLConfigException.Types.MISSING_CERTIFICATE);
-            }
-        }
-
-        //Load pem data from a given InputStream.
-        if (config.inner.pemCertificatesInputStream != null) {
-            if (config.inner.pemPrivateKeyInputStream != null) {
-                if (!keyPresent) { //If the key has not been created yet by other means, create it.
-                    if (config.inner.privateKeyPassword == null) {
-                        keyManager = PemUtils.loadIdentityMaterial(config.inner.pemCertificatesInputStream, config.inner.pemPrivateKeyInputStream);
-                    } else {
-                        keyManager = PemUtils.loadIdentityMaterial(config.inner.pemCertificatesInputStream, config.inner.pemPrivateKeyInputStream, config.inner.privateKeyPassword.toCharArray());
-                    }
-                    keyPresent = true;
-                } else {
-                    throw new SSLConfigException(SSLConfigException.Types.MULTIPLE_IDENTITY_LOADING_OPTIONS);
-                }
-            } else {
-                throw new SSLConfigException(SSLConfigException.Types.MISSING_PRIVATE_KEY);
-            }
-        } else {
-            if (config.inner.pemPrivateKeyInputStream != null) {
-                throw new SSLConfigException(SSLConfigException.Types.MISSING_CERTIFICATE);
-            }
-        }
-
-
-        if (!keyPresent) {
-            throw new SSLConfigException(SSLConfigException.Types.MISSING_CERT_AND_KEY_FILE);
-        } else
-            return keyManager;
+        return keyManager;
 
     }
 }

@@ -1,5 +1,6 @@
 package io.javalin.ssl.plugin;
 
+import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.InputStream;
@@ -8,6 +9,10 @@ import java.nio.file.Paths;
 
 @SuppressWarnings("unused")
 public class SSLConfig {
+
+
+
+
 
     /**
      * Host to bind to.
@@ -63,6 +68,17 @@ public class SSLConfig {
      * Configuration for the SSL (secure) connector, meant to be accessed using its setters.
      */
     public static class InnerConfig {
+
+        public enum IdentityLoadingType {
+            NONE,
+            PEM_CLASS_PATH,
+            PEM_FILE_PATH,
+            PEM_STRING,
+            PEM_INPUT_STREAM
+        }
+
+        @Getter
+        IdentityLoadingType identityLoadingType = IdentityLoadingType.NONE;
 
         /**
          * Name of the certificate chain PEM file in the classpath.
@@ -120,77 +136,115 @@ public class SSLConfig {
     }
 
     /**
-     * Set the path to the pem certificate file.
+     * Load pem formatted identity data from a given path in the system.
      *
-     * @param pemCertificatesPath The path to the pem certificate file.
+     * @param certificatePath path to the certificate chain PEM file.
+     * @param privateKeyPath  path to the private key PEM file.
      */
-    public void setPemCertificatesPath(String pemCertificatesPath) {
-        inner.pemCertificatesPath = Paths.get(pemCertificatesPath);
+    public void loadPemFromPath(String certificatePath, String privateKeyPath) {
+        if (inner.identityLoadingType != InnerConfig.IdentityLoadingType.NONE) {
+            throw new SSLConfigException(SSLConfigException.Types.MULTIPLE_IDENTITY_LOADING_OPTIONS);
+        }
+        inner.pemCertificatesPath = Paths.get(certificatePath);
+        inner.pemPrivateKeyPath = Paths.get(privateKeyPath);
+       inner.identityLoadingType = InnerConfig.IdentityLoadingType.PEM_FILE_PATH;
     }
 
     /**
-     * Set the path to the pem private key file.
+     * Load pem formatted identity data from a given path in the system.
      *
-     * @param pemPrivateKeyPath The path to the pem private key file.
+     * @param certificatePath    path to the certificate chain PEM file.
+     * @param privateKeyPath     path to the private key PEM file.
+     * @param privateKeyPassword password for the private key.
      */
-    public void setPemPrivateKeyPath(String pemPrivateKeyPath) {
-        inner.pemPrivateKeyPath = Paths.get(pemPrivateKeyPath);
+    public void loadPemFromPath(String certificatePath, String privateKeyPath, String privateKeyPassword) {
+        loadPemFromPath(certificatePath, privateKeyPath);
+        inner.privateKeyPassword = privateKeyPassword;
+    }
+
+
+    /**
+     * Load pem formatted identity data from the classpath.
+     *
+     * @param certificateFile The name of the pem certificate file in the classpath.
+     * @param privateKeyFile  The name of the pem private key file in the classpath.
+     */
+    public void loadPemFromClasspath(String certificateFile, String privateKeyFile) {
+        if (inner.identityLoadingType != InnerConfig.IdentityLoadingType.NONE) {
+            throw new SSLConfigException(SSLConfigException.Types.MULTIPLE_IDENTITY_LOADING_OPTIONS);
+        }
+        inner.pemCertificatesFile = certificateFile;
+        inner.pemPrivateKeyFile = privateKeyFile;
+       inner.identityLoadingType = InnerConfig.IdentityLoadingType.PEM_CLASS_PATH;
     }
 
     /**
-     * Set the name of the pem certificate file in the classpath.
+     * Load pem formatted identity data from the classpath.
      *
-     * @param pemCertificatesFile The name of the pem certificate file in the classpath.
+     * @param certificateFile    The name of the pem certificate file in the classpath.
+     * @param privateKeyFile     The name of the pem private key file in the classpath.
+     * @param privateKeyPassword password for the private key.
      */
-    public void setPemCertificatesFile(String pemCertificatesFile) {
-        inner.pemCertificatesFile = pemCertificatesFile;
+    public void loadPemFromClasspath(String certificateFile, String privateKeyFile, String privateKeyPassword) {
+        loadPemFromClasspath(certificateFile, privateKeyFile);
+        inner.privateKeyPassword = privateKeyPassword;
+    }
+
+
+    /**
+     * Load pem formatted identity data from a given input stream.
+     *
+     * @param certificateInputStream input stream to the certificate chain PEM file.
+     * @param privateKeyInputStream  input stream to the private key PEM file.
+     */
+    public void loadPemFromInputStream(InputStream certificateInputStream, InputStream privateKeyInputStream) {
+        if (inner.identityLoadingType != InnerConfig.IdentityLoadingType.NONE) {
+            throw new SSLConfigException(SSLConfigException.Types.MULTIPLE_IDENTITY_LOADING_OPTIONS);
+        }
+        inner.pemCertificatesInputStream = certificateInputStream;
+        inner.pemPrivateKeyInputStream = privateKeyInputStream;
+       inner.identityLoadingType = InnerConfig.IdentityLoadingType.PEM_INPUT_STREAM;
     }
 
     /**
-     * Set the name of the pem private key file in the classpath.
+     * Load pem formatted identity data from a given input stream.
      *
-     * @param pemPrivateKeyFile The name of the pem private key file in the classpath.
+     * @param certificateInputStream input stream to the certificate chain PEM file.
+     * @param privateKeyInputStream  input stream to the private key PEM file.
+     * @param privateKeyPassword     password for the private key.
      */
-    public void setPemPrivateKeyFile(String pemPrivateKeyFile) {
-        inner.pemPrivateKeyFile = pemPrivateKeyFile;
+    public void loadPemFromInputStream(InputStream certificateInputStream, InputStream privateKeyInputStream, String privateKeyPassword) {
+        loadPemFromInputStream(certificateInputStream, privateKeyInputStream);
+        inner.privateKeyPassword = privateKeyPassword;
+    }
+
+
+    /**
+     * Load pem formatted identity data from a given string.
+     *
+     * @param certificateString PEM encoded certificate chain.
+     * @param privateKeyString  PEM encoded private key.
+     */
+    public void loadPemFromString(String certificateString, String privateKeyString) {
+        if (inner.identityLoadingType != InnerConfig.IdentityLoadingType.NONE) {
+            throw new SSLConfigException(SSLConfigException.Types.MULTIPLE_IDENTITY_LOADING_OPTIONS);
+        }
+        inner.pemCertificatesString = certificateString;
+        inner.pemPrivateKeyString = privateKeyString;
+       inner.identityLoadingType = InnerConfig.IdentityLoadingType.PEM_STRING;
     }
 
     /**
-     * Set the input stream to the pem certificate file.
+     * Load pem formatted identity data from a given string.
      *
-     * @param pemCertificatesInputStream The input stream to the pem certificate file.
+     * @param certificateString PEM encoded certificate chain.
+     * @param privateKeyString  PEM encoded private key.
+     * @param privateKeyPassword password for the private key.
      */
-    public void setPemCertificatesInputStream(InputStream pemCertificatesInputStream) {
-        inner.pemCertificatesInputStream = pemCertificatesInputStream;
+    public void loadPemFromString(String certificateString, String privateKeyString, String privateKeyPassword) {
+        loadPemFromString(certificateString, privateKeyString);
+        inner.privateKeyPassword = privateKeyPassword;
     }
-
-    /**
-     * Set the input stream to the pem private key file.
-     *
-     * @param pemPrivateKeyInputStream The input stream to the pem private key file.
-     */
-    public void setPemPrivateKeyInputStream(InputStream pemPrivateKeyInputStream) {
-        inner.pemPrivateKeyInputStream = pemPrivateKeyInputStream;
-    }
-
-    /**
-     * Set the pem certificate chain as a PEM encoded string.
-     *
-     * @param pemCertificatesString The pem certificate chain as a PEM encoded string.
-     */
-    public void setPemCertificatesString(String pemCertificatesString) {
-        inner.pemCertificatesString = pemCertificatesString;
-    }
-
-    /**
-     * Set the pem private key as a PEM encoded string.
-     *
-     * @param pemPrivateKeyString The pem private key as a PEM encoded string.
-     */
-    public void setPemPrivateKeyString(String pemPrivateKeyString) {
-        inner.pemPrivateKeyString = pemPrivateKeyString;
-    }
-
 
 
 }
