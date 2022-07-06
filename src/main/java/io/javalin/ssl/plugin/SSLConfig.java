@@ -10,10 +10,6 @@ import java.nio.file.Paths;
 @SuppressWarnings("unused")
 public class SSLConfig {
 
-
-
-
-
     /**
      * Host to bind to.
      */
@@ -40,9 +36,9 @@ public class SSLConfig {
     public int insecurePort = 80;
 
     /**
-     * Enables HTTP/2 Support
+     * Disables HTTP/2 Support
      */
-    public boolean enableHttp2 = true;
+    public boolean disableHttp2 = false;
 
     /**
      * Enables HTTP/3 Support.

@@ -41,7 +41,7 @@ public class SSLPlugin implements Plugin {
             Server server;
 
             //Check if the server has been manually configured
-            server = Objects.requireNonNullElseGet(javalin.cfg.inner.server, Server::new);
+            server = Objects.requireNonNullElseGet(javalin.cfg.pvt.server, Server::new);
 
             //parseConfig returns a consumer configuring the server.
             patcher.accept(server);
@@ -64,7 +64,7 @@ public class SSLPlugin implements Plugin {
     private static Consumer<Server> createJettyServerPatcher(SSLConfig config) {
         //TODO: Assert that the config is valid before creating the consumer, otherwise exceptions will be buried.
 
-        //Created outside the lambda to have exceptions thrown in the correct context.
+        //Created outside the lambda to have exceptions thrown in the current scope
         SslContextFactory.Server sslContextFactory;
 
         if(!config.disableSecure || config.enableHttp3){
@@ -72,7 +72,7 @@ public class SSLPlugin implements Plugin {
                 createSslContextFactory(createKeyManager(config), config);
         } else {
             sslContextFactory =
-                createSslContextFactory(null, config);
+                null;
         }
 
         return (server) -> {

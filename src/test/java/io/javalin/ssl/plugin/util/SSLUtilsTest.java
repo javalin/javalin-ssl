@@ -2,25 +2,13 @@ package io.javalin.ssl.plugin.util;
 
 import io.javalin.ssl.plugin.SSLConfig;
 import io.javalin.ssl.plugin.SSLConfigException;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import java.io.InputStream;
-import java.net.URISyntaxException;
-import java.nio.file.Paths;
-import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Tag("unit")
 class SSLUtilsTest {
-
-    private final String emptyPemString = "";
-    private final String emptyPemFileName = "wrong.pem";
-
-    private final Supplier<InputStream> emptyPemInputStream = InputStream::nullInputStream;
-    private final String emptyPemFilePath = String.valueOf(Paths.get( this.getClass().getClassLoader().getResource(emptyPemFileName).toURI()).toFile());
-
-    SSLUtilsTest() throws URISyntaxException {
-    }
 
     @Test
     void createSslContextFactory() {

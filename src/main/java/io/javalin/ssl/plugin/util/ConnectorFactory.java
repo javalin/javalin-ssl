@@ -40,7 +40,7 @@ public class ConnectorFactory {
         //The factory for HTTP/1.1 connections.
         HttpConnectionFactory http11 = new HttpConnectionFactory(httpConfiguration);
 
-        if (config.enableHttp2) {
+        if (!config.disableHttp2) {
             //The factory for HTTP/2 connections.
             HTTP2CServerConnectionFactory http2 = new HTTP2CServerConnectionFactory(httpConfiguration);
             connector = new ServerConnector(server, http11, http2);
@@ -74,7 +74,7 @@ public class ConnectorFactory {
         //The factory for HTTP/1.1 connections
         HttpConnectionFactory http11 = new HttpConnectionFactory(httpConfiguration);
 
-        if (config.enableHttp2) {
+        if (!config.disableHttp2) {
             //The factory for HTTP/2 connections.
             HTTP2ServerConnectionFactory http2 = new HTTP2ServerConnectionFactory(httpConfiguration);
             // The ALPN ConnectionFactory.
