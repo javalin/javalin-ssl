@@ -9,7 +9,7 @@ import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@Tag("unit")
+@Tag("unitary")
 class SSLConfigTest {
 
     final String absolutePathString = "/etc/sample/path";

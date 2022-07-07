@@ -3,21 +3,15 @@ plugins {
     id 'maven-publish'
     id 'jacoco'
     id "io.freefair.lombok" version "6.4.3"
-
 }
 
 group = 'io.javalin'
 //Must be formatted following the RegEx: /version\s*=\s*'\S+'/g
-version = '0.1.0-SNAPSHOT'
+version = '1.0.0-SNAPSHOT-1'
 
-jacocoTestReport {
-    reports {
-        xml.required = true
-        csv.required = false
-    }
-    dependsOn test // tests are required to run before generating the report
+jacoco {
+    toolVersion = "0.8.8"
 }
-
 
 repositories {
     mavenCentral()
@@ -58,7 +52,7 @@ publishing {
             def releasesRepoUrl = uri("https://repo.zugazagoitia.com/releases")
             def snapshotsRepoUrl = uri("https://repo.zugazagoitia.com/snapshots")
 
-            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            url = version.contains('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
 
             credentials {
                 username = System.getenv("MAVEN_NAME") ?: property("mavenUser").toString()
@@ -87,4 +81,50 @@ java {
 
 test {
     useJUnitPlatform()
+    finalizedBy jacocoTestReport
 }
+
+tasks.register("unitTests", Test) {
+    useJUnitPlatform {
+        includeTags "unitary"
+    }
+    finalizedBy unitTestsCoverageReport
+
+}
+
+
+tasks.register("integrationTests", Test) {
+    useJUnitPlatform {
+        includeTags "integration"
+    }
+    finalizedBy integrationTestsCoverageReport
+
+}
+
+tasks.register('unitTestsCoverageReport', JacocoReport) {
+    reports {
+        xml.required = true
+        csv.required = false
+    }
+    executionData unitTests
+    dependsOn unitTests
+}
+
+tasks.register('integrationTestsCoverageReport', JacocoReport) {
+    reports {
+        xml.required = true
+        csv.required = false
+    }
+    executionData integrationTests
+    dependsOn integrationTests
+}
+
+
+jacocoTestReport {
+    reports {
+        xml.required = true
+        csv.required = false
+    }
+}
+
+

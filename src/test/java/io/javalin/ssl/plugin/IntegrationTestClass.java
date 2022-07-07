@@ -155,7 +155,7 @@ public abstract class IntegrationTestClass {
 
     public static Javalin createTestApp(Consumer<SSLConfig> config) {
         return Javalin.create((javalinConfig) -> {
-            javalinConfig.showJavalinBanner = false;
+            javalinConfig.core.setShowJavalinBanner(false);
             javalinConfig.plugins.register(new SSLPlugin(config));
         }).get("/", ctx -> ctx.result(SUCCESS));
     }

@@ -33,6 +33,9 @@ jobs:
     needs:
       - test
     name: "📄 Codecov Report"
+    strategy:
+      matrix:
+        test-type: [unit, integration]
     steps:
       - name: Setup Java JDK
         uses: actions/setup-java@v3.4.0
@@ -49,13 +52,13 @@ jobs:
       - name: Setup and Run Gradle
         uses: gradle/gradle-build-action@v2.2.1
         with:
-          arguments: jacocoTestReport
+          arguments: ${{ matrix.test-type }}TestsCoverageReport
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2
         with:
-          directory: "build/reports/jacoco/test"
-          flags: unittests
+          directory: "build/reports/jacoco/${{ matrix.test-type }}TestsCoverageReport"
+          flags: ${{ matrix.test-type }}
           verbose: true
   publish:
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && github.repository == 'javalin/javalin-ssl'
@@ -95,15 +98,23 @@ jobs:
         with:
           arguments: publish
 
-      # TODO: Change release body repository based on version (releases/snapshots)
       - name: Create Release
+        if: "!contains(needs.build.outputs.version, 'SNAPSHOT')"
         uses: ncipollo/release-action@v1.10.0
         with:
           body: |
-            Available on https://repo.zugazagoitia.com with version `${{ needs.build.outputs.version }}`
+            Available on https://repo.zugazagoitia.com/releases with version `${{ needs.build.outputs.version }}`
           tag: ${{ needs.build.outputs.version }}
           generateReleaseNotes: true
           commit: main
 
-
-
+      - name: Create Pre-Release
+        if: contains(needs.build.outputs.version, 'SNAPSHOT')
+        uses: ncipollo/release-action@v1.10.0
+        with:
+          body: |
+            Available on https://repo.zugazagoitia.com/snapshots with version `${{ needs.build.outputs.version }}`
+          tag: ${{ needs.build.outputs.version }}
+          generateReleaseNotes: true
+          commit: main
+          prerelease: true
