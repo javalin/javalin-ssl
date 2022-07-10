@@ -82,6 +82,12 @@ java {
 test {
     useJUnitPlatform()
     finalizedBy jacocoTestReport
+
+    testLogging {
+        exceptionFormat = 'full'
+        showStackTraces = true
+    }
+
 }
 
 tasks.register("unitTests", Test) {

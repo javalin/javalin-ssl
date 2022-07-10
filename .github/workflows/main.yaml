@@ -55,10 +55,10 @@ jobs:
           arguments: ${{ matrix.test-type }}TestsCoverageReport
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v3.1.0
         with:
-          directory: "build/reports/jacoco/${{ matrix.test-type }}TestsCoverageReport"
-          flags: ${{ matrix.test-type }}
+          files: "build/reports/jacoco/${{ matrix.test-type }}TestsCoverageReport/${{ matrix.test-type }}TestsCoverageReport.xml"
+          flags: "${{ matrix.test-type }}Tests"
           verbose: true
   publish:
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && github.repository == 'javalin/javalin-ssl'
