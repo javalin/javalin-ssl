@@ -1,7 +1,7 @@
 package io.javalin.ssl.plugin;
 
 import io.javalin.Javalin;
-import io.javalin.core.plugin.Plugin;
+import io.javalin.plugin.Plugin;
 import io.javalin.ssl.plugin.util.ConnectorFactory;
 import org.eclipse.jetty.server.*;
 import org.eclipse.jetty.util.ssl.SslContextFactory;

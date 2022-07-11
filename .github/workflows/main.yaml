@@ -60,6 +60,7 @@ jobs:
           files: "build/reports/jacoco/${{ matrix.test-type }}TestsCoverageReport/${{ matrix.test-type }}TestsCoverageReport.xml"
           flags: "${{ matrix.test-type }}Tests"
           verbose: true
+          token: "${{ secrets.CODECOV_TOKEN }}"
   publish:
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && github.repository == 'javalin/javalin-ssl'
     needs:
@@ -98,23 +99,74 @@ jobs:
         with:
           arguments: publish
 
-      - name: Create Release
-        if: "!contains(needs.build.outputs.version, 'SNAPSHOT')"
-        uses: ncipollo/release-action@v1.10.0
-        with:
-          body: |
-            Available on https://repo.zugazagoitia.com/releases with version `${{ needs.build.outputs.version }}`
-          tag: ${{ needs.build.outputs.version }}
-          generateReleaseNotes: true
-          commit: main
-
       - name: Create Pre-Release
         if: contains(needs.build.outputs.version, 'SNAPSHOT')
         uses: ncipollo/release-action@v1.10.0
         with:
           body: |
-            Available on https://repo.zugazagoitia.com/snapshots with version `${{ needs.build.outputs.version }}`
+            ## Download Instructions
+            ### Maven
+            ```xml
+            <repository>
+              <id>zugazagoitia-repo-snapshots</id>
+              <name>Zugazagoitia Repository</name>
+              <url>https://repo.zugazagoitia.com/snapshots</url>
+            </repository>
+            ```
+            ```xml
+            <dependency>
+              <groupId>io.javalin</groupId>
+              <artifactId>javalin-ssl</artifactId>
+              <version>${{ needs.build.outputs.version }}</version>
+            </dependency>
+            ```
+            ### Gradle
+            ```groovy
+            maven {
+              url "https://repo.zugazagoitia.com/snapshots"
+            }
+            ```
+            ```groovy
+              implementation('io.javalin:javalin-ssl:${{ needs.build.outputs.version }}')
+            ```
           tag: ${{ needs.build.outputs.version }}
           generateReleaseNotes: true
           commit: main
           prerelease: true
+
+      - name: Create Release
+        if: "!contains(needs.build.outputs.version, 'SNAPSHOT')"
+        uses: ncipollo/release-action@v1.10.0
+        with:
+          body: |
+            ## Download Instructions
+            ### Maven
+            ```xml
+            <repository>
+              <id>zugazagoitia-repo-releases</id>
+              <name>Zugazagoitia Repository</name>
+              <url>https://repo.zugazagoitia.com/releases</url>
+            </repository>
+            ```
+            ```xml
+            <dependency>
+              <groupId>io.javalin</groupId>
+              <artifactId>javalin-ssl</artifactId>
+              <version>${{ needs.build.outputs.version }}</version>
+            </dependency>
+            ```
+            ### Gradle
+            ```groovy
+            maven {
+              url "https://repo.zugazagoitia.com/releases"
+            }
+            ```
+            ```groovy
+              implementation('io.javalin:javalin-ssl:${{ needs.build.outputs.version }}')
+            ```
+
+          tag: ${{ needs.build.outputs.version }}
+          generateReleaseNotes: true
+          commit: main
+
+
