@@ -1,0 +1,136 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'jacoco'
+    id "io.freefair.lombok" version "6.4.3"
+}
+
+group = 'io.javalin'
+//Must be formatted following the RegEx: /version\s*=\s*'\S+'/g
+version = '5.0.0-SNAPSHOT'
+
+jacoco {
+    toolVersion = "0.8.8"
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        url "https://maven.reposilite.com/snapshots" //Javalin Snapshots
+    }
+}
+
+
+dependencies {
+    def javalin = "5.0.0-SNAPSHOT"
+    def jetty = "11.0.9"
+    def junit = '5.8.2'
+    def sslcontextKickstart = "7.4.4"
+    def okhttp = "4.10.0"
+
+    compileOnly("io.javalin:javalin-bundle:$javalin")
+
+    implementation("org.eclipse.jetty.http3:http3-server:$jetty")
+    implementation("io.github.hakky54:sslcontext-kickstart:$sslcontextKickstart")
+    implementation("io.github.hakky54:sslcontext-kickstart-for-jetty:$sslcontextKickstart")
+    implementation("io.github.hakky54:sslcontext-kickstart-for-pem:$sslcontextKickstart")
+
+    testImplementation("org.junit.jupiter:junit-jupiter-api:$junit")
+    testImplementation("io.javalin:javalin-bundle:$javalin")
+    testImplementation("com.squareup.okhttp3:okhttp:$okhttp")
+    testImplementation("com.squareup.okhttp3:okhttp-tls:$okhttp")
+
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit")
+
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "zugazagoitia-repo"
+
+            def releasesRepoUrl = uri("https://repo.zugazagoitia.com/releases")
+            def snapshotsRepoUrl = uri("https://repo.zugazagoitia.com/snapshots")
+
+            url = version.contains('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+
+            credentials {
+                username = System.getenv("MAVEN_NAME") ?: property("mavenUser").toString()
+                password = System.getenv("MAVEN_TOKEN") ?: property("mavenPassword").toString()
+            }
+        }
+    }
+    publications {
+        maven(MavenPublication) {
+            groupId = project.group
+            artifactId = rootProject.name
+            version = project.version
+
+            from components.java
+        }
+    }
+}
+
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+    withSourcesJar()
+    withJavadocJar()
+}
+
+test {
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport
+
+    testLogging {
+        exceptionFormat = 'full'
+        showStackTraces = true
+    }
+
+}
+
+tasks.register("unitTests", Test) {
+    useJUnitPlatform {
+        includeTags "unitary"
+    }
+    finalizedBy unitTestsCoverageReport
+
+}
+
+
+tasks.register("integrationTests", Test) {
+    useJUnitPlatform {
+        includeTags "integration"
+    }
+    finalizedBy integrationTestsCoverageReport
+
+}
+
+tasks.register('unitTestsCoverageReport', JacocoReport) {
+    reports {
+        xml.required = true
+        csv.required = false
+    }
+    executionData unitTests
+    dependsOn unitTests
+}
+
+tasks.register('integrationTestsCoverageReport', JacocoReport) {
+    reports {
+        xml.required = true
+        csv.required = false
+    }
+    executionData integrationTests
+    dependsOn integrationTests
+}
+
+
+jacocoTestReport {
+    reports {
+        xml.required = true
+        csv.required = false
+    }
+}
+
+
