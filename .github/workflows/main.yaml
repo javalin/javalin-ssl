@@ -84,10 +84,6 @@ jobs:
           version-file: build.gradle
           version-file-extraction-pattern: '(?<=version\s*=\s*'')\S+(?='')'
 
-      - name: Output Version
-        id: genver
-        run: echo '::set-output name=version::${{ env.RELEASE_VERSION }}'
-
       - name: Validate Wrapper
         uses: gradle/wrapper-validation-action@v1
 
@@ -100,9 +96,13 @@ jobs:
           arguments: publish
 
       - name: Create Pre-Release
-        if: contains(needs.build.outputs.version, 'SNAPSHOT')
+        if: contains(env.CURRENT_VERSION, 'SNAPSHOT')
         uses: ncipollo/release-action@v1.10.0
         with:
+          tag: ${{ env.CURRENT_VERSION }}
+          generateReleaseNotes: true
+          commit: main
+          prerelease: true
           body: |
             ## Download Instructions
             ### Maven
@@ -117,7 +117,7 @@ jobs:
             <dependency>
               <groupId>io.javalin</groupId>
               <artifactId>javalin-ssl</artifactId>
-              <version>${{ needs.build.outputs.version }}</version>
+              <version>${{ env.CURRENT_VERSION }}</version>
             </dependency>
             ```
             ### Gradle
@@ -127,17 +127,16 @@ jobs:
             }
             ```
             ```groovy
-              implementation('io.javalin:javalin-ssl:${{ needs.build.outputs.version }}')
+              implementation('io.javalin:javalin-ssl:${{ env.CURRENT_VERSION }}')
             ```
-          tag: ${{ needs.build.outputs.version }}
-          generateReleaseNotes: true
-          commit: main
-          prerelease: true
 
       - name: Create Release
-        if: "!contains(needs.build.outputs.version, 'SNAPSHOT')"
+        if: "!contains(env.CURRENT_VERSION, 'SNAPSHOT')"
         uses: ncipollo/release-action@v1.10.0
         with:
+          tag: ${{ env.CURRENT_VERSION }}
+          generateReleaseNotes: true
+          commit: main
           body: |
             ## Download Instructions
             ### Maven
@@ -152,7 +151,7 @@ jobs:
             <dependency>
               <groupId>io.javalin</groupId>
               <artifactId>javalin-ssl</artifactId>
-              <version>${{ needs.build.outputs.version }}</version>
+              <version>${{ env.CURRENT_VERSION }}</version>
             </dependency>
             ```
             ### Gradle
@@ -162,11 +161,8 @@ jobs:
             }
             ```
             ```groovy
-              implementation('io.javalin:javalin-ssl:${{ needs.build.outputs.version }}')
+              implementation('io.javalin:javalin-ssl:${{ env.CURRENT_VERSION }}')
             ```
 
-          tag: ${{ needs.build.outputs.version }}
-          generateReleaseNotes: true
-          commit: main
 
 
