@@ -58,7 +58,7 @@ Latest snapshot:
 <dependency>
   <groupId>io.javalin</groupId>
   <artifactId>javalin-ssl</artifactId>
-  <version>1.0.0-SNAPSHOT-1</version>
+  <version>5.0.0-SNAPSHOT</version>
 </dependency>
 ```
 </details>
@@ -88,7 +88,7 @@ implementation('io.javalin:javalin-ssl:1.0.0') //Latest Release
 ```
 --->
 ```groovy
-implementation('io.javalin:javalin-ssl:1.0.0-SNAPSHOT-1') //Latest snapshot
+implementation('io.javalin:javalin-ssl:5.0.0-SNAPSHOT') //Latest snapshot
 ```
 
 </details>

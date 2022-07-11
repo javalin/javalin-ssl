@@ -7,7 +7,7 @@ plugins {
 
 group = 'io.javalin'
 //Must be formatted following the RegEx: /version\s*=\s*'\S+'/g
-version = '1.0.0-SNAPSHOT-1'
+version = '5.0.0-SNAPSHOT'
 
 jacoco {
     toolVersion = "0.8.8"
