@@ -94,7 +94,7 @@ jobs:
       - name: Setup and Run Gradle
         uses: gradle/gradle-build-action@v2.2.1
         env:
-          MAVEN_USER: '${{ secrets.MAVEN_USER }}'
+          MAVEN_NAME: '${{ secrets.MAVEN_NAME }}'
           MAVEN_TOKEN: '${{ secrets.MAVEN_TOKEN }}'
         with:
           arguments: publish
