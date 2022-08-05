@@ -70,7 +70,10 @@ public class SSLConfig {
             PEM_CLASS_PATH,
             PEM_FILE_PATH,
             PEM_STRING,
-            PEM_INPUT_STREAM
+            PEM_INPUT_STREAM,
+            KEY_STORE_CLASS_PATH,
+            KEY_STORE_FILE_PATH,
+            KEY_STORE_INPUT_STREAM
         }
 
         @Getter
@@ -129,7 +132,36 @@ public class SSLConfig {
          */
         @Nullable
         public String privateKeyPassword = null;
+
+        /**
+         * Path to the key store file.
+         */
+        @Nullable
+        public Path keyStorePath = null;
+
+
+        /**
+         * Name of the key store file in the classpath.
+         */
+        @Nullable
+        public String keyStoreFile = null;
+
+        /**
+         * Input stream to the key store file.
+         */
+        @Nullable
+        public InputStream keyStoreInputStream = null;
+
+        /**
+         * Password for the key store.
+         */
+        @Nullable
+        public String keyStorePassword = null;
     }
+
+    ///////////////////////////////////////////////////////////////
+    // PEM Loading Methods
+    ///////////////////////////////////////////////////////////////
 
     /**
      * Load pem formatted identity data from a given path in the system.
@@ -137,13 +169,13 @@ public class SSLConfig {
      * @param certificatePath path to the certificate chain PEM file.
      * @param privateKeyPath  path to the private key PEM file.
      */
-    public void loadPemFromPath(String certificatePath, String privateKeyPath) {
+    public void pemFromPath(String certificatePath, String privateKeyPath) {
         if (inner.identityLoadingType != InnerConfig.IdentityLoadingType.NONE) {
             throw new SSLConfigException(SSLConfigException.Types.MULTIPLE_IDENTITY_LOADING_OPTIONS);
         }
         inner.pemCertificatesPath = Paths.get(certificatePath);
         inner.pemPrivateKeyPath = Paths.get(privateKeyPath);
-       inner.identityLoadingType = InnerConfig.IdentityLoadingType.PEM_FILE_PATH;
+        inner.identityLoadingType = InnerConfig.IdentityLoadingType.PEM_FILE_PATH;
     }
 
     /**
@@ -153,8 +185,8 @@ public class SSLConfig {
      * @param privateKeyPath     path to the private key PEM file.
      * @param privateKeyPassword password for the private key.
      */
-    public void loadPemFromPath(String certificatePath, String privateKeyPath, String privateKeyPassword) {
-        loadPemFromPath(certificatePath, privateKeyPath);
+    public void pemFromPath(String certificatePath, String privateKeyPath, String privateKeyPassword) {
+        pemFromPath(certificatePath, privateKeyPath);
         inner.privateKeyPassword = privateKeyPassword;
     }
 
@@ -165,13 +197,13 @@ public class SSLConfig {
      * @param certificateFile The name of the pem certificate file in the classpath.
      * @param privateKeyFile  The name of the pem private key file in the classpath.
      */
-    public void loadPemFromClasspath(String certificateFile, String privateKeyFile) {
+    public void pemFromClasspath(String certificateFile, String privateKeyFile) {
         if (inner.identityLoadingType != InnerConfig.IdentityLoadingType.NONE) {
             throw new SSLConfigException(SSLConfigException.Types.MULTIPLE_IDENTITY_LOADING_OPTIONS);
         }
         inner.pemCertificatesFile = certificateFile;
         inner.pemPrivateKeyFile = privateKeyFile;
-       inner.identityLoadingType = InnerConfig.IdentityLoadingType.PEM_CLASS_PATH;
+        inner.identityLoadingType = InnerConfig.IdentityLoadingType.PEM_CLASS_PATH;
     }
 
     /**
@@ -181,8 +213,8 @@ public class SSLConfig {
      * @param privateKeyFile     The name of the pem private key file in the classpath.
      * @param privateKeyPassword password for the private key.
      */
-    public void loadPemFromClasspath(String certificateFile, String privateKeyFile, String privateKeyPassword) {
-        loadPemFromClasspath(certificateFile, privateKeyFile);
+    public void pemFromClasspath(String certificateFile, String privateKeyFile, String privateKeyPassword) {
+        pemFromClasspath(certificateFile, privateKeyFile);
         inner.privateKeyPassword = privateKeyPassword;
     }
 
@@ -193,13 +225,13 @@ public class SSLConfig {
      * @param certificateInputStream input stream to the certificate chain PEM file.
      * @param privateKeyInputStream  input stream to the private key PEM file.
      */
-    public void loadPemFromInputStream(InputStream certificateInputStream, InputStream privateKeyInputStream) {
+    public void pemFromInputStream(InputStream certificateInputStream, InputStream privateKeyInputStream) {
         if (inner.identityLoadingType != InnerConfig.IdentityLoadingType.NONE) {
             throw new SSLConfigException(SSLConfigException.Types.MULTIPLE_IDENTITY_LOADING_OPTIONS);
         }
         inner.pemCertificatesInputStream = certificateInputStream;
         inner.pemPrivateKeyInputStream = privateKeyInputStream;
-       inner.identityLoadingType = InnerConfig.IdentityLoadingType.PEM_INPUT_STREAM;
+        inner.identityLoadingType = InnerConfig.IdentityLoadingType.PEM_INPUT_STREAM;
     }
 
     /**
@@ -209,8 +241,8 @@ public class SSLConfig {
      * @param privateKeyInputStream  input stream to the private key PEM file.
      * @param privateKeyPassword     password for the private key.
      */
-    public void loadPemFromInputStream(InputStream certificateInputStream, InputStream privateKeyInputStream, String privateKeyPassword) {
-        loadPemFromInputStream(certificateInputStream, privateKeyInputStream);
+    public void pemFromInputStream(InputStream certificateInputStream, InputStream privateKeyInputStream, String privateKeyPassword) {
+        pemFromInputStream(certificateInputStream, privateKeyInputStream);
         inner.privateKeyPassword = privateKeyPassword;
     }
 
@@ -221,25 +253,72 @@ public class SSLConfig {
      * @param certificateString PEM encoded certificate chain.
      * @param privateKeyString  PEM encoded private key.
      */
-    public void loadPemFromString(String certificateString, String privateKeyString) {
+    public void pemFromString(String certificateString, String privateKeyString) {
         if (inner.identityLoadingType != InnerConfig.IdentityLoadingType.NONE) {
             throw new SSLConfigException(SSLConfigException.Types.MULTIPLE_IDENTITY_LOADING_OPTIONS);
         }
         inner.pemCertificatesString = certificateString;
         inner.pemPrivateKeyString = privateKeyString;
-       inner.identityLoadingType = InnerConfig.IdentityLoadingType.PEM_STRING;
+        inner.identityLoadingType = InnerConfig.IdentityLoadingType.PEM_STRING;
     }
 
     /**
      * Load pem formatted identity data from a given string.
      *
-     * @param certificateString PEM encoded certificate chain.
-     * @param privateKeyString  PEM encoded private key.
+     * @param certificateString  PEM encoded certificate chain.
+     * @param privateKeyString   PEM encoded private key.
      * @param privateKeyPassword password for the private key.
      */
-    public void loadPemFromString(String certificateString, String privateKeyString, String privateKeyPassword) {
-        loadPemFromString(certificateString, privateKeyString);
+    public void pemFromString(String certificateString, String privateKeyString, String privateKeyPassword) {
+        pemFromString(certificateString, privateKeyString);
         inner.privateKeyPassword = privateKeyPassword;
+    }
+
+    ///////////////////////////////////////////////////////////////
+    // Key Store Loading Methods
+    ///////////////////////////////////////////////////////////////
+
+
+    /**
+     * Load a key store from a given path in the system.
+     * @param keyStorePath path to the key store file.
+     * @param keyStorePassword password for the key store.
+     */
+    public void keyStoreFromPath(String keyStorePath, String keyStorePassword) {
+        if (inner.identityLoadingType != InnerConfig.IdentityLoadingType.NONE) {
+            throw new SSLConfigException(SSLConfigException.Types.MULTIPLE_IDENTITY_LOADING_OPTIONS);
+        }
+        inner.keyStorePath = Paths.get(keyStorePath);
+        inner.identityLoadingType = InnerConfig.IdentityLoadingType.KEY_STORE_FILE_PATH;
+        inner.keyStorePassword = keyStorePassword;
+    }
+
+    /**
+     * Load a key store from a given input stream.
+     * @param keyStoreInputStream input stream to the key store file.
+     * @param keyStorePassword password for the key store.
+     */
+    public void keyStoreFromInputStream(InputStream keyStoreInputStream, String keyStorePassword) {
+        if (inner.identityLoadingType != InnerConfig.IdentityLoadingType.NONE) {
+            throw new SSLConfigException(SSLConfigException.Types.MULTIPLE_IDENTITY_LOADING_OPTIONS);
+        }
+        inner.keyStoreInputStream = keyStoreInputStream;
+        inner.identityLoadingType = InnerConfig.IdentityLoadingType.KEY_STORE_INPUT_STREAM;
+        inner.keyStorePassword = keyStorePassword;
+    }
+
+    /**
+     * Load a key store from the classpath.
+     * @param keyStoreFile name of the key store file in the classpath.
+     * @param keyStorePassword password for the key store.
+     */
+    public void keyStoreFromClasspath(String keyStoreFile, String keyStorePassword) {
+        if (inner.identityLoadingType != InnerConfig.IdentityLoadingType.NONE) {
+            throw new SSLConfigException(SSLConfigException.Types.MULTIPLE_IDENTITY_LOADING_OPTIONS);
+        }
+        inner.keyStoreFile = keyStoreFile;
+        inner.identityLoadingType = InnerConfig.IdentityLoadingType.KEY_STORE_CLASS_PATH;
+        inner.keyStorePassword = keyStorePassword;
     }
 
 

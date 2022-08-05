@@ -25,7 +25,7 @@ dependencies {
     def javalin = "5.0.0-SNAPSHOT"
     def jetty = "11.0.9"
     def junit = '5.8.2'
-    def sslcontextKickstart = "7.4.4"
+    def sslcontextKickstart = "7.4.5"
     def okhttp = "4.10.0"
 
     compileOnly("io.javalin:javalin-bundle:$javalin")

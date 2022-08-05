@@ -13,10 +13,9 @@
 * License summary: https://tldrlegal.com/license/apache-license-2.0-(apache-2.0)
 
 # SSL Plugin
-Straightforward SSL Configuration for Javalin!
+Straightforward SSL and HTTP/2 Configuration for Javalin!
 
 ## Getting started
-
 
 <details>
   <summary>Maven</summary>
@@ -99,14 +98,36 @@ implementation('io.javalin:javalin-ssl:5.0.0-SNAPSHOT') //Latest snapshot
 
 You can pass a config object when registering the plugin
 
+<details>
+  <summary>Java</summary>
+
 ```java
 Javalin.create(config ->  { 
-	...  // your javalin config here
-	config.plugins.register(new SSLPlugin(sslConf-> {  // Your SSL config inside this block
-	    sslConf.loadPemFromPath("...", "..."); 
+	...  // your Javalin config here
+	config.plugins.register(new SSLPlugin(ssl-> {  
+            ... // your SSL configuration here
+            ssl.loadPemFromPath("/path/to/cert.pem", "/path/to/key.pem"); 
 	}));
 });
 ```
+</details>
+
+<br>
+
+<details>
+  <summary>Kotlin</summary>
+
+```kotlin
+Javalin.create { config ->
+    ... // your Javalin config here
+    config.plugins.register(SSLPlugin { ssl ->
+        ... // your SSL configuration here
+        ssl.loadPemFromPath("/path/to/cert.pem", "/path/to/key.pem")
+    })
+}
+```
+
+</details>
 
 ### Available config options
 
@@ -119,23 +140,27 @@ sslPort = 443;                                                              // P
 insecurePort = 80;                                                          // Port to use on the http (insecure) connector.
 disableHttp2 = false;                                                       // Disables HTTP/2 Support
 
-// PEM-Encoded file loading options
-loadPemFromPath("certPath", "keyPath");                                     // Loads the cert and keys from the given paths.
-loadPemFromPath("certPath", "keyPath", "keyPassword");                      // Loads the cert and keys from the given paths with the given key password.
-loadPemFromClasspath("certPath", "keyPath");                                // Loads the cert and keys from the given paths in the classpath.
-loadPemFromClasspath("certPath", "keyPath", "keyPassword");                 // Loads the cert and keys from the given paths in the classpath with the given key password.
-loadPemFromInputStream(certInputStream, keyInputStream);                    // Loads the cert and keys from the given input streams.
-loadPemFromInputStream(certInputStream, keyInputStream, "keyPassword");     // Loads the cert and keys from the given input streams with the given key password.
-loadPemFromString(certString, keyString);                                   // Loads the cert and keys from the given strings.
-loadPemFromString(certString, keyString, "keyPassword");                    // Loads the cert and keys from the given strings with the given key password.
+// PEM loading options (mutually exclusive)
+pemFromPath("/path/to/cert.pem", "/path/to/key.pem");                   // Loads the cert and keys from the given paths.
+pemFromPath("/path/to/cert.pem", "/path/to/key.pem", "keyPassword");    // Loads the cert and keys from the given paths with the given key password.
+pemFromClasspath("certName.pem", "keyName.pem");                        // Loads the cert and keys from the given paths in the classpath.
+pemFromClasspath("certName.pem", "keyName.pem", "keyPassword");         // Loads the cert and keys from the given paths in the classpath with the given key password.
+pemFromInputStream(certInputStream, keyInputStream);                    // Loads the cert and keys from the given input streams.
+pemFromInputStream(certInputStream, keyInputStream, "keyPassword");     // Loads the cert and keys from the given input streams with the given key password.
+pemFromString(certString, keyString);                                   // Loads the cert and keys from the given strings.
+pemFromString(certString, keyString, "keyPassword");                    // Loads the cert and keys from the given strings with the given key password.
+
+// Keystore loading options (mutually exclusive)
+keystoreFromPath("/path/to/keystore.jks", "keystorePassword");          // Loads the keystore from the given path
+keystoreFromClasspath("keyStoreName.p12", "keystorePassword");          // Loads the keystore from the given path in the classpath.
+keystoreFromInputStream(keystoreInputStream, "keystorePassword");       // Loads the keystore from the given input stream.
+
 ```
 
 ### Notes
 
-- For browser use the certificate should be a full chain, with the leaf certificate signed by a trusted root CA.
-- Currently, only the PEM-Encoded files are supported.
-- The PEM-Encoded Certificate loading options are mutually exclusive.
-- HTTP3 is not yet supported because of some issues with the Jetty implementation.
+- HTTP3 is not yet supported because of some issues with Jetty's implementation.
+- Client-side X.509 authentication is not supported.
 
 ## Contributing
 

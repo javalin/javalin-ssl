@@ -56,13 +56,22 @@ public class SSLPlugin implements Plugin {
     }
 
     /**
+     * Method to apply the SSLConfig to a given Jetty Server.
+     * Can be used to patch pre-existing or custom servers.
+     * @param server The Jetty Server to patch.
+     */
+    public void patch(@NotNull Server server){
+        Consumer<Server> patcher = createJettyServerPatcher(config);
+        patcher.accept(server);
+    }
+
+    /**
      * Method to parse the config and return a consumer that can be used to configure the server.
      *
      * @param config The config to parse.
      * @return A {@link Consumer<Server>} that can be used to configure the server.
      */
     private static Consumer<Server> createJettyServerPatcher(SSLConfig config) {
-        //TODO: Assert that the config is valid before creating the consumer, otherwise exceptions will be buried.
 
         //Created outside the lambda to have exceptions thrown in the current scope
         SslContextFactory.Server sslContextFactory;
