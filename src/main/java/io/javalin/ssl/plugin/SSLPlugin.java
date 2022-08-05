@@ -49,10 +49,6 @@ public class SSLPlugin implements Plugin {
             return server;
         });
 
-        if(config.enableHttp3 && !config.disableHttp3Upgrade){
-            javalin.before(createHttp3UpgradeHandler(config));
-        }
-
     }
 
     /**
@@ -78,7 +74,7 @@ public class SSLPlugin implements Plugin {
 
         if(!config.disableSecure || config.enableHttp3){
             sslContextFactory =
-                createSslContextFactory(createKeyManager(config), config);
+                createSslContextFactory(config);
         } else {
             sslContextFactory =
                 null;
@@ -98,7 +94,7 @@ public class SSLPlugin implements Plugin {
             }
 
             if (config.enableHttp3) {
-                connectorList.add(connectorFactory.createHttp3Connector());
+                throw new UnsupportedOperationException("HTTP/3 is not supported yet");
             }
 
             connectorList.forEach(server::addConnector);

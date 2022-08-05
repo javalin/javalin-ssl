@@ -284,7 +284,7 @@ public class SSLConfig {
      * @param keyStorePath path to the key store file.
      * @param keyStorePassword password for the key store.
      */
-    public void keyStoreFromPath(String keyStorePath, String keyStorePassword) {
+    public void keystoreFromPath(String keyStorePath, String keyStorePassword) {
         if (inner.identityLoadingType != InnerConfig.IdentityLoadingType.NONE) {
             throw new SSLConfigException(SSLConfigException.Types.MULTIPLE_IDENTITY_LOADING_OPTIONS);
         }
@@ -298,7 +298,7 @@ public class SSLConfig {
      * @param keyStoreInputStream input stream to the key store file.
      * @param keyStorePassword password for the key store.
      */
-    public void keyStoreFromInputStream(InputStream keyStoreInputStream, String keyStorePassword) {
+    public void keystoreFromInputStream(InputStream keyStoreInputStream, String keyStorePassword) {
         if (inner.identityLoadingType != InnerConfig.IdentityLoadingType.NONE) {
             throw new SSLConfigException(SSLConfigException.Types.MULTIPLE_IDENTITY_LOADING_OPTIONS);
         }
@@ -312,7 +312,7 @@ public class SSLConfig {
      * @param keyStoreFile name of the key store file in the classpath.
      * @param keyStorePassword password for the key store.
      */
-    public void keyStoreFromClasspath(String keyStoreFile, String keyStorePassword) {
+    public void keystoreFromClasspath(String keyStoreFile, String keyStorePassword) {
         if (inner.identityLoadingType != InnerConfig.IdentityLoadingType.NONE) {
             throw new SSLConfigException(SSLConfigException.Types.MULTIPLE_IDENTITY_LOADING_OPTIONS);
         }

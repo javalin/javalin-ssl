@@ -11,7 +11,8 @@ import java.io.InputStream;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Tag("integration")
-public class PemLoadingTests extends IntegrationTestClass {
+public class PemLoadingTest extends IntegrationTestClass {
+
 
     @Test
     void loadValidPasswordlessFromString() {

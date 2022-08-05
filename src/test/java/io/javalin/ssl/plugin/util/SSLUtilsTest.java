@@ -2,6 +2,7 @@ package io.javalin.ssl.plugin.util;
 
 import io.javalin.ssl.plugin.SSLConfig;
 import io.javalin.ssl.plugin.SSLConfigException;
+import nl.altindag.ssl.SSLFactory;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -15,10 +16,11 @@ class SSLUtilsTest {
     }
 
     @Test
-    void createKeyManagerEmptyConfig() {
+    void parseIdentityEmptyConfig() {
         SSLConfig config = new SSLConfig();
+
         try {
-            SSLUtils.createKeyManager(config);
+            SSLUtils.parseIdentity(config,SSLFactory.builder());
             fail("Expected SSLConfigException");
         } catch (SSLConfigException e) {
             assertEquals(SSLConfigException.Types.MISSING_CERT_AND_KEY_FILE.getMessage(), e.getMessage());

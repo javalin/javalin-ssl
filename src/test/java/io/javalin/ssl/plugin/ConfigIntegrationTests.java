@@ -234,4 +234,50 @@ public class ConfigIntegrationTests extends IntegrationTestClass {
             fail(e);
         }
     }
+
+    @Test
+    void testMatchingHost() {
+        OkHttpClient client = createHttpsClient();
+        int insecurePort = ports.getAndIncrement();
+        int securePort = ports.getAndIncrement();
+        String http = HTTP_URL_WITH_PORT.apply(insecurePort);
+        String https = HTTPS_URL_WITH_PORT.apply(securePort);
+        try (Javalin app = IntegrationTestClass.createTestApp(config -> {
+            config.insecurePort = insecurePort;
+            config.sslPort = securePort;
+            config.pemFromString(CERTIFICATE_AS_STRING, NON_ENCRYPTED_KEY_AS_STRING);
+            config.host = "localhost";
+        })) {
+            app.start();
+            Response response = client.newCall(new Request.Builder().url(http).build()).execute();
+            assertEquals(200, response.code());
+            assertEquals(SUCCESS, Objects.requireNonNull(response.body()).string());
+            assertEquals(Protocol.HTTP_1_1, response.protocol());
+            Response response2 = client.newCall(new Request.Builder().url(https).build()).execute();
+            assertEquals(200, response2.code());
+            assertEquals(SUCCESS, Objects.requireNonNull(response2.body()).string());
+            assertEquals(Protocol.HTTP_2, response2.protocol());
+            response.close();
+        } catch (IOException e) {
+            fail(e);
+        }
+    }
+
+    @Test
+    void testWrongHost(){
+        OkHttpClient client = createHttpsClient();
+        int insecurePort = ports.getAndIncrement();
+        int securePort = ports.getAndIncrement();
+        String http = HTTP_URL_WITH_PORT.apply(insecurePort);
+        String https = HTTPS_URL_WITH_PORT.apply(securePort);
+        try (Javalin app = IntegrationTestClass.createTestApp(config -> {
+            config.insecurePort = insecurePort;
+            config.sslPort = securePort;
+            config.pemFromString(CERTIFICATE_AS_STRING, NON_ENCRYPTED_KEY_AS_STRING);
+            config.host = "wronghost";
+        })) {
+            app.start();
+            fail();
+        } catch (Exception ignored) {
+        }}
 }

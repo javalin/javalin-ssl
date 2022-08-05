@@ -8,11 +8,18 @@ import okhttp3.tls.Certificates;
 import okhttp3.tls.HandshakeCertificates;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+import java.util.Collections;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -63,6 +70,48 @@ public abstract class IntegrationTestClass {
     public static final Supplier<InputStream> ENCRYPTED_KEY_INPUT_STREAM_SUPPLIER = () -> new ByteArrayInputStream(ENCRYPTED_KEY_AS_STRING.getBytes(StandardCharsets.UTF_8));
     public static final Supplier<InputStream> NON_ENCRYPTED_KEY_INPUT_STREAM_SUPPLIER = () -> new ByteArrayInputStream(NON_ENCRYPTED_KEY_AS_STRING.getBytes(StandardCharsets.UTF_8));
     public static final String KEY_PASSWORD = "password";
+
+
+    public static final String JKS_KEY_STORE_NAME = "keystore.jks";
+    public static final String P12_KEY_STORE_NAME = "keystore.p12";
+
+    public static final String JKS_KEY_STORE_PATH;
+    public static final String P12_KEY_STORE_PATH;
+
+    static {
+        try {
+            JKS_KEY_STORE_PATH = Path.of(ClassLoader.getSystemResource(JKS_KEY_STORE_NAME).toURI()).toAbsolutePath().toString();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    static {
+        try {
+            P12_KEY_STORE_PATH = Path.of(ClassLoader.getSystemResource(P12_KEY_STORE_NAME).toURI()).toAbsolutePath().toString();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static final Supplier<InputStream> JKS_KEY_STORE_INPUT_STREAM_SUPPLIER = () -> {
+        try {
+            return ClassLoader.getSystemResource(JKS_KEY_STORE_NAME).openStream();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    };
+
+    public static final Supplier<InputStream> P12_KEY_STORE_INPUT_STREAM_SUPPLIER = () -> {
+        try {
+            return ClassLoader.getSystemResource(P12_KEY_STORE_NAME).openStream();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    };
+
+    public static final String KEY_STORE_PASSWORD = "password";
+
     public static final String HTTPS_URL = "https://localhost/";
     public static final Function<Integer, String> HTTPS_URL_WITH_PORT = (Integer port) -> String.format("https://localhost:%s/", port);
     public static final String HTTP_URL = "http://localhost/";
@@ -71,7 +120,24 @@ public abstract class IntegrationTestClass {
     private static OkHttpClient client = createHttpsClient();
 
     static OkHttpClient createHttpsClient() {
-        HandshakeCertificates clientCertificates = new HandshakeCertificates.Builder().addTrustedCertificate(Certificates.decodeCertificatePem(CERTIFICATE_AS_STRING)).build();
+        HandshakeCertificates.Builder builder = new HandshakeCertificates.Builder();
+        builder.addTrustedCertificate(Certificates.decodeCertificatePem(CERTIFICATE_AS_STRING));
+        try {
+            KeyStore ks = KeyStore.getInstance("pkcs12");
+            ks.load(P12_KEY_STORE_INPUT_STREAM_SUPPLIER.get(),KEY_STORE_PASSWORD.toCharArray());
+            for(String alias: Collections.list(ks.aliases())){
+                builder.addTrustedCertificate((X509Certificate) ks.getCertificate(alias));
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        } catch (CertificateException e) {
+            throw new RuntimeException(e);
+        } catch (KeyStoreException e) {
+            throw new RuntimeException(e);
+        }
+        HandshakeCertificates clientCertificates = builder.build();
         client = new OkHttpClient.Builder().sslSocketFactory(clientCertificates.sslSocketFactory(), clientCertificates.trustManager()).hostnameVerifier((hostname, session) -> true).build();
         return client;
     }

@@ -150,7 +150,7 @@ pemFromInputStream(certInputStream, keyInputStream, "keyPassword");     // Loads
 pemFromString(certString, keyString);                                   // Loads the cert and keys from the given strings.
 pemFromString(certString, keyString, "keyPassword");                    // Loads the cert and keys from the given strings with the given key password.
 
-// Keystore loading options (mutually exclusive)
+// Keystore loading options (PKCS#12/JKS) (mutually exclusive)
 keystoreFromPath("/path/to/keystore.jks", "keystorePassword");          // Loads the keystore from the given path
 keystoreFromClasspath("keyStoreName.p12", "keystorePassword");          // Loads the keystore from the given path in the classpath.
 keystoreFromInputStream(keystoreInputStream, "keystorePassword");       // Loads the keystore from the given input stream.

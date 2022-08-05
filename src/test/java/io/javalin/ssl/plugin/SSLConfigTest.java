@@ -25,6 +25,10 @@ class SSLConfigTest {
             "----- END CERTIFICATE -----\n";
 
 
+    //////////////////////////////
+    // Pem loading tests        //
+    //////////////////////////////
+
     @Test
     void loadPemFromPathCorrectly() {
         SSLConfig config = new SSLConfig();
@@ -58,13 +62,6 @@ class SSLConfigTest {
 
     @Test
     void loadPemFromPathWithPasswordTwice() {
-        SSLConfig config = new SSLConfig();
-        config.pemFromPath(absolutePathString,absolutePathString, "password");
-        assertThrows(SSLConfigException.class,() -> config.pemFromPath(absolutePathString,absolutePathString, "password"));
-    }
-
-    @Test
-    void loadPemFromPathWithPasswordPreviouslyLoaded() {
         SSLConfig config = new SSLConfig();
         config.pemFromPath(absolutePathString,absolutePathString, "password");
         assertThrows(SSLConfigException.class,() -> config.pemFromPath(absolutePathString,absolutePathString, "password"));
@@ -110,14 +107,6 @@ class SSLConfigTest {
     }
 
     @Test
-    void loadPemFromClasspathWithPasswordPreviouslyLoaded() {
-        SSLConfig config = new SSLConfig();
-        config.pemFromClasspath(fileName,fileName, "password");
-        assertThrows(SSLConfigException.class,() -> config.pemFromClasspath(fileName,fileName, "password"));
-    }
-
-    //Repeat the same tests with the method loadPemFromString
-    @Test
     void loadPemFromStringCorrectly() {
         SSLConfig config = new SSLConfig();
         assertDoesNotThrow(() -> config.pemFromString(pemString,pemString));
@@ -155,12 +144,6 @@ class SSLConfigTest {
         assertThrows(SSLConfigException.class,() -> config.pemFromString(pemString,pemString, "password"));
     }
 
-    @Test
-    void loadPemFromStringWithPasswordPreviouslyLoaded() {
-        SSLConfig config = new SSLConfig();
-        config.pemFromString(pemString,pemString, "password");
-        assertThrows(SSLConfigException.class,() -> config.pemFromString(pemString,pemString, "password"));
-    }
 
     //Repeat the same tests with the method loadPemFromInputStream
     @Test
@@ -201,12 +184,55 @@ class SSLConfigTest {
         assertThrows(SSLConfigException.class,() -> config.pemFromInputStream(inputStream,inputStream, "password"));
     }
 
+
+    //////////////////////////////
+    // Keystore loading tests   //
+    //////////////////////////////
+
+    //Keystore loading tests are the same as the PEM loading tests, but with the keystore method instead of the pem method and always with a password
     @Test
-    void loadPemFromInputStreamWithPasswordPreviouslyLoaded() {
+    void loadKeystoreFromPathCorrectly() {
         SSLConfig config = new SSLConfig();
-        config.pemFromInputStream(inputStream,inputStream, "password");
-        assertThrows(SSLConfigException.class,() -> config.pemFromInputStream(inputStream,inputStream, "password"));
+        assertDoesNotThrow(() -> config.keystoreFromPath(absolutePathString,"password"));
+        assertEquals(absolutePath, config.inner.keyStorePath);
+        assertEquals("password", config.inner.keyStorePassword);
     }
 
-    //TODO: Test keystore loading and write javalin samples
+    @Test
+    void loadKeystoreFromPathTwice() {
+        SSLConfig config = new SSLConfig();
+        config.keystoreFromPath(absolutePathString,"password");
+        assertThrows(SSLConfigException.class,() -> config.keystoreFromPath(absolutePathString,"password"));
+    }
+
+    @Test
+    void loadKeystoreFromInputStreamCorrectly() {
+        SSLConfig config = new SSLConfig();
+        assertDoesNotThrow(() -> config.keystoreFromInputStream(inputStream,"password"));
+        assertNotNull(config.inner.keyStoreInputStream);
+        assertEquals("password", config.inner.keyStorePassword);
+    }
+
+    @Test
+    void loadKeystoreFromInputStreamTwice() {
+        SSLConfig config = new SSLConfig();
+        config.keystoreFromInputStream(inputStream,"password");
+        assertThrows(SSLConfigException.class,() -> config.keystoreFromInputStream(inputStream,"password"));
+    }
+
+    @Test
+    void loadKeystoreFromClasspathCorrectly() {
+        SSLConfig config = new SSLConfig();
+        assertDoesNotThrow(() -> config.keystoreFromClasspath(fileName,"password"));
+        assertEquals(fileName, config.inner.keyStoreFile);
+        assertEquals("password", config.inner.keyStorePassword);
+    }
+
+    @Test
+    void loadKeystoreFromClasspathTwice() {
+        SSLConfig config = new SSLConfig();
+        config.keystoreFromClasspath(fileName,"password");
+        assertThrows(SSLConfigException.class,() -> config.keystoreFromClasspath(fileName,"password"));
+    }
+
 }
