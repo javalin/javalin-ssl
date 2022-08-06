@@ -131,6 +131,8 @@ tasks.register('integrationTestsCoverageReport', JacocoReport) {
     description = 'Generates code coverage report for the integrationTest task.'
     group = 'verification'
 
+    dependsOn integrationTests
+
     sourceSets sourceSets.main
     executionData integrationTests
     mustRunAfter integrationTests
@@ -144,6 +146,8 @@ tasks.register('integrationTestsCoverageReport', JacocoReport) {
 tasks.register('unitTestsCoverageReport', JacocoReport) {
     description = 'Generates code coverage report for the test task.'
     group = 'verification'
+
+    dependsOn test
 
     sourceSets sourceSets.test
     executionData test
