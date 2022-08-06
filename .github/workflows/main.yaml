@@ -57,7 +57,7 @@ jobs:
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3.1.0
         with:
-          files: "build/reports/jacoco/${{ matrix.test-type }}TestsCoverageReport/${{ matrix.test-type }}TestsCoverageReport.xml"
+          files: "${{ github.workspace }}/build/reports/jacoco/${{ matrix.test-type }}TestsCoverageReport/${{ matrix.test-type }}TestsCoverageReport.xml"
           flags: "${{ matrix.test-type }}Tests"
           verbose: true
           token: "${{ secrets.CODECOV_TOKEN }}"
