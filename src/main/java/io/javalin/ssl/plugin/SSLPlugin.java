@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import static io.javalin.ssl.plugin.util.ConnectorFactory.*;
 import static io.javalin.ssl.plugin.util.SSLUtils.*;
 
 public class SSLPlugin implements Plugin {

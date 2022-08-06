@@ -8,7 +8,6 @@ import okhttp3.tls.Certificates;
 import okhttp3.tls.HandshakeCertificates;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;

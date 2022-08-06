@@ -1,16 +1,12 @@
 package io.javalin.ssl.plugin.util;
 
-import io.javalin.http.Handler;
 import io.javalin.ssl.plugin.SSLConfig;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.eclipse.jetty.alpn.server.ALPNServerConnectionFactory;
 import org.eclipse.jetty.http.UriCompliance;
-import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.http2.server.HTTP2CServerConnectionFactory;
 import org.eclipse.jetty.http2.server.HTTP2ServerConnectionFactory;
-import org.eclipse.jetty.http3.server.HTTP3ServerConnectionFactory;
-import org.eclipse.jetty.http3.server.HTTP3ServerConnector;
 import org.eclipse.jetty.server.*;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 

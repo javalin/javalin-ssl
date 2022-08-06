@@ -20,6 +20,23 @@ repositories {
     }
 }
 
+sourceSets {
+    integrationTest {
+        java {
+            srcDir 'src/intTest/java'
+        }
+        resources {
+            srcDir 'src/intTest/resources'
+        }
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+    }
+}
+
+configurations {
+    intTestImplementation.extendsFrom implementation
+    intTestRuntimeOnly.extendsFrom runtimeOnly
+}
 
 dependencies {
     def javalin = "5.0.0-SNAPSHOT"
@@ -36,12 +53,19 @@ dependencies {
     implementation("io.github.hakky54:sslcontext-kickstart-for-pem:$sslcontextKickstart")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junit")
-    testImplementation("io.javalin:javalin-bundle:$javalin")
-    testImplementation("com.squareup.okhttp3:okhttp:$okhttp")
-    testImplementation("com.squareup.okhttp3:okhttp-tls:$okhttp")
 
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit")
 
+    integrationTestImplementation("org.junit.jupiter:junit-jupiter-api:$junit")
+    integrationTestImplementation("io.javalin:javalin-bundle:$javalin")
+    integrationTestImplementation("io.github.hakky54:sslcontext-kickstart:$sslcontextKickstart")
+    integrationTestImplementation("io.github.hakky54:sslcontext-kickstart-for-jetty:$sslcontextKickstart")
+    integrationTestImplementation("io.github.hakky54:sslcontext-kickstart-for-pem:$sslcontextKickstart")
+    integrationTestImplementation("com.squareup.okhttp3:okhttp:$okhttp")
+    integrationTestImplementation("com.squareup.okhttp3:okhttp-tls:$okhttp")
+    integrationTestImplementation("org.slf4j:slf4j-simple:2.0.0-alpha6")
+
+    integrationTestRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit")
 }
 
 publishing {
@@ -79,58 +103,68 @@ java {
     withJavadocJar()
 }
 
-test {
-    useJUnitPlatform()
-    finalizedBy jacocoTestReport
+tasks.register("integrationTests", Test) {
+    description = 'Runs the integration tests.'
+    group = 'verification'
+
+    testClassesDirs = sourceSets.integrationTest.output.classesDirs
+    classpath = sourceSets.integrationTest.runtimeClasspath
+
+    shouldRunAfter test
+
+    outputs.upToDateWhen { false }
 
     testLogging {
         exceptionFormat = 'full'
         showStackTraces = true
     }
 
-}
-
-tasks.register("unitTests", Test) {
-    useJUnitPlatform {
-        includeTags "unitary"
-    }
-    finalizedBy unitTestsCoverageReport
-
-}
-
-
-tasks.register("integrationTests", Test) {
     useJUnitPlatform {
         includeTags "integration"
     }
+
     finalizedBy integrationTestsCoverageReport
 
 }
 
-tasks.register('unitTestsCoverageReport', JacocoReport) {
-    reports {
-        xml.required = true
-        csv.required = false
-    }
-    executionData unitTests
-    dependsOn unitTests
-}
-
 tasks.register('integrationTestsCoverageReport', JacocoReport) {
-    reports {
-        xml.required = true
-        csv.required = false
-    }
+    description = 'Generates code coverage report for the integrationTest task.'
+    group = 'verification'
+
+    sourceSets sourceSets.main
     executionData integrationTests
-    dependsOn integrationTests
-}
+    mustRunAfter integrationTests
 
-
-jacocoTestReport {
     reports {
         xml.required = true
-        csv.required = false
+    }
+
+}
+
+tasks.register('unitTestsCoverageReport', JacocoReport) {
+    description = 'Generates code coverage report for the test task.'
+    group = 'verification'
+
+    sourceSets sourceSets.test
+    executionData test
+    mustRunAfter test
+
+    reports {
+        xml.required = true
+    }
+
+}
+
+test {
+    useJUnitPlatform()
+    finalizedBy unitTestsCoverageReport
+
+    testLogging {
+        exceptionFormat = 'full'
+        showStackTraces = true
     }
 }
+
+check.dependsOn integrationTests
 
 

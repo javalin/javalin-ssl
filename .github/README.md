@@ -159,13 +159,15 @@ keystoreFromInputStream(keystoreInputStream, "keystorePassword");       // Loads
 
 ### Notes
 
-- HTTP3 is not yet supported because of some issues with Jetty's implementation.
-- Client-side X.509 authentication is not supported.
+- HTTP/2 **can** be used over an insecure connection.
+- HTTP/3 is **not** yet supported because of some issues with Jetty's implementation.
+- Client-side X.509 authentication is **not** supported.
 
 ## Contributing
 
 Contributions are welcome! Open an issue or pull request if you have a suggestion or bug report. 
 
+All development is done on the dev branch, main is used for releases.
 
 
 
