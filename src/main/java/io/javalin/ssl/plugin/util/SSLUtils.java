@@ -15,7 +15,6 @@ public class SSLUtils {
     /**
      * Helper method to create a {@link SslContextFactory} from the given config.
      *
-     * @param keyManager The key manager to use.
      * @param config     The config to use.
      * @return The created {@link SslContextFactory}.
      */
