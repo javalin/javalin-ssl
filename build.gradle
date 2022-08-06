@@ -149,7 +149,7 @@ tasks.register('unitTestsCoverageReport', JacocoReport) {
 
     dependsOn test
 
-    sourceSets sourceSets.test
+    sourceSets sourceSets.main
     executionData test
     mustRunAfter test
 
