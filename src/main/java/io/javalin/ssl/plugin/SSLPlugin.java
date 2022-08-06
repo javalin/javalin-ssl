@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import static io.javalin.ssl.plugin.util.ConnectorFactory.*;
 import static io.javalin.ssl.plugin.util.SSLUtils.*;
 
 public class SSLPlugin implements Plugin {
@@ -49,10 +48,16 @@ public class SSLPlugin implements Plugin {
             return server;
         });
 
-        if(config.enableHttp3 && !config.disableHttp3Upgrade){
-            javalin.before(createHttp3UpgradeHandler(config));
-        }
+    }
 
+    /**
+     * Method to apply the SSLConfig to a given Jetty Server.
+     * Can be used to patch pre-existing or custom servers.
+     * @param server The Jetty Server to patch.
+     */
+    public void patch(@NotNull Server server){
+        Consumer<Server> patcher = createJettyServerPatcher(config);
+        patcher.accept(server);
     }
 
     /**
@@ -62,14 +67,13 @@ public class SSLPlugin implements Plugin {
      * @return A {@link Consumer<Server>} that can be used to configure the server.
      */
     private static Consumer<Server> createJettyServerPatcher(SSLConfig config) {
-        //TODO: Assert that the config is valid before creating the consumer, otherwise exceptions will be buried.
 
         //Created outside the lambda to have exceptions thrown in the current scope
         SslContextFactory.Server sslContextFactory;
 
         if(!config.disableSecure || config.enableHttp3){
             sslContextFactory =
-                createSslContextFactory(createKeyManager(config), config);
+                createSslContextFactory(config);
         } else {
             sslContextFactory =
                 null;
@@ -89,7 +93,7 @@ public class SSLPlugin implements Plugin {
             }
 
             if (config.enableHttp3) {
-                connectorList.add(connectorFactory.createHttp3Connector());
+                throw new UnsupportedOperationException("HTTP/3 is not supported yet");
             }
 
             connectorList.forEach(server::addConnector);

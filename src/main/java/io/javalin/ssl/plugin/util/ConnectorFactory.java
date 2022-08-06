@@ -1,16 +1,12 @@
 package io.javalin.ssl.plugin.util;
 
-import io.javalin.http.Handler;
 import io.javalin.ssl.plugin.SSLConfig;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.eclipse.jetty.alpn.server.ALPNServerConnectionFactory;
 import org.eclipse.jetty.http.UriCompliance;
-import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.http2.server.HTTP2CServerConnectionFactory;
 import org.eclipse.jetty.http2.server.HTTP2ServerConnectionFactory;
-import org.eclipse.jetty.http3.server.HTTP3ServerConnectionFactory;
-import org.eclipse.jetty.http3.server.HTTP3ServerConnector;
 import org.eclipse.jetty.server.*;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
@@ -99,37 +95,5 @@ public class ConnectorFactory {
 
     }
 
-    /**
-     * Create and apply an HTTP/3 connector to the server.
-     *
-     * @return The created {@link Connector}.
-     */
-    public HTTP3ServerConnector createHttp3Connector() {
-
-        //The http configuration object
-        HttpConfiguration httpConfiguration = new HttpConfiguration();
-        httpConfiguration.setUriCompliance(UriCompliance.RFC3986);  // accept ambiguous values in path and let Javalin handle them
-        httpConfiguration.setSendServerVersion(false);
-        httpConfiguration.addCustomizer(new SecureRequestCustomizer());
-
-        HTTP3ServerConnector connector = new HTTP3ServerConnector(server,
-            sslContextFactory, //FIXME: The SSLContextFactory is not properly consumed by the QuicConnector on the jetty side.
-            new HTTP3ServerConnectionFactory(httpConfiguration));
-
-        connector.setPort(config.http3Port);
-        if (config.host != null) {
-            connector.setHost(config.host);
-        }
-        return connector;
-    }
-
-
-    public static Handler createHttp3UpgradeHandler(SSLConfig config) {
-        return context -> {
-            if (!context.protocol().equals(HttpVersion.HTTP_3.asString())) { //If the protocol is HTTP/3, then we don't want to handle it.
-                context.header("Alt-Svc", "h3=\":" + config.http3Port + "\""); //Set the Alt-Svc header to tell the client to use HTTP/3.
-            }
-        };
-    }
 
 }
