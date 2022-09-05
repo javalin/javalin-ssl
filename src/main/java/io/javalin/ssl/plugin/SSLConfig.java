@@ -16,19 +16,19 @@ public class SSLConfig {
     public String host = null;
 
     /**
-     * Disable the default http (insecure) connector.
+     * Toggle the default http (insecure) connector.
      */
-    public boolean disableInsecure = false;
+    public boolean insecure = true;
 
     /**
-     * Disable the default https (secure) connector.
+     * Toggle the default https (secure) connector.
      */
-    public boolean disableSecure = false;
+    public boolean secure = true;
 
     /**
      * Port to use on the SSL (secure) connector.
      */
-    public int sslPort = 443;
+    public int securePort = 443;
 
     /**
      * Port to use on the http (insecure) connector.
@@ -36,9 +36,20 @@ public class SSLConfig {
     public int insecurePort = 80;
 
     /**
-     * Disables HTTP/2 Support
+     * Toggle HTTP/2 Support
      */
-    public boolean disableHttp2 = false;
+    public boolean http2 = true;
+
+    /**
+     * Disable SNI checks.
+     * @see <a href="https://www.eclipse.org/jetty/documentation/jetty-11/operations-guide/index.html#og-protocols-ssl-sni">Configuring SNI</a>
+     */
+    public boolean sniHostCheck = true;
+
+    /**
+     * TLS Security configuration
+     */
+    public TLSConfig tlsConfig = TLSConfig.INTERMEDIATE;
 
     /**
      * Enables HTTP/3 Support.

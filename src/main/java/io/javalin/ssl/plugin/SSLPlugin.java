@@ -31,6 +31,10 @@ public class SSLPlugin implements Plugin {
         config.accept(this.config);
     }
 
+    /**
+     * Method to apply the plugin to a Javalin instance
+     * @param javalin Javalin instance
+     */
     @Override
     public void apply(@NotNull Javalin javalin) {
 
@@ -71,7 +75,7 @@ public class SSLPlugin implements Plugin {
         //Created outside the lambda to have exceptions thrown in the current scope
         SslContextFactory.Server sslContextFactory;
 
-        if(!config.disableSecure || config.enableHttp3){
+        if(config.secure || config.enableHttp3){
             sslContextFactory =
                 createSslContextFactory(config);
         } else {
@@ -84,11 +88,11 @@ public class SSLPlugin implements Plugin {
             List<Connector> connectorList = new LinkedList<>();
             ConnectorFactory connectorFactory = new ConnectorFactory(config, server, sslContextFactory);
 
-            if (!config.disableInsecure) {
+            if (config.insecure) {
                 connectorList.add(connectorFactory.createInsecureConnector());
             }
 
-            if (!config.disableSecure) {
+            if (config.secure) {
                 connectorList.add(connectorFactory.createSecureConnector());
             }
 

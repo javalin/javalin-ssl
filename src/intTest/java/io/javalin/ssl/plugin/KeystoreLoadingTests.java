@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Tag("integration")
-public class KeystoreLoadingTest extends IntegrationTestClass {
+public class KeystoreLoadingTests extends IntegrationTestClass {
 
     private static final String MALFORMED_JKS_FILE_NAME = "malformed.jks";
 
@@ -41,7 +41,7 @@ public class KeystoreLoadingTest extends IntegrationTestClass {
 
     public static final Supplier<InputStream> MALFORMED_JKS_INPUT_STREAM_SUPPLIER = () -> {
         try {
-            return KeystoreLoadingTest.class.getResourceAsStream(MALFORMED_JKS_FILE_NAME);
+            return KeystoreLoadingTests.class.getResourceAsStream(MALFORMED_JKS_FILE_NAME);
         } catch (Exception e) {
             throw new GenericIOException(e);
         }
@@ -49,7 +49,7 @@ public class KeystoreLoadingTest extends IntegrationTestClass {
 
     public static final Supplier<InputStream> MALFORMED_P12_INPUT_STREAM_SUPPLIER = () -> {
         try {
-            return KeystoreLoadingTest.class.getResourceAsStream(MALFORMED_JKS_FILE_NAME);
+            return KeystoreLoadingTests.class.getResourceAsStream(MALFORMED_JKS_FILE_NAME);
         } catch (Exception e) {
             throw new GenericIOException(e);
         }
@@ -168,8 +168,5 @@ public class KeystoreLoadingTest extends IntegrationTestClass {
         assertThrows(GenericKeyStoreException.class, () -> assertSslWorks(config -> config.keystoreFromInputStream(MALFORMED_P12_INPUT_STREAM_SUPPLIER.get(), KEY_STORE_PASSWORD)));
     }
 
-
-
-    //TODO: add tests for invalid and empty keystore
 }
 

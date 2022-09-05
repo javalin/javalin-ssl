@@ -39,18 +39,18 @@ configurations {
 }
 
 dependencies {
-    def javalin = "5.0.0-SNAPSHOT"
-    def jetty = "11.0.9"
-    def junit = '5.8.2'
-    def sslcontextKickstart = "7.4.5"
+    def javalin = "5.0.0.RC2"
+    def jetty = '11.0.11'
+    def junit = '5.9.0'
+    def sslContextKickstart = '7.4.5'
     def okhttp = "4.10.0"
 
     compileOnly("io.javalin:javalin-bundle:$javalin")
 
-    implementation("org.eclipse.jetty.http3:http3-server:$jetty")
-    implementation("io.github.hakky54:sslcontext-kickstart:$sslcontextKickstart")
-    implementation("io.github.hakky54:sslcontext-kickstart-for-jetty:$sslcontextKickstart")
-    implementation("io.github.hakky54:sslcontext-kickstart-for-pem:$sslcontextKickstart")
+    //implementation("org.eclipse.jetty.http3:http3-server:$jetty")
+    implementation("io.github.hakky54:sslcontext-kickstart:$sslContextKickstart")
+    implementation("io.github.hakky54:sslcontext-kickstart-for-jetty:$sslContextKickstart")
+    implementation("io.github.hakky54:sslcontext-kickstart-for-pem:$sslContextKickstart")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junit")
 
@@ -58,12 +58,12 @@ dependencies {
 
     integrationTestImplementation("org.junit.jupiter:junit-jupiter-api:$junit")
     integrationTestImplementation("io.javalin:javalin-bundle:$javalin")
-    integrationTestImplementation("io.github.hakky54:sslcontext-kickstart:$sslcontextKickstart")
-    integrationTestImplementation("io.github.hakky54:sslcontext-kickstart-for-jetty:$sslcontextKickstart")
-    integrationTestImplementation("io.github.hakky54:sslcontext-kickstart-for-pem:$sslcontextKickstart")
+    integrationTestImplementation("io.github.hakky54:sslcontext-kickstart:$sslContextKickstart")
+    integrationTestImplementation("io.github.hakky54:sslcontext-kickstart-for-jetty:$sslContextKickstart")
+    integrationTestImplementation("io.github.hakky54:sslcontext-kickstart-for-pem:$sslContextKickstart")
     integrationTestImplementation("com.squareup.okhttp3:okhttp:$okhttp")
     integrationTestImplementation("com.squareup.okhttp3:okhttp-tls:$okhttp")
-    integrationTestImplementation("org.slf4j:slf4j-simple:2.0.0-alpha6")
+    integrationTestImplementation('org.slf4j:slf4j-simple:2.0.0')
 
     integrationTestRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit")
 }

@@ -15,7 +15,7 @@ public class SSLUtils {
     /**
      * Helper method to create a {@link SslContextFactory} from the given config.
      *
-     * @param config     The config to use.
+     * @param config The config to use.
      * @return The created {@link SslContextFactory}.
      */
     public static SslContextFactory.Server createSslContextFactory(SSLConfig config) {
@@ -28,17 +28,18 @@ public class SSLUtils {
 
         builder.withSecurityProvider(Conscrypt.newProvider());
 
-        SSLFactory sslFactory = builder.build();
+        builder.withCiphers(config.tlsConfig.getCipherSuites());
+        builder.withProtocols(config.tlsConfig.getProtocols());
 
-        //TODO: Fine tune the TLS configuration
+        SSLFactory sslFactory = builder.build();
 
         return JettySslUtils.forServer(sslFactory);
     }
 
     /**
-     * Helper method to parse the given config and create apply an identity to the given builder.
+     * Helper method to parse the given config and add Identity Material to the given builder.
      *
-     * @param config The config to use.
+     * @param config  The config to use.
      * @throws SSLConfigException if the key configuration is invalid.
      */
     public static void parseIdentity(SSLConfig config, SSLFactory.Builder builder) throws SSLConfigException {
