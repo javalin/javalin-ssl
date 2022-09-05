@@ -100,10 +100,10 @@ You can pass a config object when registering the plugin
 Javalin.create(config->{
     ...  // your Javalin config here
     config.plugins.register(new SSLPlugin(ssl->{
-    ... // your SSL configuration here
-    ssl.loadPemFromPath("/path/to/cert.pem","/path/to/key.pem");
+        ... // your SSL configuration here
+        ssl.loadPemFromPath("/path/to/cert.pem","/path/to/key.pem");
     }));
-    });
+});
 ```
 
 ### Kotlin
@@ -123,31 +123,31 @@ Javalin.create { config ->
 ```java
 // Connection options
 host=null;                                                            // Host to bind to, by default it will bind to all interfaces.
-    insecure=true;                                                        // Toggle the default http (insecure) connector.
-    secure=true;                                                          // Toggle the default https (secure) connector.
-    http2=true;                                                           // Toggle HTTP/2 Support
+insecure=true;                                                        // Toggle the default http (insecure) connector.
+secure=true;                                                          // Toggle the default https (secure) connector.
+http2=true;                                                           // Toggle HTTP/2 Support
 
-    securePort=443;                                                       // Port to use on the SSL (secure) connector.
-    insecurePort=80;                                                      // Port to use on the http (insecure) connector.
+securePort=443;                                                       // Port to use on the SSL (secure) connector.
+insecurePort=80;                                                      // Port to use on the http (insecure) connector.
 
-    sniHostCheck=true;                                                    // Enable SNI hostname verification.
-    tlsConfig=TLSConfig.INTERMEDIATE;                                     // Set the TLS configuration. (by default it uses Mozilla's intermediate configuration)
+sniHostCheck=true;                                                    // Enable SNI hostname verification.
+tlsConfig=TLSConfig.INTERMEDIATE;                                     // Set the TLS configuration. (by default it uses Mozilla's intermediate configuration)
 
 
 // PEM loading options (mutually exclusive)
-    pemFromPath("/path/to/cert.pem","/path/to/key.pem");                   // load from the given paths.
-    pemFromPath("/path/to/cert.pem","/path/to/key.pem","keyPassword");    // load from the given paths with the given key password.
-    pemFromClasspath("certName.pem","keyName.pem");                        // load from the given paths in the classpath.
-    pemFromClasspath("certName.pem","keyName.pem","keyPassword");         // load from the given paths in the classpath with the given key password.
-    pemFromInputStream(certInputStream,keyInputStream);                    // load from the given input streams.
-    pemFromInputStream(certInputStream,keyInputStream,"keyPassword");     // load from the given input streams with the given key password.
-    pemFromString(certString,keyString);                                   // load from the given strings.
-    pemFromString(certString,keyString,"keyPassword");                    // load from the given strings with the given key password.
+pemFromPath("/path/to/cert.pem","/path/to/key.pem");                   // load from the given paths.
+pemFromPath("/path/to/cert.pem","/path/to/key.pem","keyPassword");    // load from the given paths with the given key password.
+pemFromClasspath("certName.pem","keyName.pem");                        // load from the given paths in the classpath.
+pemFromClasspath("certName.pem","keyName.pem","keyPassword");         // load from the given paths in the classpath with the given key password.
+pemFromInputStream(certInputStream,keyInputStream);                    // load from the given input streams.
+pemFromInputStream(certInputStream,keyInputStream,"keyPassword");     // load from the given input streams with the given key password.
+pemFromString(certString,keyString);                                   // load from the given strings.
+pemFromString(certString,keyString,"keyPassword");                    // load from the given strings with the given key password.
 
 // Keystore loading options (PKCS#12/JKS) (mutually exclusive)
-    keystoreFromPath("/path/to/keystore.jks","keystorePassword");          // load the keystore from the given path
-    keystoreFromClasspath("keyStoreName.p12","keystorePassword");          // load the keystore from the given path in the classpath.
-    keystoreFromInputStream(keystoreInputStream,"keystorePassword");       // load the keystore from the given input stream.
+keystoreFromPath("/path/to/keystore.jks","keystorePassword");          // load the keystore from the given path
+keystoreFromClasspath("keyStoreName.p12","keystorePassword");          // load the keystore from the given path in the classpath.
+keystoreFromInputStream(keystoreInputStream,"keystorePassword");       // load the keystore from the given input stream.
 
 ```
 
@@ -160,22 +160,23 @@ host=null;                                                            // Host to
   setting `sniHostCheck = false`.
 
 ## Depends on
-- [SSLContext Kickstart](https://github.com/Hakky54/sslcontext-kickstart) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
--
+
 | Package                                       | Version | License                                                                                                              |
 |-----------------------------------------------|---------|----------------------------------------------------------------------------------------------------------------------|
 | [Javalin](https://github.com/javalin/javalin) | `5.0.0` | [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) |
 | [Jetty](https://github.com/eclipse/jetty.project)         | `11.0.11` | [![License](https://img.shields.io/badge/License-EPL%202.0-blue.svg)](https://opensource.org/licenses/EPL-2.0) |
  | [SSLContext Kickstart](https://github.com/Hakky54/sslcontext-kickstart) | `7.4.5` | [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) |
 
-- [Javalin](https://github.com/javalin/javalin) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-
-
 ## Contributing
 
 Contributions are welcome! Open an issue or pull request if you have a suggestion or bug report.
 
-All development is done on the dev branch, main is used for releases.
+All development is carried out on the dev branch, main is only used for releases.
+
+
+## License
+
+This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details
 
 
 
