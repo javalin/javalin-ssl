@@ -11,7 +11,7 @@ import java.io.InputStream;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Tag("integration")
-public class PemLoadingTest extends IntegrationTestClass {
+public class PemLoadingTests extends IntegrationTestClass {
 
 
     @Test

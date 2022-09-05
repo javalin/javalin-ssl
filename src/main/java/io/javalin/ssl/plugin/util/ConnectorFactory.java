@@ -36,7 +36,7 @@ public class ConnectorFactory {
         //The factory for HTTP/1.1 connections.
         HttpConnectionFactory http11 = new HttpConnectionFactory(httpConfiguration);
 
-        if (!config.disableHttp2) {
+        if (config.http2) {
             //The factory for HTTP/2 connections.
             HTTP2CServerConnectionFactory http2 = new HTTP2CServerConnectionFactory(httpConfiguration);
             connector = new ServerConnector(server, http11, http2);
@@ -58,19 +58,18 @@ public class ConnectorFactory {
      */
     public ServerConnector createSecureConnector() {
 
-
         ServerConnector connector;
 
         //The http configuration object
         HttpConfiguration httpConfiguration = new HttpConfiguration();
         httpConfiguration.setUriCompliance(UriCompliance.RFC3986);  // accept ambiguous values in path and let Javalin handle them
         httpConfiguration.setSendServerVersion(false);
-        httpConfiguration.addCustomizer(new SecureRequestCustomizer());
+        httpConfiguration.addCustomizer(new SecureRequestCustomizer(config.sniHostCheck));
 
         //The factory for HTTP/1.1 connections
         HttpConnectionFactory http11 = new HttpConnectionFactory(httpConfiguration);
 
-        if (!config.disableHttp2) {
+        if (config.http2) {
             //The factory for HTTP/2 connections.
             HTTP2ServerConnectionFactory http2 = new HTTP2ServerConnectionFactory(httpConfiguration);
             // The ALPN ConnectionFactory.
@@ -87,7 +86,7 @@ public class ConnectorFactory {
             connector = new ServerConnector(server, tls, http11);
         }
 
-        connector.setPort(config.sslPort);
+        connector.setPort(config.securePort);
         if (config.host != null) {
             connector.setHost(config.host);
         }
