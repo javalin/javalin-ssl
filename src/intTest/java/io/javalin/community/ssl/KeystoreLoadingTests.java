@@ -1,4 +1,4 @@
-package io.javalin.ssl.plugin;
+package io.javalin.community.ssl;
 
 import nl.altindag.ssl.exception.GenericIOException;
 import nl.altindag.ssl.exception.GenericKeyStoreException;

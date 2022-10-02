@@ -1,8 +1,8 @@
-package io.javalin.ssl.plugin;
+package io.javalin.community.ssl;
 
 import io.javalin.Javalin;
 import io.javalin.plugin.Plugin;
-import io.javalin.ssl.plugin.util.ConnectorFactory;
+import io.javalin.community.ssl.util.ConnectorFactory;
 import org.eclipse.jetty.server.*;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.jetbrains.annotations.NotNull;
@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import static io.javalin.ssl.plugin.util.SSLUtils.*;
+import static io.javalin.community.ssl.util.SSLUtils.*;
 
 public class SSLPlugin implements Plugin {
 
