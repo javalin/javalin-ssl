@@ -1,7 +1,7 @@
-package io.javalin.ssl.plugin.util;
+package io.javalin.community.ssl.util;
 
-import io.javalin.ssl.plugin.SSLConfig;
-import io.javalin.ssl.plugin.SSLConfigException;
+import io.javalin.community.ssl.SSLConfig;
+import io.javalin.community.ssl.SSLConfigException;
 import nl.altindag.ssl.SSLFactory;
 import nl.altindag.ssl.util.JettySslUtils;
 import nl.altindag.ssl.util.PemUtils;

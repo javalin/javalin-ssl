@@ -1,6 +1,6 @@
-package io.javalin.ssl.plugin;
+package io.javalin.community.ssl;
 
-import io.javalin.ssl.plugin.util.SSLUtils;
+import io.javalin.community.ssl.util.SSLUtils;
 import nl.altindag.ssl.SSLFactory;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;

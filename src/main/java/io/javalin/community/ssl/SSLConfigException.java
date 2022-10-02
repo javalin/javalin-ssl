@@ -1,4 +1,4 @@
-package io.javalin.ssl.plugin;
+package io.javalin.community.ssl;
 
 /**
  * Exception thrown when the SSLConfig is invalid.

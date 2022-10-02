@@ -115,8 +115,8 @@ jobs:
             ```
             ```xml
             <dependency>
-              <groupId>io.javalin</groupId>
-              <artifactId>javalin-ssl</artifactId>
+              <groupId>io.javalin.community</groupId>
+              <artifactId>javalin-ssl-plugin</artifactId>
               <version>${{ env.CURRENT_VERSION }}</version>
             </dependency>
             ```
@@ -127,7 +127,7 @@ jobs:
             }
             ```
             ```groovy
-              implementation('io.javalin:javalin-ssl:${{ env.CURRENT_VERSION }}')
+              implementation('io.javalin.community:javalin-ssl-plugin:${{ env.CURRENT_VERSION }}')
             ```
 
       - name: Create Release
@@ -141,27 +141,15 @@ jobs:
             ## Download Instructions
             ### Maven
             ```xml
-            <repository>
-              <id>zugazagoitia-repo-releases</id>
-              <name>Zugazagoitia Repository</name>
-              <url>https://repo.zugazagoitia.com/releases</url>
-            </repository>
-            ```
-            ```xml
             <dependency>
-              <groupId>io.javalin</groupId>
-              <artifactId>javalin-ssl</artifactId>
+              <groupId>io.javalin.community</groupId>
+              <artifactId>javalin-ssl-plugin</artifactId>
               <version>${{ env.CURRENT_VERSION }}</version>
             </dependency>
             ```
             ### Gradle
             ```groovy
-            maven {
-              url "https://repo.zugazagoitia.com/releases"
-            }
-            ```
-            ```groovy
-              implementation('io.javalin:javalin-ssl:${{ env.CURRENT_VERSION }}')
+              implementation('io.javalin.community:javalin-ssl-plugin:${{ env.CURRENT_VERSION }}')
             ```
 
 

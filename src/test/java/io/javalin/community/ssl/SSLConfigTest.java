@@ -1,7 +1,5 @@
-package io.javalin.ssl.plugin;
+package io.javalin.community.ssl;
 
-import io.javalin.ssl.plugin.SSLConfig;
-import io.javalin.ssl.plugin.SSLConfigException;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 

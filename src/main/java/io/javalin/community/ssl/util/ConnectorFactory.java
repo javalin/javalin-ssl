@@ -1,6 +1,6 @@
-package io.javalin.ssl.plugin.util;
+package io.javalin.community.ssl.util;
 
-import io.javalin.ssl.plugin.SSLConfig;
+import io.javalin.community.ssl.SSLConfig;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.eclipse.jetty.alpn.server.ALPNServerConnectionFactory;

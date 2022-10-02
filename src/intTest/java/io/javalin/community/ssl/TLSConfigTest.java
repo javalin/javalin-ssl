@@ -1,4 +1,4 @@
-package io.javalin.ssl.plugin;
+package io.javalin.community.ssl;
 
 import io.javalin.Javalin;
 import okhttp3.ConnectionSpec;
