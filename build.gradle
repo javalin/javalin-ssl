@@ -1,8 +1,10 @@
 plugins {
-    id 'java-library'
-    id 'maven-publish'
-    id 'jacoco'
-    id "io.freefair.lombok" version "6.4.3"
+    id('java-library')
+    id('maven-publish')
+    id('jacoco')
+    id('io.freefair.lombok') version '6.4.3'
+    id('signing')
+    id('io.github.gradle-nexus.publish-plugin') version '1.1.0'
 }
 
 group = 'io.javalin.community.ssl'
@@ -10,7 +12,7 @@ group = 'io.javalin.community.ssl'
 version = '5.0.0'
 
 jacoco {
-    toolVersion = "0.8.8"
+    toolVersion = '0.8.8'
 }
 
 repositories {
@@ -63,7 +65,7 @@ dependencies {
     integrationTestImplementation("io.github.hakky54:sslcontext-kickstart-for-pem:$sslContextKickstart")
     integrationTestImplementation("com.squareup.okhttp3:okhttp:$okhttp")
     integrationTestImplementation("com.squareup.okhttp3:okhttp-tls:$okhttp")
-    integrationTestImplementation('org.slf4j:slf4j-simple:2.0.1')
+    integrationTestImplementation('org.slf4j:slf4j-simple:2.0.3')
 
     integrationTestRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit")
 }
@@ -71,10 +73,10 @@ dependencies {
 publishing {
     repositories {
         maven {
-            name = "zugazagoitia-repo"
+            name = "reposilite"
 
-            def releasesRepoUrl = uri("https://repo.zugazagoitia.com/releases")
-            def snapshotsRepoUrl = uri("https://repo.zugazagoitia.com/snapshots")
+            def releasesRepoUrl = uri("https://maven.reposilite.com/releases")
+            def snapshotsRepoUrl = uri("https://maven.reposilite.com/snapshots")
 
             url = version.contains('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
 
@@ -91,7 +93,47 @@ publishing {
             version = project.version
 
             from components.java
+
+            pom {
+                name = 'Javalin SSL Plugin'
+                description = 'Straightforward SSL Configuration for Javalin!'
+                url = 'https://javalin.io/plugins/ssl-helpers'
+
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'zugazagoitia'
+                        name = 'Alberto Zugazagoitia'
+                        email = 'alberto@zugazagoitia.com'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git://github.com/javalin/javalin-ssl.git'
+                    developerConnection = 'scm:git:ssh://github.com:javalin/javalin-ssl.git'
+                    url = 'https://github.com/javalin/javalin-ssl'
+                }
+            }
         }
+    }
+}
+
+
+signing {
+    if (project.findProperty("signingKey")) {
+        useInMemoryPgpKeys(findProperty("signingKeyId"), findProperty("signingKey"), findProperty("signingPassword"))
+    } else {
+        useGpgCmd()
+    }
+    sign publishing.publications.maven
+}
+nexusPublishing {
+    repositories {
+        sonatype()
     }
 }
 
