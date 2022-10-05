@@ -87,13 +87,28 @@ jobs:
       - name: Validate Wrapper
         uses: gradle/wrapper-validation-action@v1
 
-      - name: Setup and Run Gradle
+      - name: Publish to Reposilite
         uses: gradle/gradle-build-action@v2.2.1
         env:
           MAVEN_NAME: '${{ secrets.MAVEN_NAME }}'
           MAVEN_TOKEN: '${{ secrets.MAVEN_TOKEN }}'
+          ORG_GRADLE_PROJECT_signingKey: '${{ secrets.GPG_KEY }}'
+          ORG_GRADLE_PROJECT_signingPassword: '${{ secrets.GPG_PASSPHRASE }}'
+          ORG_GRADLE_PROJECT_signingKeyId: '${{ secrets.GPG_KEYID }}'
         with:
-          arguments: publish
+          arguments: publishMavenPublicationToReposiliteRepository
+
+      - name: Publish to Maven Central
+        if: "!contains(env.CURRENT_VERSION, 'SNAPSHOT')"
+        uses: gradle/gradle-build-action@v2.2.1
+        env:
+          ORG_GRADLE_PROJECT_sonatypeUsername: '${{ secrets.ORG_GRADLE_PROJECT_SONATYPEUSERNAME }}'
+          ORG_GRADLE_PROJECT_sonatypePassword: '${{ secrets.ORG_GRADLE_PROJECT_SONATYPEPASSWORD }}'
+          ORG_GRADLE_PROJECT_signingKey: '${{ secrets.GPG_KEY }}'
+          ORG_GRADLE_PROJECT_signingPassword: '${{ secrets.GPG_PASSPHRASE }}'
+          ORG_GRADLE_PROJECT_signingKeyId: '${{ secrets.GPG_KEYID }}'
+        with:
+          arguments: publishToSonatype closeAndReleaseStagingRepository
 
       - name: Create Pre-Release
         if: contains(env.CURRENT_VERSION, 'SNAPSHOT')
