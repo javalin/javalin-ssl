@@ -5,7 +5,7 @@ plugins {
     id "io.freefair.lombok" version "6.4.3"
 }
 
-group = 'io.javalin.community'
+group = 'io.javalin.community.ssl'
 //Must be formatted following the RegEx: /version\s*=\s*'\S+'/g
 version = '5.0.0'
 

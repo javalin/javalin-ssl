@@ -13,82 +13,22 @@ Straightforward SSL and HTTP/2 Configuration for Javalin!
 
 [![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/javalin/javalin-ssl?label=Latest%20Release)](https://github.com/javalin/javalin-ssl/releases) ![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/javalin/javalin-ssl?include_prereleases&label=Latest%20Snapshot)
 
+As simple as adding a dependency:
 ### Maven
 
-#### Add the desired repository
-
-<!--- 
-Releases:
-```xml
-<repository>
-  <id>zugazagoitia-repo-releases</id>
-  <name>Zugazagoitia Repository</name>
-  <url>https://repo.zugazagoitia.com/releases</url>
-</repository>
-```
---->
-
-Snapshots:
-
-```xml
-
-<repository>
-    <id>zugazagoitia-repo-snapshots</id>
-    <name>Zugazagoitia Repository</name>
-    <url>https://repo.zugazagoitia.com/snapshots</url>
-</repository>
-```
-
-#### And the dependency
-
-<!--- Latest release:
 ```xml
 <dependency>
-  <groupId>io.javalin</groupId>
-  <artifactId>javalin-ssl</artifactId>
-  <version>1.0.0</version>
-</dependency>
-``` --->
-Latest snapshot:
-
-```xml
-
-<dependency>
-    <groupId>io.javalin</groupId>
-    <artifactId>javalin-ssl</artifactId>
-    <version>5.0.0-SNAPSHOT</version>
+  <groupId>io.javalin.community.ssl</groupId>
+  <artifactId>ssl-plugin</artifactId>
+  <version>5.0.0</version>
 </dependency>
 ```
-
 ### Gradle
 
-#### Add the desired repository
-
-<!---
-```groovy
-maven {
-    url "https://repo.zugazagoitia.com/releases" //Repo for releases
-}
-```
---->
-
-```groovy
-maven {
-    url "https://repo.zugazagoitia.com/snapshots" //Repo for snapshots
-}
+```kotlin
+implementation('io.javalin.community.ssl:ssl-plugin:5.0.0')
 ```
 
-#### And dependency
-
-<!---
-```groovy
-implementation('io.javalin:javalin-ssl:1.0.0') //Latest Release
-```
---->
-
-```groovy
-implementation('io.javalin:javalin-ssl:5.0.0-SNAPSHOT') //Latest snapshot
-```
 
 ## Configuration
 
@@ -164,8 +104,7 @@ keystoreFromInputStream(keystoreInputStream,"keystorePassword");       // load t
 | Package                                       | Version | License                                                                                                              |
 |-----------------------------------------------|---------|----------------------------------------------------------------------------------------------------------------------|
 | [Javalin](https://github.com/javalin/javalin) | `5.0.0` | [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) |
-| [Jetty](https://github.com/eclipse/jetty.project)         | `11.0.11` | [![License](https://img.shields.io/badge/License-EPL%202.0-blue.svg)](https://opensource.org/licenses/EPL-2.0) |
- | [SSLContext Kickstart](https://github.com/Hakky54/sslcontext-kickstart) | `7.4.5` | [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) |
+ | [SSLContext Kickstart](https://github.com/Hakky54/sslcontext-kickstart) | `7.4.6` | [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) |
 
 ## Contributing
 
