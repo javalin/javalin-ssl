@@ -108,26 +108,26 @@ jobs:
             ### Maven
             ```xml
             <repository>
-              <id>zugazagoitia-repo-snapshots</id>
-              <name>Zugazagoitia Repository</name>
-              <url>https://repo.zugazagoitia.com/snapshots</url>
+              <id>reposilite-repository-snapshots</id>
+              <name>Reposilite Repository</name>
+              <url>https://maven.reposilite.com/snapshots</url>
             </repository>
             ```
             ```xml
             <dependency>
-              <groupId>io.javalin.community</groupId>
-              <artifactId>javalin-ssl-plugin</artifactId>
+              <groupId>io.javalin.community.ssl</groupId>
+              <artifactId>ssl-plugin</artifactId>
               <version>${{ env.CURRENT_VERSION }}</version>
             </dependency>
             ```
             ### Gradle
             ```groovy
             maven {
-              url "https://repo.zugazagoitia.com/snapshots"
+              url "https://maven.reposilite.com/snapshots"
             }
             ```
             ```groovy
-              implementation('io.javalin.community:javalin-ssl-plugin:${{ env.CURRENT_VERSION }}')
+              implementation('io.javalin.community.ssl:ssl-plugin:${{ env.CURRENT_VERSION }}')
             ```
 
       - name: Create Release
@@ -142,14 +142,14 @@ jobs:
             ### Maven
             ```xml
             <dependency>
-              <groupId>io.javalin.community</groupId>
-              <artifactId>javalin-ssl-plugin</artifactId>
+              <groupId>io.javalin.community.ssl</groupId>
+              <artifactId>ssl-plugin</artifactId>
               <version>${{ env.CURRENT_VERSION }}</version>
             </dependency>
             ```
             ### Gradle
             ```groovy
-              implementation('io.javalin.community:javalin-ssl-plugin:${{ env.CURRENT_VERSION }}')
+              implementation('io.javalin.community.ssl:ssl-plugin:${{ env.CURRENT_VERSION }}')
             ```
 
 
