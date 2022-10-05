@@ -20,13 +20,13 @@ As simple as adding a dependency:
 <dependency>
   <groupId>io.javalin.community.ssl</groupId>
   <artifactId>ssl-plugin</artifactId>
-  <version>5.0.0</version>
+  <version>5.0.1</version>
 </dependency>
 ```
 ### Gradle
 
 ```kotlin
-implementation('io.javalin.community.ssl:ssl-plugin:5.0.0')
+implementation('io.javalin.community.ssl:ssl-plugin:5.0.1')
 ```
 
 
@@ -103,7 +103,7 @@ keystoreFromInputStream(keystoreInputStream,"keystorePassword");       // load t
 
 | Package                                       | Version | License                                                                                                              |
 |-----------------------------------------------|---------|----------------------------------------------------------------------------------------------------------------------|
-| [Javalin](https://github.com/javalin/javalin) | `5.0.0` | [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) |
+| [Javalin](https://github.com/javalin/javalin) | `5.0.1` | [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) |
  | [SSLContext Kickstart](https://github.com/Hakky54/sslcontext-kickstart) | `7.4.6` | [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) |
 
 ## Contributing
