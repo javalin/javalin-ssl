@@ -10,6 +10,9 @@ import org.eclipse.jetty.http2.server.HTTP2ServerConnectionFactory;
 import org.eclipse.jetty.server.*;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
+/**
+ * Helper class to create the requested {@link ServerConnector}s from the given config.
+ */
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class ConnectorFactory {

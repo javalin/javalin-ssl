@@ -7,6 +7,9 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+/**
+ * Data class to hold the configuration for the plugin.
+ */
 @SuppressWarnings("unused")
 public class SSLConfig {
 

@@ -5,7 +5,7 @@
 * Chat on Discord: https://discord.gg/sgak4e5NKv
 * License summary: https://tldrlegal.com/license/apache-license-2.0-(apache-2.0)
 
-# SSL Plugin [![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/javalin/javalin-ssl/Test%20all%20JDKs%20on%20all%20OSes%20and%20Publish/main?label=main&logo=githubactions&logoColor=white)](https://github.com/javalin/javalin-ssl/actions?query=branch%3Amain) [![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/javalin/javalin-ssl/Test%20all%20JDKs%20on%20all%20OSes%20and%20Publish/dev?label=dev&logo=githubactions&logoColor=white)](https://github.com/javalin/javalin-ssl/actions?query=branch%3Adev) [![Coverage](https://codecov.io/gh/javalin/javalin-ssl/branch/dev/graphs/badge.svg)](https://app.codecov.io/gh/javalin/javalin-ssl)
+# SSL Plugin [![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/javalin/javalin-ssl/Test%20all%20JDKs%20on%20all%20OSes%20and%20Publish/main?label=main&logo=githubactions&logoColor=white)](https://github.com/javalin/javalin-ssl/actions?query=branch%3Amain) [![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/javalin/javalin-ssl/Test%20all%20JDKs%20on%20all%20OSes%20and%20Publish/dev?label=dev&logo=githubactions&logoColor=white)](https://github.com/javalin/javalin-ssl/actions?query=branch%3Adev) [![Coverage](https://codecov.io/gh/javalin/javalin-ssl/branch/dev/graphs/badge.svg)](https://app.codecov.io/gh/javalin/javalin-ssl) [![javadoc](https://javadoc.io/badge2/io.javalin.community.ssl/ssl-plugin/javadoc.svg)](https://javadoc.io/doc/io.javalin.community.ssl/ssl-plugin)
 
 Straightforward SSL and HTTP/2 Configuration for Javalin!
 

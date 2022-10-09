@@ -10,6 +10,9 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 import javax.net.ssl.X509ExtendedKeyManager;
 
+/**
+ * Utility class for SSL related tasks.
+ */
 public class SSLUtils {
 
     /**
