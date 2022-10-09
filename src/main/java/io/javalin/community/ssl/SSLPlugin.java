@@ -1,9 +1,11 @@
 package io.javalin.community.ssl;
 
 import io.javalin.Javalin;
-import io.javalin.plugin.Plugin;
 import io.javalin.community.ssl.util.ConnectorFactory;
-import org.eclipse.jetty.server.*;
+import io.javalin.jetty.JettyUtil;
+import io.javalin.plugin.Plugin;
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.jetbrains.annotations.NotNull;
 
@@ -12,27 +14,53 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import static io.javalin.community.ssl.util.SSLUtils.*;
+import static io.javalin.community.ssl.util.SSLUtils.createSslContextFactory;
 
+/**
+ * A plugin to easily enable SSL on a Javalin server.
+ * <p>
+ * The intended configuration pattern is to use the {@link SSLPlugin#SSLPlugin(Consumer)} constructor to configure the
+ * plugin, either though a lambda or a Consumer. This allows for a more fluent configuration pattern.
+ *
+ * @author Alberto Zugazagoitia
+ * @see SSLConfig
+ */
 public class SSLPlugin implements Plugin {
 
     private final SSLConfig config;
 
-    public SSLPlugin(){
+    /**
+     * Creates a new SSLPlugin with the default configuration.
+     */
+    public SSLPlugin() {
         config = new SSLConfig();
     }
 
+    /**
+     * Creates a new SSLPlugin with the given configuration.
+     *
+     * @param config The configuration to use.
+     */
     public SSLPlugin(SSLConfig config) {
         this.config = config;
     }
 
+    /**
+     * Creates a new SSLPlugin with the given configuration lambda/supplier.
+     * This is useful if you want to use the default configuration and only change a few values.
+     * Recommended way to create a new SSLPlugin with the given configuration.
+     *
+     * @param config The configuration to use.
+     */
     public SSLPlugin(Consumer<SSLConfig> config) {
         this();
         config.accept(this.config);
     }
 
+
     /**
      * Method to apply the plugin to a Javalin instance
+     *
      * @param javalin Javalin instance
      */
     @Override
@@ -41,10 +69,11 @@ public class SSLPlugin implements Plugin {
         Consumer<Server> patcher = createJettyServerPatcher(config);
 
         javalin.cfg.jetty.server(() -> {
-            Server server;
 
             //Check if the server has been manually configured
-            server = Objects.requireNonNullElseGet(javalin.cfg.pvt.server, Server::new);
+            Server server = Objects.requireNonNullElseGet(
+                javalin.cfg.pvt.server,
+                SSLPlugin::getServer);
 
             //parseConfig returns a consumer configuring the server.
             patcher.accept(server);
@@ -57,9 +86,10 @@ public class SSLPlugin implements Plugin {
     /**
      * Method to apply the SSLConfig to a given Jetty Server.
      * Can be used to patch pre-existing or custom servers.
+     *
      * @param server The Jetty Server to patch.
      */
-    public void patch(@NotNull Server server){
+    public void patch(@NotNull Server server) {
         Consumer<Server> patcher = createJettyServerPatcher(config);
         patcher.accept(server);
     }
@@ -75,7 +105,7 @@ public class SSLPlugin implements Plugin {
         //Created outside the lambda to have exceptions thrown in the current scope
         SslContextFactory.Server sslContextFactory;
 
-        if(config.secure || config.enableHttp3){
+        if (config.secure || config.enableHttp3) {
             sslContextFactory =
                 createSslContextFactory(config);
         } else {
@@ -104,5 +134,13 @@ public class SSLPlugin implements Plugin {
         };
     }
 
+    /**
+     * Method to create a new Jetty Server instance using Javalin's default configuration.
+     *
+     * @return A new Jetty Server instance.
+     */
+    private static Server getServer() {
+        return JettyUtil.getOrDefault(null);
+    }
 }
 

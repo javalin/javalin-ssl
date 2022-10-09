@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.Value;
 
 /**
- * Holder class for the SSL configuration.
+ * Data class for the SSL configuration.
  *
  * @see <a href="https://wiki.mozilla.org/Security/Server_Side_TLS">Security/Server Side TLS</a>
  */
@@ -40,7 +40,13 @@ public class TLSConfig {
         new String[]{"TLSv1", "TLSv1.1", "TLSv1.2", "TLSv1.3"});
 
 
+    /**
+     * String array of cipher suites to use, following the guidelines in the <a href="https://www.eclipse.org/jetty/documentation/jetty-11/operations-guide/index.html#og-protocols-ssl-customize-ciphers"> Jetty documentation</a>.
+     */
     String[] cipherSuites;
 
+    /**
+     * String array of protocols to use, following the guidelines in the <a href="https://www.eclipse.org/jetty/documentation/jetty-11/operations-guide/index.html#og-protocols-ssl-customize-versions"> Jetty documentation</a>.
+     */
     String[] protocols;
 }

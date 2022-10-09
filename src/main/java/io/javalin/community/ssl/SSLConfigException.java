@@ -23,7 +23,7 @@ public class SSLConfigException extends RuntimeException {
         MISSING_CERT_AND_KEY_FILE("There is no certificate or key file provided"),
         MULTIPLE_IDENTITY_LOADING_OPTIONS("Both the certificate and key must be provided using the same method");
 
-        private String message;
+        private final String message;
 
         Types(String message) {
             this.message = message;
