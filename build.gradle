@@ -49,8 +49,11 @@ dependencies {
     def conscrypt = "2.5.2"
 
     compileOnly("io.javalin:javalin:$javalin")
+
+    compileOnly("org.conscrypt:conscrypt-openjdk-uber:$conscrypt")
     implementation("org.eclipse.jetty.http2:http2-server:$jetty")
     implementation("org.eclipse.jetty:jetty-alpn-conscrypt-server:$jetty")
+
 
 
     //implementation("org.eclipse.jetty.http3:http3-server:$jetty")
