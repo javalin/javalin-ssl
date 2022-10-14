@@ -9,7 +9,7 @@ plugins {
 
 group = 'io.javalin.community.ssl'
 //Must be formatted following the RegEx: /version\s*=\s*'\S+'/g
-version = '5.0.1'
+version = '5.0.2-SNAPSHOT'
 
 jacoco {
     toolVersion = '0.8.8'
@@ -42,12 +42,16 @@ configurations {
 
 dependencies {
     def javalin = "5.0.1"
-    //def jetty = '11.0.11'
+    def jetty = '11.0.12'
     def junit = '5.9.0'
     def sslContextKickstart = '7.4.6'
     def okhttp = "4.10.0"
+    def conscrypt = "2.5.2"
 
-    compileOnly("io.javalin:javalin-bundle:$javalin")
+    compileOnly("io.javalin:javalin:$javalin")
+    implementation("org.eclipse.jetty.http2:http2-server:$jetty")
+    implementation("org.eclipse.jetty:jetty-alpn-conscrypt-server:$jetty")
+
 
     //implementation("org.eclipse.jetty.http3:http3-server:$jetty")
     implementation("io.github.hakky54:sslcontext-kickstart:$sslContextKickstart")
