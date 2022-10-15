@@ -1,11 +1,15 @@
 package io.javalin.community.ssl;
 
 import lombok.Getter;
+import org.conscrypt.Conscrypt;
+import org.eclipse.jetty.server.ServerConnector;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.Provider;
+import java.util.function.Consumer;
 
 /**
  * Data class to hold the configuration for the plugin.
@@ -334,6 +338,18 @@ public class SSLConfig {
         inner.identityLoadingType = InnerConfig.IdentityLoadingType.KEY_STORE_CLASS_PATH;
         inner.keyStorePassword = keyStorePassword;
     }
+
+
+    /**
+     * Consumer to configure the different @{@link ServerConnector}s that will be created.
+     * This consumer will be called as the last config step for each connector, allowing to override any previous configuration.
+     */
+    public Consumer<ServerConnector> configConnectors = null;
+
+    /**
+     * Security provider to use for the SSLContext.
+     */
+    public Provider securityProvider = Conscrypt.newProvider();
 
 
 }

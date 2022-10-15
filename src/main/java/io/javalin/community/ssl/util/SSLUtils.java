@@ -29,7 +29,7 @@ public class SSLUtils {
         //Add the identity information
         parseIdentity(config, builder);
 
-        builder.withSecurityProvider(Conscrypt.newProvider());
+        builder.withSecurityProvider(config.securityProvider);
 
         builder.withCiphers(config.tlsConfig.getCipherSuites());
         builder.withProtocols(config.tlsConfig.getProtocols());

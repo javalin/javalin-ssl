@@ -5,6 +5,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Protocol;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.eclipse.jetty.server.Connector;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -299,6 +300,32 @@ public class SSLConfigTests extends IntegrationTestClass {
         }).start()) {
             testSuccessfulEndpoint(getUntrustedClient(), http, Protocol.HTTP_1_1);
             testSuccessfulEndpoint(getUntrustedClient(), https, Protocol.HTTP_2);
+        } catch (IOException e) {
+            fail(e);
+        }
+    }
+
+    @Test
+    void testConnectorConfigConsumer(){
+        int insecurePort = ports.getAndIncrement();
+        int securePort = ports.getAndIncrement();
+        String http = HTTP_URL_WITH_PORT.apply(insecurePort);
+        String https = HTTPS_URL_WITH_PORT.apply(securePort);
+        try (Javalin app = IntegrationTestClass.createTestApp(config -> {
+            config.insecurePort = insecurePort;
+            config.securePort = securePort;
+            config.pemFromString(CERTIFICATE_AS_STRING, NON_ENCRYPTED_KEY_AS_STRING);
+            config.configConnectors = connector -> {
+                connector.setIdleTimeout(1000);
+                connector.setName("customName");
+            };
+        }).start()) {
+            testSuccessfulEndpoint(http, Protocol.HTTP_1_1);
+            testSuccessfulEndpoint(https, Protocol.HTTP_2);
+            for(Connector connector : app.cfg.pvt.server.getConnectors()){
+                assertEquals(1000, connector.getIdleTimeout());
+                assertEquals("customName", connector.getName());
+            }
         } catch (IOException e) {
             fail(e);
         }

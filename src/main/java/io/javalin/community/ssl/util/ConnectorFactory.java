@@ -48,9 +48,15 @@ public class ConnectorFactory {
         }
 
         connector.setPort(config.insecurePort);
+
         if (config.host != null) {
             connector.setHost(config.host);
         }
+
+        if (config.configConnectors != null) {
+            config.configConnectors.accept(connector);
+        }
+
         return connector;
     }
 
@@ -90,9 +96,15 @@ public class ConnectorFactory {
         }
 
         connector.setPort(config.securePort);
+
         if (config.host != null) {
             connector.setHost(config.host);
         }
+
+        if (config.configConnectors != null) {
+            config.configConnectors.accept(connector);
+        }
+
         return connector;
 
     }
