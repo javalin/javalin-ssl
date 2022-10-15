@@ -73,22 +73,24 @@ insecurePort=80;                                                      // Port to
 sniHostCheck=true;                                                    // Enable SNI hostname verification.
 tlsConfig=TLSConfig.INTERMEDIATE;                                     // Set the TLS configuration. (by default it uses Mozilla's intermediate configuration)
 
-
 // PEM loading options (mutually exclusive)
-pemFromPath("/path/to/cert.pem","/path/to/key.pem");                   // load from the given paths.
+pemFromPath("/path/to/cert.pem","/path/to/key.pem");                  // load from the given paths.
 pemFromPath("/path/to/cert.pem","/path/to/key.pem","keyPassword");    // load from the given paths with the given key password.
-pemFromClasspath("certName.pem","keyName.pem");                        // load from the given paths in the classpath.
+pemFromClasspath("certName.pem","keyName.pem");                       // load from the given paths in the classpath.
 pemFromClasspath("certName.pem","keyName.pem","keyPassword");         // load from the given paths in the classpath with the given key password.
-pemFromInputStream(certInputStream,keyInputStream);                    // load from the given input streams.
+pemFromInputStream(certInputStream,keyInputStream);                   // load from the given input streams.
 pemFromInputStream(certInputStream,keyInputStream,"keyPassword");     // load from the given input streams with the given key password.
-pemFromString(certString,keyString);                                   // load from the given strings.
+pemFromString(certString,keyString);                                  // load from the given strings.
 pemFromString(certString,keyString,"keyPassword");                    // load from the given strings with the given key password.
 
 // Keystore loading options (PKCS#12/JKS) (mutually exclusive)
-keystoreFromPath("/path/to/keystore.jks","keystorePassword");          // load the keystore from the given path
-keystoreFromClasspath("keyStoreName.p12","keystorePassword");          // load the keystore from the given path in the classpath.
-keystoreFromInputStream(keystoreInputStream,"keystorePassword");       // load the keystore from the given input stream.
+keystoreFromPath("/path/to/keystore.jks","keystorePassword");         // load the keystore from the given path
+keystoreFromClasspath("keyStoreName.p12","keystorePassword");         // load the keystore from the given path in the classpath.
+keystoreFromInputStream(keystoreInputStream,"keystorePassword");      // load the keystore from the given input stream.
 
+// Advanced options
+configConnectors = null;                                              // Consumer to configure the connectors.
+securityProvider = Conscrypt.newProvider();                           // Set the security provider to use.
 ```
 
 ## Notes
