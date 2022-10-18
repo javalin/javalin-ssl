@@ -106,7 +106,7 @@ securityProvider = Conscrypt.newProvider();                           // Set the
 | Package                                       | Version | License                                                                                                              |
 |-----------------------------------------------|---------|----------------------------------------------------------------------------------------------------------------------|
 | [Javalin](https://github.com/javalin/javalin) | `5.1.1` | [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) |
- | [SSLContext Kickstart](https://github.com/Hakky54/sslcontext-kickstart) | `7.4.6` | [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) |
+ | [SSLContext Kickstart](https://github.com/Hakky54/sslcontext-kickstart) | `7.4.7` | [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) |
 
 ## Contributing
 
