@@ -17,7 +17,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Set up JDK ${{ matrix.java_version }}
-        uses: actions/setup-java@v3.4.0
+        uses: actions/setup-java@v3.5.1
         with:
           distribution: 'zulu'
           java-version: ${{ matrix.java_version }}
@@ -25,7 +25,7 @@ jobs:
         uses: gradle/wrapper-validation-action@v1
 
       - name: Setup and Run Gradle
-        uses: gradle/gradle-build-action@v2.2.1
+        uses: gradle/gradle-build-action@v2.3.2
         with:
           arguments: check
   coverage:
@@ -38,7 +38,7 @@ jobs:
         test-type: [unit, integration]
     steps:
       - name: Setup Java JDK
-        uses: actions/setup-java@v3.4.0
+        uses: actions/setup-java@v3.5.1
         with:
           distribution: 'temurin'
           java-version: '17'
@@ -50,12 +50,12 @@ jobs:
         uses: gradle/wrapper-validation-action@v1
 
       - name: Setup and Run Gradle
-        uses: gradle/gradle-build-action@v2.2.1
+        uses: gradle/gradle-build-action@v2.3.2
         with:
           arguments: ${{ matrix.test-type }}TestsCoverageReport
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3.1.0
+        uses: codecov/codecov-action@v3.1.1
         with:
           files: "${{ github.workspace }}/build/reports/jacoco/${{ matrix.test-type }}TestsCoverageReport/${{ matrix.test-type }}TestsCoverageReport.xml"
           flags: "${{ matrix.test-type }}Tests"
@@ -72,13 +72,13 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Set up JDK
-        uses: actions/setup-java@v3.4.0
+        uses: actions/setup-java@v3.5.1
         with:
           distribution: 'zulu'
           java-version: '17'
 
       - name: Generate version
-        uses: HardNorth/github-version-generate@v1.1.2
+        uses: HardNorth/github-version-generate@v1.3.0
         with:
           version-source: file
           version-file: build.gradle
@@ -88,7 +88,7 @@ jobs:
         uses: gradle/wrapper-validation-action@v1
 
       - name: Publish to Reposilite
-        uses: gradle/gradle-build-action@v2.2.1
+        uses: gradle/gradle-build-action@v2.3.2
         env:
           MAVEN_NAME: '${{ secrets.MAVEN_NAME }}'
           MAVEN_TOKEN: '${{ secrets.MAVEN_TOKEN }}'
@@ -100,7 +100,7 @@ jobs:
 
       - name: Publish to Maven Central
         if: "!contains(env.CURRENT_VERSION, 'SNAPSHOT')"
-        uses: gradle/gradle-build-action@v2.2.1
+        uses: gradle/gradle-build-action@v2.3.2
         env:
           ORG_GRADLE_PROJECT_sonatypeUsername: '${{ secrets.ORG_GRADLE_PROJECT_SONATYPEUSERNAME }}'
           ORG_GRADLE_PROJECT_sonatypePassword: '${{ secrets.ORG_GRADLE_PROJECT_SONATYPEPASSWORD }}'
@@ -112,7 +112,7 @@ jobs:
 
       - name: Create Pre-Release
         if: contains(env.CURRENT_VERSION, 'SNAPSHOT')
-        uses: ncipollo/release-action@v1.10.0
+        uses: ncipollo/release-action@v1.11.1
         with:
           tag: ${{ env.CURRENT_VERSION }}
           generateReleaseNotes: true
@@ -147,7 +147,7 @@ jobs:
 
       - name: Create Release
         if: "!contains(env.CURRENT_VERSION, 'SNAPSHOT')"
-        uses: ncipollo/release-action@v1.10.0
+        uses: ncipollo/release-action@v1.11.1
         with:
           tag: ${{ env.CURRENT_VERSION }}
           generateReleaseNotes: true
