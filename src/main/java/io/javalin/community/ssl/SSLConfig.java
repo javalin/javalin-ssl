@@ -1,7 +1,8 @@
 package io.javalin.community.ssl;
 
+import io.javalin.community.ssl.util.SSLUtils;
 import lombok.Getter;
-import org.conscrypt.Conscrypt;
+//import org.conscrypt.Conscrypt;
 import org.eclipse.jetty.server.ServerConnector;
 import org.jetbrains.annotations.Nullable;
 
@@ -349,7 +350,7 @@ public class SSLConfig {
     /**
      * Security provider to use for the SSLContext.
      */
-    public Provider securityProvider = Conscrypt.newProvider();
+    public Provider securityProvider = SSLUtils.getSecurityProvider();
 
 
 }
