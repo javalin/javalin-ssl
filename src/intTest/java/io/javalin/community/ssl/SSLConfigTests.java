@@ -1,19 +1,26 @@
 package io.javalin.community.ssl;
 
 import io.javalin.Javalin;
+import io.javalin.community.ssl.util.SSLUtils;
 import okhttp3.OkHttpClient;
 import okhttp3.Protocol;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.SslConnectionFactory;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import java.io.IOException;
+import java.security.Provider;
 import java.util.Collections;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 @Tag("integration")
 public class SSLConfigTests extends IntegrationTestClass {
@@ -330,4 +337,72 @@ public class SSLConfigTests extends IntegrationTestClass {
             fail(e);
         }
     }
+
+    @Test
+    void testNullSecurityProvider(){
+        int securePort = ports.getAndIncrement();
+        String https = HTTPS_URL_WITH_PORT.apply(securePort);
+        try (Javalin app = IntegrationTestClass.createTestApp(config -> {
+            config.insecure = false;
+            config.securePort = securePort;
+            config.pemFromString(CERTIFICATE_AS_STRING, NON_ENCRYPTED_KEY_AS_STRING);
+            config.securityProvider = null;
+        }).start()) {
+            printSecurityProviderName(app);
+            testSuccessfulEndpoint(https, Protocol.HTTP_2);
+        } catch (IOException e) {
+            fail(e);
+        }
+    }
+
+    @Test
+    void testDefaultSecurityProvider(){
+        int securePort = ports.getAndIncrement();
+        String https = HTTPS_URL_WITH_PORT.apply(securePort);
+        try (Javalin app = IntegrationTestClass.createTestApp(config -> {
+            config.insecure = false;
+            config.securePort = securePort;
+            config.pemFromString(CERTIFICATE_AS_STRING, NON_ENCRYPTED_KEY_AS_STRING);
+        }).start()) {
+            printSecurityProviderName(app);
+            testSuccessfulEndpoint(https, Protocol.HTTP_2);
+        } catch (IOException e) {
+            fail(e);
+        }
+    }
+
+    @Test
+    @EnabledOnOs({OS.LINUX, OS.MAC, OS.WINDOWS})
+    void checkSupportedOsUsesConscrypt() {
+        assumeTrue(SSLUtils.osIs64Bit());
+
+        int securePort = ports.getAndIncrement();
+        String https = HTTPS_URL_WITH_PORT.apply(securePort);
+        try (Javalin app = IntegrationTestClass.createTestApp(config -> {
+            config.insecure = false;
+            config.securePort = securePort;
+            config.pemFromString(CERTIFICATE_AS_STRING, NON_ENCRYPTED_KEY_AS_STRING);
+        }).start()) {
+            printSecurityProviderName(app);
+            assertTrue(getSecurityProviderName(app).contains("Conscrypt"));
+            testSuccessfulEndpoint(https, Protocol.HTTP_2);
+        } catch (IOException e) {
+            fail(e);
+        }
+    }
+
+    private static String getSecurityProviderName(Javalin app){
+        ServerConnector conn = (ServerConnector) app.jettyServer().server().getConnectors()[0];
+        return conn.getConnectionFactories().stream()
+                .filter(cf -> cf instanceof SslConnectionFactory)
+                .map(cf -> (SslConnectionFactory) cf)
+                .map(sslConnectionFactory -> sslConnectionFactory.getSslContextFactory().getSslContext().getProvider().getName())
+                .findFirst()
+                .orElseThrow();
+    }
+
+    private static void printSecurityProviderName(Javalin app) {
+        System.out.println("Security provider: " + getSecurityProviderName(app));
+    }
+
 }

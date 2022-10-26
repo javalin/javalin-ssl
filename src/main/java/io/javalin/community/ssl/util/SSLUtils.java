@@ -5,10 +5,10 @@ import io.javalin.community.ssl.SSLConfigException;
 import nl.altindag.ssl.SSLFactory;
 import nl.altindag.ssl.util.JettySslUtils;
 import nl.altindag.ssl.util.PemUtils;
-import org.conscrypt.Conscrypt;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 import javax.net.ssl.X509ExtendedKeyManager;
+import java.security.Provider;
 
 /**
  * Utility class for SSL related tasks.
@@ -42,7 +42,7 @@ public class SSLUtils {
     /**
      * Helper method to parse the given config and add Identity Material to the given builder.
      *
-     * @param config  The config to use.
+     * @param config The config to use.
      * @throws SSLConfigException if the key configuration is invalid.
      */
     public static void parseIdentity(SSLConfig config, SSLFactory.Builder builder) throws SSLConfigException {
@@ -101,5 +101,52 @@ public class SSLUtils {
         }
 
         builder.withIdentityMaterial(keyManager);
+    }
+
+    /**
+     * Helper method to create a working {@link Provider} for the current JVM.
+     */
+    public static Provider getSecurityProvider() {
+        if(osSupportsConscrypt()){
+            return new org.conscrypt.OpenSSLProvider();
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Checks if the current OS is supported by Conscrypt.
+     * Currently only Windows (x86, x64), Linux (x64) and Mac OS X (x64) are supported.
+     * @return true if the current OS is supported by Conscrypt.
+     */
+    public static boolean osSupportsConscrypt() {
+        String osName = System.getProperty("os.name").toLowerCase();
+        //Remove all non-alphanumeric characters from the os name
+        osName = osName.replaceAll("[^a-z0-9]", "");
+
+        if (osName.contains("windows")) {
+            return true;
+        } else if (osName.contains("linux") || (osName.contains("macosx") || osName.contains("osx"))) {
+            return osIs64Bit();
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Checks if the current OS runs on an x86_64 architecture.
+     * @return true if the current OS runs on an x86_64 architecture.
+     */
+    public static boolean osIs64Bit() {
+        String osArch = System.getProperty("os.arch").toLowerCase();
+        osArch = osArch.replaceAll("[^a-z0-9]", "");
+
+        String[] archNames = new String[]{"x8664", "amd64", "ia32e", "em64t", "x64"};
+        for (String archName : archNames) {
+            if (osArch.contains(archName)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
