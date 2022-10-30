@@ -20,13 +20,13 @@ As simple as adding a dependency:
 <dependency>
   <groupId>io.javalin.community.ssl</groupId>
   <artifactId>ssl-plugin</artifactId>
-  <version>5.1.2</version>
+  <version>5.1.3</version>
 </dependency>
 ```
 ### Gradle
 
 ```kotlin
-implementation('io.javalin.community.ssl:ssl-plugin:5.1.2')
+implementation('io.javalin.community.ssl:ssl-plugin:5.1.3')
 ```
 
 
