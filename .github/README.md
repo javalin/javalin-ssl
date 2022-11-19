@@ -9,6 +9,8 @@
 
 Straightforward SSL and HTTP/2 Configuration for Javalin!
 
+If you're not familiar with the HTTPS protocol we have a great guide at the [Javalin website](https://javalin.io/tutorials/javalin-ssl-tutorial).
+
 ## Getting started
 
 [![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/javalin/javalin-ssl?label=Latest%20Release)](https://github.com/javalin/javalin-ssl/releases) ![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/javalin/javalin-ssl?include_prereleases&label=Latest%20Snapshot)
