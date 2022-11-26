@@ -4,6 +4,8 @@ import io.javalin.Javalin;
 import io.javalin.community.ssl.util.ConnectorFactory;
 import io.javalin.jetty.JettyUtil;
 import io.javalin.plugin.Plugin;
+import nl.altindag.ssl.SSLFactory;
+import nl.altindag.ssl.util.SSLFactoryUtils;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
@@ -15,6 +17,7 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 import static io.javalin.community.ssl.util.SSLUtils.createSslContextFactory;
+import static io.javalin.community.ssl.util.SSLUtils.getSslFactory;
 
 /**
  * A plugin to easily enable SSL on a Javalin server.
@@ -28,6 +31,8 @@ import static io.javalin.community.ssl.util.SSLUtils.createSslContextFactory;
 public class SSLPlugin implements Plugin {
 
     private final SSLConfig config;
+
+    private SSLFactory sslFactory = null;
 
     /**
      * Creates a new SSLPlugin with the default configuration.
@@ -94,20 +99,52 @@ public class SSLPlugin implements Plugin {
         patcher.accept(server);
     }
 
+
+    //TODO: Document this method and reloading behavior
+    //TODO: Test reloading behavior
+    /**
+     * Method to hot-swap the certificate and key material of the plugin.
+     * Any configuration changes will be ignored, only the certificate and key material will be updated.
+     *
+     * @param newConfig A config containing the new certificate and key material.
+     */
+    public void reload(SSLConfig newConfig) {
+        if(sslFactory == null)
+            throw new IllegalStateException("Cannot reload before the plugin has been applied to a Javalin instance, a server has been patched or if the ssl connector is disabled.");
+
+        SSLFactory newFactory = getSslFactory(newConfig,true);
+        SSLFactoryUtils.reload(sslFactory, newFactory);
+    }
+
+    //TODO: Document this method and reloading behavior
+    //TODO: Test reloading behavior
+    /**
+     * Method to hot-swap the certificate and key material of the plugin.
+     * Any configuration changes will be ignored, only the certificate and key material will be updated.
+     *
+     * @param newConfigConsumer A consumer providing the new certificate and key material.
+     */
+    public void reload(Consumer<SSLConfig> newConfigConsumer) {
+        SSLConfig newConfig = new SSLConfig();
+        newConfigConsumer.accept(newConfig);
+        reload(newConfig);
+    }
+
     /**
      * Method to parse the config and return a consumer that can be used to configure the server.
      *
      * @param config The config to parse.
      * @return A {@link Consumer<Server>} that can be used to configure the server.
      */
-    private static Consumer<Server> createJettyServerPatcher(SSLConfig config) {
+    private Consumer<Server> createJettyServerPatcher(SSLConfig config) {
 
         //Created outside the lambda to have exceptions thrown in the current scope
         SslContextFactory.Server sslContextFactory;
 
         if (config.secure || config.enableHttp3) {
+            sslFactory = getSslFactory(config);
             sslContextFactory =
-                createSslContextFactory(config);
+                createSslContextFactory(sslFactory);
         } else {
             sslContextFactory =
                 null;
@@ -142,5 +179,7 @@ public class SSLPlugin implements Plugin {
     private static Server getServer() {
         return JettyUtil.getOrDefault(null);
     }
+
+
 }
 

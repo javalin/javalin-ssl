@@ -15,7 +15,6 @@ import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
 import java.io.IOException;
-import java.security.Provider;
 import java.util.Collections;
 import java.util.Objects;
 
@@ -197,18 +196,6 @@ public class SSLConfigTests extends IntegrationTestClass {
         } catch (IOException e) {
             fail(e);
         }
-    }
-
-    private static void testSuccessfulEndpoint(OkHttpClient client, String url, Protocol protocol) throws IOException {
-        Response response = client.newCall(new Request.Builder().url(url).build()).execute();
-        assertEquals(200, response.code());
-        assertEquals(SUCCESS, Objects.requireNonNull(response.body()).string());
-        assertEquals(protocol, response.protocol());
-        response.close();
-    }
-
-    private static void testSuccessfulEndpoint(String url, Protocol protocol) throws IOException {
-        testSuccessfulEndpoint(getClient(), url, protocol);
     }
 
     @Test
