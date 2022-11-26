@@ -95,6 +95,28 @@ configConnectors = null;                                              // Consume
 securityProvider = Conscrypt.newProvider();                           // Set the security provider to use.
 ```
 
+### Hot reloading
+Certificate reloading is supported by default, if you want to replace the certificate you can simply call `SSLPlugin#reload` with the new certificate:
+
+```java
+
+SSLPlugin sslPlugin = new SSLPlugin(ssl->{
+    ssl.loadPemFromPath("/path/to/cert.pem","/path/to/key.pem");
+});
+
+Javalin.create(config->{
+    ...  // your Javalin config here
+    config.plugins.register(sslPlugin);
+});
+
+// later on, when you want to replace the certificate
+sslPlugin.reload(ssl->{
+    //Any options other than loading certificates/keys will be ignored.
+    ssl.loadPemFromPath("/path/to/new/cert.pem","/path/to/new/key.pem");
+});
+``` 
+
+
 ## Notes
 
 - HTTP/2 **can** be used over an insecure connection.
@@ -107,8 +129,8 @@ securityProvider = Conscrypt.newProvider();                           // Set the
 
 | Package                                       | Version | License                                                                                                              |
 |-----------------------------------------------|---------|----------------------------------------------------------------------------------------------------------------------|
-| [Javalin](https://github.com/javalin/javalin) | `5.1.1` | [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) |
- | [SSLContext Kickstart](https://github.com/Hakky54/sslcontext-kickstart) | `7.4.7` | [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) |
+| [Javalin](https://github.com/javalin/javalin) | `5.2.0` | [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) |
+ | [SSLContext Kickstart](https://github.com/Hakky54/sslcontext-kickstart) | `7.4.8` | [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) |
 
 ## Contributing
 

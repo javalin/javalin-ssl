@@ -24,6 +24,8 @@ import static io.javalin.community.ssl.util.SSLUtils.getSslFactory;
  * <p>
  * The intended configuration pattern is to use the {@link SSLPlugin#SSLPlugin(Consumer)} constructor to configure the
  * plugin, either though a lambda or a Consumer. This allows for a more fluent configuration pattern.
+ * <p>
+ * Hot reloading of the SSL certificates is supported. This means that the plugin will replace the SSL certificates without restarting the server, allowing for a seamless transition. This is done by using the {@link SSLPlugin#reload(Consumer)} method.
  *
  * @author Alberto Zugazagoitia
  * @see SSLConfig
@@ -100,8 +102,6 @@ public class SSLPlugin implements Plugin {
     }
 
 
-    //TODO: Document this method and reloading behavior
-    //TODO: Test reloading behavior
     /**
      * Method to hot-swap the certificate and key material of the plugin.
      * Any configuration changes will be ignored, only the certificate and key material will be updated.
@@ -116,8 +116,6 @@ public class SSLPlugin implements Plugin {
         SSLFactoryUtils.reload(sslFactory, newFactory);
     }
 
-    //TODO: Document this method and reloading behavior
-    //TODO: Test reloading behavior
     /**
      * Method to hot-swap the certificate and key material of the plugin.
      * Any configuration changes will be ignored, only the certificate and key material will be updated.
