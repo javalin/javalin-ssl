@@ -76,7 +76,7 @@ dependencies {
     integrationTestImplementation("org.eclipse.jetty:jetty-alpn-conscrypt-server:$jetty")
     integrationTestImplementation("com.squareup.okhttp3:okhttp:$okhttp")
     integrationTestImplementation("com.squareup.okhttp3:okhttp-tls:$okhttp")
-    integrationTestImplementation('org.slf4j:slf4j-simple:2.0.3')
+    integrationTestImplementation('org.slf4j:slf4j-simple:2.0.6')
 
     integrationTestRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit")
 }
