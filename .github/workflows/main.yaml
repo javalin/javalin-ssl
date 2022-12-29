@@ -112,7 +112,7 @@ jobs:
 
       - name: Create Pre-Release
         if: contains(env.CURRENT_VERSION, 'SNAPSHOT')
-        uses: ncipollo/release-action@v1.11.2
+        uses: ncipollo/release-action@v1.12.0
         with:
           tag: ${{ env.CURRENT_VERSION }}
           generateReleaseNotes: true
@@ -147,7 +147,7 @@ jobs:
 
       - name: Create Release
         if: "!contains(env.CURRENT_VERSION, 'SNAPSHOT')"
-        uses: ncipollo/release-action@v1.11.2
+        uses: ncipollo/release-action@v1.12.0
         with:
           tag: ${{ env.CURRENT_VERSION }}
           generateReleaseNotes: true
