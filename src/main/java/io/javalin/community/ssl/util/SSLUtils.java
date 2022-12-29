@@ -4,6 +4,7 @@ import io.javalin.community.ssl.SSLConfig;
 import io.javalin.community.ssl.SSLConfigException;
 import nl.altindag.ssl.SSLFactory;
 import nl.altindag.ssl.util.JettySslUtils;
+import nl.altindag.ssl.util.KeyManagerUtils;
 import nl.altindag.ssl.util.PemUtils;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
@@ -16,28 +17,50 @@ import java.security.Provider;
 public class SSLUtils {
 
     /**
-     * Helper method to create a {@link SslContextFactory} from the given config.
+     * Helper method to create a {@link SslContextFactory} from the SSLFactory.
      *
-     * @param config The config to use.
+     * @param sslFactory The {@link SSLFactory} to use.
      * @return The created {@link SslContextFactory}.
      */
-    public static SslContextFactory.Server createSslContextFactory(SSLConfig config) {
+    public static SslContextFactory.Server createSslContextFactory(SSLFactory sslFactory) {
 
-        //The sslcontext-kickstart factory
+        return JettySslUtils.forServer(sslFactory);
+    }
+
+    /**
+     * Helper method to create a {@link SSLFactory} from the given config.
+     *
+     * @param config The config to use.
+     * @return The created {@link SSLFactory}.
+     */
+    public static SSLFactory getSslFactory(SSLConfig config) {
+        return getSslFactory(config, false);
+    }
+
+    /**
+     * Helper method to create a {@link SSLFactory} from the given config.
+     *
+     * @param config The config to use.
+     * @param reloading  Whether the SSLFactory is being reloaded or is the first time.
+     * @return The created {@link SSLFactory}.
+     */
+    public static SSLFactory getSslFactory(SSLConfig config, boolean reloading) {
         SSLFactory.Builder builder = SSLFactory.builder();
 
         //Add the identity information
         parseIdentity(config, builder);
+
+        if (!reloading) builder.withSwappableIdentityMaterial();
 
         builder.withSecurityProvider(config.securityProvider);
 
         builder.withCiphers(config.tlsConfig.getCipherSuites());
         builder.withProtocols(config.tlsConfig.getProtocols());
 
-        SSLFactory sslFactory = builder.build();
-
-        return JettySslUtils.forServer(sslFactory);
+        return builder.build();
     }
+
+
 
     /**
      * Helper method to parse the given config and add Identity Material to the given builder.
@@ -107,7 +130,7 @@ public class SSLUtils {
      * Helper method to create a working {@link Provider} for the current JVM.
      */
     public static Provider getSecurityProvider() {
-        if(osSupportsConscrypt()){
+        if (osSupportsConscrypt()) {
             return new org.conscrypt.OpenSSLProvider();
         } else {
             return null;
@@ -117,6 +140,7 @@ public class SSLUtils {
     /**
      * Checks if the current OS is supported by Conscrypt.
      * Currently only Windows (x86, x64), Linux (x64) and Mac OS X (x64) are supported.
+     *
      * @return true if the current OS is supported by Conscrypt.
      */
     public static boolean osSupportsConscrypt() {
@@ -135,6 +159,7 @@ public class SSLUtils {
 
     /**
      * Checks if the current OS runs on an x86_64 architecture.
+     *
      * @return true if the current OS runs on an x86_64 architecture.
      */
     public static boolean osIs64Bit() {
