@@ -9,7 +9,7 @@ plugins {
 
 group = 'io.javalin.community.ssl'
 //Must be formatted following the RegEx: /version\s*=\s*'\S+'/g
-version = '5.3.0'
+version = '5.3.1'
 
 jacoco {
     toolVersion = '0.8.8'
@@ -41,42 +41,44 @@ configurations {
 }
 
 dependencies {
-    def javalin = "5.3.0"
-    def jetty = '11.0.13'
+    def javalin = "5.3.1"
     def junit = '5.9.1'
     def sslContextKickstart = '7.4.9'
     def okhttp = "4.10.0"
     def conscrypt = "2.5.2"
 
     compileOnly("io.javalin:javalin:$javalin")
+    implementation(platform("io.javalin:javalin-parent:$javalin")) //Javalin BOM
 
     compileOnly("org.conscrypt:conscrypt-openjdk-uber:$conscrypt")
-    implementation("org.eclipse.jetty.http2:http2-server:$jetty")
-    implementation("org.eclipse.jetty:jetty-alpn-conscrypt-server:$jetty")
-    implementation("org.eclipse.jetty:jetty-alpn-java-server:$jetty")
+    implementation("org.eclipse.jetty.http2:http2-server")
+    implementation("org.eclipse.jetty:jetty-alpn-conscrypt-server")
+    implementation("org.eclipse.jetty:jetty-alpn-java-server")
+    //implementation("org.eclipse.jetty.http3:http3-server")
 
-
-
-    //implementation("org.eclipse.jetty.http3:http3-server:$jetty")
     implementation("io.github.hakky54:sslcontext-kickstart:$sslContextKickstart")
     implementation("io.github.hakky54:sslcontext-kickstart-for-jetty:$sslContextKickstart")
     implementation("io.github.hakky54:sslcontext-kickstart-for-pem:$sslContextKickstart")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junit")
-
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit")
 
-    integrationTestImplementation("org.junit.jupiter:junit-jupiter-api:$junit")
     integrationTestImplementation("io.javalin:javalin:$javalin")
+    integrationTestImplementation(platform("io.javalin:javalin-parent:$javalin"))
+
     integrationTestImplementation("io.github.hakky54:sslcontext-kickstart:$sslContextKickstart")
     integrationTestImplementation("io.github.hakky54:sslcontext-kickstart-for-jetty:$sslContextKickstart")
     integrationTestImplementation("io.github.hakky54:sslcontext-kickstart-for-pem:$sslContextKickstart")
-    integrationTestImplementation("org.eclipse.jetty.http2:http2-server:$jetty")
-    integrationTestImplementation("org.eclipse.jetty:jetty-alpn-java-server:$jetty")
-    integrationTestImplementation("org.eclipse.jetty:jetty-alpn-conscrypt-server:$jetty")
+
+    integrationTestImplementation('org.slf4j:slf4j-simple')
+    integrationTestImplementation("org.eclipse.jetty.http2:http2-server")
+    integrationTestImplementation("org.eclipse.jetty:jetty-alpn-java-server")
+    integrationTestImplementation("org.eclipse.jetty:jetty-alpn-conscrypt-server")
+
     integrationTestImplementation("com.squareup.okhttp3:okhttp:$okhttp")
     integrationTestImplementation("com.squareup.okhttp3:okhttp-tls:$okhttp")
-    integrationTestImplementation('org.slf4j:slf4j-simple:2.0.6')
+    integrationTestImplementation("org.junit.jupiter:junit-jupiter-api:$junit")
+
 
     integrationTestRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit")
 }
