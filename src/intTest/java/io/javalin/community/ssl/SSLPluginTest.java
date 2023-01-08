@@ -55,7 +55,7 @@ public class SSLPluginTest extends IntegrationTestClass {
             Response res = client.newCall(new Request.Builder().url(https).build()).execute();
             //Check that the certificate is the one we expect
             X509Certificate cert = (X509Certificate) res.handshake().peerCertificates().get(0);
-            log.info("First Certificate: {}", cert.getSubjectDN().getName());
+            log.info("First Certificate: {}", cert.getSubjectX500Principal().getName());
             assertTrue(cert.getIssuerX500Principal().getName().contains("Bergen"));
 
             // Reload the identity
@@ -65,7 +65,7 @@ public class SSLPluginTest extends IntegrationTestClass {
             // Second connection
             res = client2.newCall(new Request.Builder().url(https).build()).execute();
             cert = (X509Certificate) res.handshake().peerCertificates().get(0);
-            log.info("Second Certificate: {}", cert.getSubjectDN().getName());
+            log.info("Second Certificate: {}", cert.getSubjectX500Principal().getName());
             assertTrue(cert.getIssuerX500Principal().getName().contains("Vigo"));
         } catch (IOException e) {
             fail(e);
@@ -123,7 +123,7 @@ public class SSLPluginTest extends IntegrationTestClass {
             Response res = client.newCall(new Request.Builder().url(https).build()).execute();
             //Check that the certificate is the one we expect
             X509Certificate cert = (X509Certificate) res.handshake().peerCertificates().get(0);
-            log.info("First Certificate: {}", cert.getSubjectDN().getName());
+            log.info("First Certificate: {}", cert.getSubjectX500Principal().getName());
             assertTrue(cert.getIssuerX500Principal().getName().contains("Bergen"));
 
             // Reload the identity
@@ -134,7 +134,7 @@ public class SSLPluginTest extends IntegrationTestClass {
             // Second connection
             res = client2.newCall(new Request.Builder().url(https).build()).execute();
             cert = (X509Certificate) res.handshake().peerCertificates().get(0);
-            log.info("Second Certificate: {}", cert.getSubjectDN().getName());
+            log.info("Second Certificate: {}", cert.getSubjectX500Principal().getName());
             assertTrue(cert.getIssuerX500Principal().getName().contains("Vigo"));
         } catch (IOException e) {
             fail(e);
