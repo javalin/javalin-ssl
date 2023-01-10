@@ -1,6 +1,7 @@
 package io.javalin.community.ssl;
 
 import io.javalin.Javalin;
+import io.javalin.community.ssl.certs.Server;
 import okhttp3.ConnectionSpec;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -45,7 +46,7 @@ public class TLSConfigTest extends IntegrationTestClass {
         String https = HTTPS_URL_WITH_PORT.apply(securePort);
         try (Javalin ignored = IntegrationTestClass.createTestApp(config -> {
             config.insecure = false;
-            config.pemFromString(CERTIFICATE_AS_STRING, NON_ENCRYPTED_KEY_AS_STRING);
+            config.pemFromString(Server.CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING);
             config.securePort = securePort;
             config.tlsConfig = TLSConfig.MODERN;
         }).start()) {
@@ -65,7 +66,7 @@ public class TLSConfigTest extends IntegrationTestClass {
         String https = HTTPS_URL_WITH_PORT.apply(securePort);
         try (Javalin ignored = IntegrationTestClass.createTestApp(config -> {
             config.insecure = false;
-            config.pemFromString(CERTIFICATE_AS_STRING, NON_ENCRYPTED_KEY_AS_STRING);
+            config.pemFromString(Server.CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING);
             config.securePort = securePort;
             config.tlsConfig = TLSConfig.MODERN;
         }).start()) {
@@ -85,7 +86,7 @@ public class TLSConfigTest extends IntegrationTestClass {
         String https = HTTPS_URL_WITH_PORT.apply(securePort);
         try (Javalin ignored = IntegrationTestClass.createTestApp(config -> {
             config.insecure = false;
-            config.pemFromString(CERTIFICATE_AS_STRING, NON_ENCRYPTED_KEY_AS_STRING);
+            config.pemFromString(Server.CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING);
             config.securePort = securePort;
             config.tlsConfig = TLSConfig.INTERMEDIATE;
         }).start()) {
@@ -106,7 +107,7 @@ public class TLSConfigTest extends IntegrationTestClass {
         String https = HTTPS_URL_WITH_PORT.apply(securePort);
         try (Javalin ignored = IntegrationTestClass.createTestApp(config -> {
             config.insecure = false;
-            config.pemFromString(CERTIFICATE_AS_STRING, NON_ENCRYPTED_KEY_AS_STRING);
+            config.pemFromString(Server.CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING);
             config.securePort = securePort;
             config.tlsConfig = TLSConfig.INTERMEDIATE;
         }).start()) {

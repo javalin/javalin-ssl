@@ -1,5 +1,6 @@
 package io.javalin.community.ssl;
 
+import io.javalin.community.ssl.certs.Server;
 import nl.altindag.ssl.exception.GenericIOException;
 import nl.altindag.ssl.exception.GenericKeyStoreException;
 import org.junit.jupiter.api.Tag;
@@ -15,9 +16,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @Tag("integration")
 public class KeystoreLoadingTests extends IntegrationTestClass {
 
-    private static final String MALFORMED_JKS_FILE_NAME = "malformed.jks";
+    private static final String MALFORMED_JKS_FILE_NAME = "server/malformed.jks";
 
-    private static final String MALFORMED_P12_FILE_NAME = "malformed.p12";
+    private static final String MALFORMED_P12_FILE_NAME = "server/malformed.p12";
 
     private static final String MALFORMED_JKS_FILE_PATH;
 
@@ -61,32 +62,32 @@ public class KeystoreLoadingTests extends IntegrationTestClass {
 
     @Test
     void loadValidJKSFromClasspath() {
-        assertSslWorks(config -> config.keystoreFromClasspath(P12_KEY_STORE_NAME,KEY_STORE_PASSWORD));
+        assertSslWorks(config -> config.keystoreFromClasspath(Server.P12_KEY_STORE_NAME, Server.KEY_STORE_PASSWORD));
     }
 
     @Test
     void loadValidP12FromClasspath(){
-        assertSslWorks(config -> config.keystoreFromClasspath(P12_KEY_STORE_NAME,KEY_STORE_PASSWORD));
+        assertSslWorks(config -> config.keystoreFromClasspath(Server.P12_KEY_STORE_NAME, Server.KEY_STORE_PASSWORD));
     }
 
     @Test
     void loadValidJKSFromPath(){
-        assertSslWorks(config -> config.keystoreFromPath(P12_KEY_STORE_PATH,KEY_STORE_PASSWORD));
+        assertSslWorks(config -> config.keystoreFromPath(Server.P12_KEY_STORE_PATH, Server.KEY_STORE_PASSWORD));
     }
 
     @Test
     void loadValidP12FromPath(){
-        assertSslWorks(config -> config.keystoreFromPath(P12_KEY_STORE_PATH,KEY_STORE_PASSWORD));
+        assertSslWorks(config -> config.keystoreFromPath(Server.P12_KEY_STORE_PATH, Server.KEY_STORE_PASSWORD));
     }
 
     @Test
     void loadValidJKSFromInputStream(){
-        assertSslWorks(config -> config.keystoreFromInputStream(JKS_KEY_STORE_INPUT_STREAM_SUPPLIER.get(),KEY_STORE_PASSWORD));
+        assertSslWorks(config -> config.keystoreFromInputStream(Server.JKS_KEY_STORE_INPUT_STREAM_SUPPLIER.get(), Server.KEY_STORE_PASSWORD));
     }
 
     @Test
     void loadValidP12FromInputStream(){
-        assertSslWorks(config -> config.keystoreFromInputStream(P12_KEY_STORE_INPUT_STREAM_SUPPLIER.get(),KEY_STORE_PASSWORD));
+        assertSslWorks(config -> config.keystoreFromInputStream(Server.P12_KEY_STORE_INPUT_STREAM_SUPPLIER.get(), Server.KEY_STORE_PASSWORD));
     }
 
     //////////////////////////////
@@ -95,77 +96,77 @@ public class KeystoreLoadingTests extends IntegrationTestClass {
 
     @Test
     void loadKeystoreFromInvalidClasspath() {
-        assertThrows(GenericKeyStoreException.class, () -> assertSslWorks(config -> config.keystoreFromClasspath("invalid",KEY_STORE_PASSWORD)));
+        assertThrows(GenericKeyStoreException.class, () -> assertSslWorks(config -> config.keystoreFromClasspath("invalid", Server.KEY_STORE_PASSWORD)));
     }
 
     @Test
     void loadBadPasswordJKSFromClasspath() {
-        assertThrows(GenericKeyStoreException.class, () -> assertSslWorks(config -> config.keystoreFromClasspath(JKS_KEY_STORE_NAME, "invalid")));
+        assertThrows(GenericKeyStoreException.class, () -> assertSslWorks(config -> config.keystoreFromClasspath(Server.JKS_KEY_STORE_NAME, "invalid")));
     }
 
     @Test
     void loadBadPasswordP12FromClasspath() {
-        assertThrows(GenericKeyStoreException.class, () -> assertSslWorks(config -> config.keystoreFromClasspath(P12_KEY_STORE_NAME, "invalid")));
+        assertThrows(GenericKeyStoreException.class, () -> assertSslWorks(config -> config.keystoreFromClasspath(Server.P12_KEY_STORE_NAME, "invalid")));
     }
 
     @Test
     void loadKeystoreFromInvalidPath() {
-        assertThrows(GenericKeyStoreException.class, () -> assertSslWorks(config -> config.keystoreFromPath("invalid",KEY_STORE_PASSWORD)));
+        assertThrows(GenericKeyStoreException.class, () -> assertSslWorks(config -> config.keystoreFromPath("invalid", Server.KEY_STORE_PASSWORD)));
     }
 
     @Test
     void loadBadPasswordJKSFromPath() {
-        assertThrows(GenericKeyStoreException.class, () -> assertSslWorks(config -> config.keystoreFromPath(JKS_KEY_STORE_PATH, "invalid")));
+        assertThrows(GenericKeyStoreException.class, () -> assertSslWorks(config -> config.keystoreFromPath(Server.JKS_KEY_STORE_PATH, "invalid")));
     }
 
     @Test
     void loadBadPasswordP12FromPath() {
-        assertThrows(GenericKeyStoreException.class, () -> assertSslWorks(config -> config.keystoreFromPath(P12_KEY_STORE_PATH, "invalid")));
+        assertThrows(GenericKeyStoreException.class, () -> assertSslWorks(config -> config.keystoreFromPath(Server.P12_KEY_STORE_PATH, "invalid")));
     }
 
     @Test
     void loadKeystoreFromInvalidInputStream() {
-        assertThrows(GenericKeyStoreException.class, () -> assertSslWorks(config -> config.keystoreFromInputStream(InputStream.nullInputStream(), KEY_STORE_PASSWORD)));
+        assertThrows(GenericKeyStoreException.class, () -> assertSslWorks(config -> config.keystoreFromInputStream(InputStream.nullInputStream(), Server.KEY_STORE_PASSWORD)));
     }
 
     @Test
     void loadBadPasswordJKSFromInputStream() {
-        assertThrows(GenericKeyStoreException.class, () -> assertSslWorks(config -> config.keystoreFromInputStream(JKS_KEY_STORE_INPUT_STREAM_SUPPLIER.get(), "invalid")));
+        assertThrows(GenericKeyStoreException.class, () -> assertSslWorks(config -> config.keystoreFromInputStream(Server.JKS_KEY_STORE_INPUT_STREAM_SUPPLIER.get(), "invalid")));
     }
 
     @Test
     void loadBadPasswordP12FromInputStream() {
-        assertThrows(GenericKeyStoreException.class, () -> assertSslWorks(config -> config.keystoreFromInputStream(P12_KEY_STORE_INPUT_STREAM_SUPPLIER.get(), "invalid")));
+        assertThrows(GenericKeyStoreException.class, () -> assertSslWorks(config -> config.keystoreFromInputStream(Server.P12_KEY_STORE_INPUT_STREAM_SUPPLIER.get(), "invalid")));
     }
 
     @Test
     void loadMalformedJKSFromClasspath() {
-        assertThrows(GenericKeyStoreException.class, () -> assertSslWorks(config -> config.keystoreFromClasspath(MALFORMED_JKS_FILE_NAME, KEY_STORE_PASSWORD)));
+        assertThrows(GenericKeyStoreException.class, () -> assertSslWorks(config -> config.keystoreFromClasspath(MALFORMED_JKS_FILE_NAME, Server.KEY_STORE_PASSWORD)));
     }
 
     @Test
     void loadMalformedP12FromClasspath() {
-        assertThrows(GenericKeyStoreException.class, () -> assertSslWorks(config -> config.keystoreFromClasspath(MALFORMED_P12_FILE_NAME, KEY_STORE_PASSWORD)));
+        assertThrows(GenericKeyStoreException.class, () -> assertSslWorks(config -> config.keystoreFromClasspath(MALFORMED_P12_FILE_NAME, Server.KEY_STORE_PASSWORD)));
     }
 
     @Test
     void loadMalformedJKSFromPath() {
-        assertThrows(GenericKeyStoreException.class, () -> assertSslWorks(config -> config.keystoreFromPath(MALFORMED_JKS_FILE_PATH, KEY_STORE_PASSWORD)));
+        assertThrows(GenericKeyStoreException.class, () -> assertSslWorks(config -> config.keystoreFromPath(MALFORMED_JKS_FILE_PATH, Server.KEY_STORE_PASSWORD)));
     }
 
     @Test
     void loadMalformedP12FromPath() {
-        assertThrows(GenericKeyStoreException.class, () -> assertSslWorks(config -> config.keystoreFromPath(MALFORMED_P12_FILE_PATH, KEY_STORE_PASSWORD)));
+        assertThrows(GenericKeyStoreException.class, () -> assertSslWorks(config -> config.keystoreFromPath(MALFORMED_P12_FILE_PATH, Server.KEY_STORE_PASSWORD)));
     }
 
     @Test
     void loadMalformedJKSFromInputStream() {
-        assertThrows(GenericKeyStoreException.class, () -> assertSslWorks(config -> config.keystoreFromInputStream(MALFORMED_JKS_INPUT_STREAM_SUPPLIER.get(), KEY_STORE_PASSWORD)));
+        assertThrows(GenericKeyStoreException.class, () -> assertSslWorks(config -> config.keystoreFromInputStream(MALFORMED_JKS_INPUT_STREAM_SUPPLIER.get(), Server.KEY_STORE_PASSWORD)));
     }
 
     @Test
     void loadMalformedP12FromInputStream() {
-        assertThrows(GenericKeyStoreException.class, () -> assertSslWorks(config -> config.keystoreFromInputStream(MALFORMED_P12_INPUT_STREAM_SUPPLIER.get(), KEY_STORE_PASSWORD)));
+        assertThrows(GenericKeyStoreException.class, () -> assertSslWorks(config -> config.keystoreFromInputStream(MALFORMED_P12_INPUT_STREAM_SUPPLIER.get(), Server.KEY_STORE_PASSWORD)));
     }
 
 }

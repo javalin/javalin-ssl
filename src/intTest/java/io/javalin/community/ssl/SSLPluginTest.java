@@ -1,6 +1,7 @@
 package io.javalin.community.ssl;
 
 import io.javalin.Javalin;
+import io.javalin.community.ssl.certs.Server;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -31,8 +32,8 @@ public class SSLPluginTest extends IntegrationTestClass {
 
         // Create a http client that trusts the self-signed certificates
         HandshakeCertificates.Builder builder = new HandshakeCertificates.Builder();
-        builder.addTrustedCertificate(Certificates.decodeCertificatePem(CERTIFICATE_AS_STRING)); // Valid certificate from Vigo
-        builder.addTrustedCertificate(Certificates.decodeCertificatePem(NORWAY_CERTIFICATE_AS_STRING)); // Valid certificate from Bergen
+        builder.addTrustedCertificate(Certificates.decodeCertificatePem(Server.CERTIFICATE_AS_STRING)); // Valid certificate from Vigo
+        builder.addTrustedCertificate(Certificates.decodeCertificatePem(Server.NORWAY_CERTIFICATE_AS_STRING)); // Valid certificate from Bergen
         HandshakeCertificates clientCertificates = builder.build();
 
         // Two clients are needed, one for the initial connection and one for after the reload, due to the way OkHttp caches connections
@@ -42,7 +43,7 @@ public class SSLPluginTest extends IntegrationTestClass {
         SSLPlugin sslPlugin = new SSLPlugin(sslConfig -> {
             sslConfig.insecure = false;
             sslConfig.securePort = securePort;
-            sslConfig.pemFromString(NORWAY_CERTIFICATE_AS_STRING, NON_ENCRYPTED_KEY_AS_STRING);
+            sslConfig.pemFromString(Server.NORWAY_CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING);
         });
 
 
@@ -60,7 +61,7 @@ public class SSLPluginTest extends IntegrationTestClass {
 
             // Reload the identity
             sslPlugin.reload(newConf -> {
-                newConf.pemFromString(CERTIFICATE_AS_STRING, NON_ENCRYPTED_KEY_AS_STRING);
+                newConf.pemFromString(Server.CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING);
             });
             // Second connection
             res = client2.newCall(new Request.Builder().url(https).build()).execute();
@@ -80,7 +81,7 @@ public class SSLPluginTest extends IntegrationTestClass {
         List<X509Certificate> certificates = new ArrayList<>();
 
         // Create a http client that trusts the self-signed certificates
-        KeyStore keyStore = KeyStore.getInstance(new File(norwayKeyStorePath),KEY_STORE_PASSWORD.toCharArray()); // Valid certificate from Bergen
+        KeyStore keyStore = KeyStore.getInstance(new File(norwayKeyStorePath), Server.KEY_STORE_PASSWORD.toCharArray()); // Valid certificate from Bergen
         keyStore.aliases().asIterator().forEachRemaining(alias -> {
             try {
                 certificates.add((X509Certificate) keyStore.getCertificate(alias));
@@ -88,7 +89,7 @@ public class SSLPluginTest extends IntegrationTestClass {
                 fail(e);
             }
         });
-        KeyStore keyStore2 = KeyStore.getInstance(new File(vigoKeyStorePath),KEY_STORE_PASSWORD.toCharArray()); // Valid certificate from Vigo
+        KeyStore keyStore2 = KeyStore.getInstance(new File(vigoKeyStorePath), Server.KEY_STORE_PASSWORD.toCharArray()); // Valid certificate from Vigo
         keyStore2.aliases().asIterator().forEachRemaining(alias -> {
             try {
                 certificates.add((X509Certificate) keyStore2.getCertificate(alias));
@@ -111,7 +112,7 @@ public class SSLPluginTest extends IntegrationTestClass {
         SSLPlugin sslPlugin = new SSLPlugin(sslConfig -> {
             sslConfig.insecure = false;
             sslConfig.securePort = securePort;
-            sslConfig.keystoreFromPath(norwayKeyStorePath, KEY_STORE_PASSWORD);
+            sslConfig.keystoreFromPath(norwayKeyStorePath, Server.KEY_STORE_PASSWORD);
         });
 
         try (Javalin app = Javalin.create(config -> {
@@ -128,7 +129,7 @@ public class SSLPluginTest extends IntegrationTestClass {
 
             // Reload the identity
             sslPlugin.reload(newConf -> {
-                newConf.keystoreFromPath(vigoKeyStorePath, KEY_STORE_PASSWORD);
+                newConf.keystoreFromPath(vigoKeyStorePath, Server.KEY_STORE_PASSWORD);
             });
 
             // Second connection
@@ -145,7 +146,7 @@ public class SSLPluginTest extends IntegrationTestClass {
     @Test
     public void testReloadP12(){
         try {
-            testReloadIdentityKeystore(NORWAY_P12_KEY_STORE_PATH, P12_KEY_STORE_PATH);
+            testReloadIdentityKeystore(Server.NORWAY_P12_KEY_STORE_PATH, Server.P12_KEY_STORE_PATH);
         } catch (Exception e){
             fail(e);
         }
@@ -154,7 +155,7 @@ public class SSLPluginTest extends IntegrationTestClass {
     @Test
     public void testReloadJks(){
         try {
-            testReloadIdentityKeystore(NORWAY_JKS_KEY_STORE_PATH, JKS_KEY_STORE_PATH);
+            testReloadIdentityKeystore(Server.NORWAY_JKS_KEY_STORE_PATH, Server.JKS_KEY_STORE_PATH);
         } catch (Exception e){
             fail(e);
         }
@@ -177,7 +178,7 @@ public class SSLPluginTest extends IntegrationTestClass {
             Response res = new OkHttpClient().newCall(new Request.Builder().url(http).build()).execute();
             assertTrue(res.isSuccessful());
             assertThrows(IllegalStateException.class, () -> sslPlugin.reload(newConf -> {
-                newConf.pemFromString(CERTIFICATE_AS_STRING, NON_ENCRYPTED_KEY_AS_STRING);
+                newConf.pemFromString(Server.CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING);
             }));
         } catch (IOException e) {
             fail(e);
@@ -191,7 +192,7 @@ public class SSLPluginTest extends IntegrationTestClass {
             sslConfig.insecurePort = ports.getAndIncrement();
         });
         assertThrows(IllegalStateException.class, () -> sslPlugin.reload(newConf -> {
-            newConf.pemFromString(CERTIFICATE_AS_STRING, NON_ENCRYPTED_KEY_AS_STRING);
+            newConf.pemFromString(Server.CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING);
         }));
     }
 

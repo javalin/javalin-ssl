@@ -2,7 +2,6 @@ package io.javalin.community.ssl;
 
 import io.javalin.community.ssl.util.SSLUtils;
 import lombok.Getter;
-//import org.conscrypt.Conscrypt;
 import org.eclipse.jetty.server.ServerConnector;
 import org.jetbrains.annotations.Nullable;
 
@@ -84,6 +83,9 @@ public class SSLConfig {
      */
     public static class InnerConfig {
 
+        /**
+         * Type of identity loading types.
+         */
         public enum IdentityLoadingType {
             NONE,
             PEM_CLASS_PATH,
@@ -340,9 +342,12 @@ public class SSLConfig {
         inner.keyStorePassword = keyStorePassword;
     }
 
+    ///////////////////////////////////////////////////////////////
+    // Advanced Options
+    ///////////////////////////////////////////////////////////////
 
     /**
-     * Consumer to configure the different @{@link ServerConnector}s that will be created.
+     * Consumer to configure the different {@link ServerConnector} that will be created.
      * This consumer will be called as the last config step for each connector, allowing to override any previous configuration.
      */
     public Consumer<ServerConnector> configConnectors = null;
@@ -352,5 +357,21 @@ public class SSLConfig {
      */
     public Provider securityProvider = SSLUtils.getSecurityProvider();
 
+    ///////////////////////////////////////////////////////////////
+    // Trust Store
+    ///////////////////////////////////////////////////////////////
 
+    /**
+     * Trust store configuration for the server, if not set, every client will be accepted.
+     */
+    public TrustConfig trustConfig = null;
+
+    /**
+     * Trust configuration as a consumer.
+     * @param trustConfigConsumer consumer to configure the trust configuration.
+     */
+    public void withTrustConfig(Consumer<TrustConfig> trustConfigConsumer) { //TODO: Document in readme, Update TrustConfig docs and update website.
+        trustConfig = new TrustConfig();
+        trustConfigConsumer.accept(trustConfig);
+    }
 }

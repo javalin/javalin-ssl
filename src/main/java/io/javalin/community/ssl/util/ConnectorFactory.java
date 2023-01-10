@@ -22,7 +22,6 @@ public class ConnectorFactory {
 
     private SslContextFactory.Server sslContextFactory = null;
 
-
     /**
      * Create and return an insecure connector to the server.
      *

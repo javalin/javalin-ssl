@@ -1,6 +1,7 @@
 package io.javalin.community.ssl;
 
 import io.javalin.Javalin;
+import io.javalin.community.ssl.certs.Server;
 import io.javalin.community.ssl.util.SSLUtils;
 import okhttp3.OkHttpClient;
 import okhttp3.Protocol;
@@ -32,7 +33,7 @@ public class SSLConfigTests extends IntegrationTestClass {
         String https = HTTPS_URL_WITH_PORT.apply(securePort);
         try (Javalin app = IntegrationTestClass.createTestApp(config -> {
             config.insecure = false;
-            config.pemFromString(CERTIFICATE_AS_STRING, NON_ENCRYPTED_KEY_AS_STRING);
+            config.pemFromString(Server.CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING);
             config.securePort = securePort;
             config.insecurePort = insecurePort;
         }).start()) {
@@ -84,7 +85,7 @@ public class SSLConfigTests extends IntegrationTestClass {
     void testSecurePortChange() {
         try (Javalin ignored = IntegrationTestClass.createTestApp(config -> {
             config.insecure = false;
-            config.pemFromString(CERTIFICATE_AS_STRING, NON_ENCRYPTED_KEY_AS_STRING);
+            config.pemFromString(Server.CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING);
             config.securePort = 8443;
         }).start()) {
             Response response = getClient().newCall(new Request.Builder().url("https://localhost:8443/").build()).execute(); // should not throw exception
@@ -135,7 +136,7 @@ public class SSLConfigTests extends IntegrationTestClass {
         String https = HTTPS_URL_WITH_PORT.apply(securePort);
         try (Javalin ignored = IntegrationTestClass.createTestApp(config -> {
             config.http2 = false;
-            config.pemFromString(CERTIFICATE_AS_STRING, NON_ENCRYPTED_KEY_AS_STRING);
+            config.pemFromString(Server.CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING);
             config.securePort = securePort;
             config.insecurePort = insecurePort;
         }).start()) {
@@ -170,7 +171,7 @@ public class SSLConfigTests extends IntegrationTestClass {
         int securePort = ports.getAndIncrement();
         String https = HTTPS_URL_WITH_PORT.apply(securePort);
         try (Javalin ignored = IntegrationTestClass.createTestApp(config -> {
-            config.pemFromString(CERTIFICATE_AS_STRING, NON_ENCRYPTED_KEY_AS_STRING);
+            config.pemFromString(Server.CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING);
             config.securePort = securePort;
             config.insecurePort = insecurePort;
         }).start()) {
@@ -189,7 +190,7 @@ public class SSLConfigTests extends IntegrationTestClass {
         try (Javalin ignored = IntegrationTestClass.createTestApp(config -> {
             config.insecurePort = insecurePort;
             config.securePort = securePort;
-            config.pemFromString(CERTIFICATE_AS_STRING, NON_ENCRYPTED_KEY_AS_STRING);
+            config.pemFromString(Server.CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING);
         }).start()) {
             testSuccessfulEndpoint(http, Protocol.HTTP_1_1);
             testSuccessfulEndpoint(https, Protocol.HTTP_2);
@@ -207,7 +208,7 @@ public class SSLConfigTests extends IntegrationTestClass {
         try (Javalin ignored = IntegrationTestClass.createTestApp(config -> {
             config.insecurePort = insecurePort;
             config.securePort = securePort;
-            config.pemFromString(CERTIFICATE_AS_STRING, NON_ENCRYPTED_KEY_AS_STRING);
+            config.pemFromString(Server.CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING);
             config.host = "localhost";
         }).start()) {
             testSuccessfulEndpoint(http, Protocol.HTTP_1_1);
@@ -224,7 +225,7 @@ public class SSLConfigTests extends IntegrationTestClass {
         try (Javalin ignored1 = IntegrationTestClass.createTestApp(config -> {
             config.insecurePort = insecurePort;
             config.securePort = securePort;
-            config.pemFromString(CERTIFICATE_AS_STRING, NON_ENCRYPTED_KEY_AS_STRING);
+            config.pemFromString(Server.CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING);
             config.host = "wronghost";
         }).start()) {
             fail();
@@ -241,7 +242,7 @@ public class SSLConfigTests extends IntegrationTestClass {
         try (Javalin ignored = IntegrationTestClass.createTestApp(config -> {
             config.insecurePort = insecurePort;
             config.securePort = securePort;
-            config.pemFromString(CERTIFICATE_AS_STRING, NON_ENCRYPTED_KEY_AS_STRING);
+            config.pemFromString(Server.CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING);
             config.host = "localhost";
             config.sniHostCheck = true;
         }).start()) {
@@ -262,7 +263,7 @@ public class SSLConfigTests extends IntegrationTestClass {
         try (Javalin ignored = IntegrationTestClass.createTestApp(config -> {
             config.insecurePort = insecurePort;
             config.securePort = securePort;
-            config.pemFromString(GOOGLE_CERTIFICATE_AS_STRING, GOOGLE_KEY_AS_STRING);
+            config.pemFromString(Server.GOOGLE_CERTIFICATE_AS_STRING, Server.GOOGLE_KEY_AS_STRING);
             config.host = "localhost";
             config.sniHostCheck = true;
         }).start()) {
@@ -288,7 +289,7 @@ public class SSLConfigTests extends IntegrationTestClass {
         try (Javalin ignored = IntegrationTestClass.createTestApp(config -> {
             config.insecurePort = insecurePort;
             config.securePort = securePort;
-            config.pemFromString(GOOGLE_CERTIFICATE_AS_STRING, GOOGLE_KEY_AS_STRING);
+            config.pemFromString(Server.GOOGLE_CERTIFICATE_AS_STRING, Server.GOOGLE_KEY_AS_STRING);
             config.host = "localhost";
             config.sniHostCheck = false;
         }).start()) {
@@ -308,7 +309,7 @@ public class SSLConfigTests extends IntegrationTestClass {
         try (Javalin app = IntegrationTestClass.createTestApp(config -> {
             config.insecurePort = insecurePort;
             config.securePort = securePort;
-            config.pemFromString(CERTIFICATE_AS_STRING, NON_ENCRYPTED_KEY_AS_STRING);
+            config.pemFromString(Server.CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING);
             config.configConnectors = connector -> {
                 connector.setIdleTimeout(1000);
                 connector.setName("customName");
@@ -332,7 +333,7 @@ public class SSLConfigTests extends IntegrationTestClass {
         try (Javalin app = IntegrationTestClass.createTestApp(config -> {
             config.insecure = false;
             config.securePort = securePort;
-            config.pemFromString(CERTIFICATE_AS_STRING, NON_ENCRYPTED_KEY_AS_STRING);
+            config.pemFromString(Server.CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING);
             config.securityProvider = null;
         }).start()) {
             printSecurityProviderName(app);
@@ -349,7 +350,7 @@ public class SSLConfigTests extends IntegrationTestClass {
         try (Javalin app = IntegrationTestClass.createTestApp(config -> {
             config.insecure = false;
             config.securePort = securePort;
-            config.pemFromString(CERTIFICATE_AS_STRING, NON_ENCRYPTED_KEY_AS_STRING);
+            config.pemFromString(Server.CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING);
         }).start()) {
             printSecurityProviderName(app);
             testSuccessfulEndpoint(https, Protocol.HTTP_2);
@@ -368,7 +369,7 @@ public class SSLConfigTests extends IntegrationTestClass {
         try (Javalin app = IntegrationTestClass.createTestApp(config -> {
             config.insecure = false;
             config.securePort = securePort;
-            config.pemFromString(CERTIFICATE_AS_STRING, NON_ENCRYPTED_KEY_AS_STRING);
+            config.pemFromString(Server.CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING);
         }).start()) {
             printSecurityProviderName(app);
             assertTrue(getSecurityProviderName(app).contains("Conscrypt"));

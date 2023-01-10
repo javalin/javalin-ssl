@@ -142,10 +142,9 @@ public class SSLPlugin implements Plugin {
         if (config.secure || config.enableHttp3) {
             sslFactory = getSslFactory(config);
             sslContextFactory =
-                createSslContextFactory(sslFactory);
+                createSslContextFactory(sslFactory, config);
         } else {
-            sslContextFactory =
-                null;
+            sslContextFactory =  null;
         }
 
         return (server) -> {
