@@ -2,6 +2,7 @@ package io.javalin.community.ssl.certs;
 
 import io.javalin.Javalin;
 import io.javalin.community.ssl.IntegrationTestClass;
+import io.javalin.community.ssl.SSLPlugin;
 import nl.altindag.ssl.SSLFactory;
 import nl.altindag.ssl.util.PemUtils;
 import okhttp3.OkHttpClient;
@@ -18,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests for the testing the trust of Certificates using a CA.
- * <a href="https://github.com/javalin/javalin-ssl/issues/56#issuecomment-1378373123">...</a>
+ * <a href="https://github.com/javalin/javalin-ssl/issues/56#issuecomment-1378373123">issue</a>
  */
 @Tag("integration")
 public class CertificateAuthorityTests extends IntegrationTestClass {
@@ -37,11 +38,14 @@ public class CertificateAuthorityTests extends IntegrationTestClass {
         assertEquals(200, response.code());
         assertEquals(SUCCESS, Objects.requireNonNull(response.body()).string());
         response.close();
+        client.connectionPool().evictAll();
+
     }
 
     protected static void testWrongCertOnEndpoint(String url, OkHttpClient client) {
         assertThrows(Exception.class, () -> {
-            client.newCall(new Request.Builder().url(url).build()).execute();
+            client.newCall(new Request.Builder().url(url).build()).execute().close();
+            client.connectionPool().evictAll();
         });
     }
 
@@ -113,9 +117,9 @@ public class CertificateAuthorityTests extends IntegrationTestClass {
     }
 
     @Test
-    void selfsignedCertificateFails(){
+    void selfsignedCertificateFails() {
         SSLFactory sslFactory = SSLFactory.builder()
-            .withIdentityMaterial(PemUtils.parseIdentityMaterial(Client.CLIENT_CERTIFICATE_AS_STRING, Client.CLIENT_PRIVATE_KEY_AS_STRING,"".toCharArray()))
+            .withIdentityMaterial(PemUtils.parseIdentityMaterial(Client.CLIENT_CERTIFICATE_AS_STRING, Client.CLIENT_PRIVATE_KEY_AS_STRING, "".toCharArray()))
             .withTrustingAllCertificatesWithoutValidation()
             .build();
 
@@ -127,7 +131,7 @@ public class CertificateAuthorityTests extends IntegrationTestClass {
     }
 
     @Test
-    void certificateWithoutChainFails(){
+    void certificateWithoutChainFails() {
         final X509ExtendedKeyManager keyManager = PemUtils.loadIdentityMaterial(CLIENT_CER, CLIENT_KEY_NAME);
 
         SSLFactory sslFactory = SSLFactory.builder()
@@ -140,5 +144,77 @@ public class CertificateAuthorityTests extends IntegrationTestClass {
         builder.hostnameVerifier(sslFactory.getHostnameVerifier());
         assertClientFails(builder.build());
     }
-    
+
+    @Test
+    void mTLSWithIntermediateIssuerCAAndTrustedRootWorks() {
+        final X509ExtendedKeyManager keyManager = PemUtils.loadIdentityMaterial(CLIENT_FULLCHAIN_CER, CLIENT_KEY_NAME);
+
+        SSLFactory sslFactory = SSLFactory.builder()
+            .withIdentityMaterial(keyManager)
+            .withTrustMaterial(PemUtils.loadTrustMaterial(ROOT_CERT_NAME))
+            .withUnsafeHostnameVerifier() // we don't care about the hostname, we just want to test the certificate
+            .build();
+
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        builder.sslSocketFactory(sslFactory.getSslSocketFactory(), sslFactory.getTrustManager().orElseThrow());
+        builder.hostnameVerifier(sslFactory.getHostnameVerifier());
+        assertClientWorks(builder.build());
+    }
+
+    @Test
+    void mTLSWithHotReloadingWorks() {
+        final X509ExtendedKeyManager keyManager = PemUtils.loadIdentityMaterial(CLIENT_FULLCHAIN_CER, CLIENT_KEY_NAME);
+
+        SSLFactory sslFactory = SSLFactory.builder()
+            .withIdentityMaterial(keyManager)
+            .withTrustMaterial(PemUtils.loadTrustMaterial(ROOT_CERT_NAME)) // root cert of the client above
+            .withUnsafeHostnameVerifier() // we don't care about the hostname, we just want to test the certificate
+            .build();
+
+        OkHttpClient client = new OkHttpClient.Builder()
+            .sslSocketFactory(sslFactory.getSslSocketFactory(), sslFactory.getTrustManager().orElseThrow())
+            .hostnameVerifier(sslFactory.getHostnameVerifier())
+            .build();
+
+        int securePort = ports.getAndIncrement();
+        String url = HTTPS_URL_WITH_PORT.apply(securePort);
+
+        SSLPlugin sslPlugin = new SSLPlugin(config -> {
+            config.insecure = false;
+            config.securePort = securePort;
+            config.pemFromClasspath(SERVER_CERT_NAME, SERVER_KEY_NAME);
+            config.http2 = false;
+            config.configConnectors = (conn) -> conn.setIdleTimeout(0); // disable idle timeout for testing
+            config.withTrustConfig(trustConfig -> {
+                trustConfig.certificateFromClasspath(ROOT_CERT_NAME);
+            });
+        });
+
+
+        try (Javalin app = Javalin.create((javalinConfig) -> {
+            javalinConfig.showJavalinBanner = false;
+            javalinConfig.plugins.register(sslPlugin);
+        }).get("/", ctx -> ctx.result(SUCCESS))
+            .start()) {
+            testSuccessfulEndpoint(url, client); // works
+            sslPlugin.reload(config -> {
+                config.pemFromClasspath(SERVER_CERT_NAME, SERVER_KEY_NAME);
+                config.withTrustConfig(trustConfig -> {
+                    trustConfig.certificateFromClasspath(Server.CERTIFICATE_FILE_NAME); // this is some other certificate
+                });
+            });
+            testWrongCertOnEndpoint(url, client); // fails because the server now has a different trust material
+            sslPlugin.reload(config -> {
+                config.pemFromClasspath(SERVER_CERT_NAME, SERVER_KEY_NAME);
+                config.withTrustConfig(trustConfig -> {
+                    trustConfig.certificateFromClasspath(ROOT_CERT_NAME); // back to the original certificate
+                });
+            });
+            testSuccessfulEndpoint(url, client); // works again
+        } catch (Exception e) {
+            fail(e);
+        }
+    }
+
+
 }
