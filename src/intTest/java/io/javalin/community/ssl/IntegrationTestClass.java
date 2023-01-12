@@ -40,12 +40,30 @@ public abstract class IntegrationTestClass {
 
     public static final Function<Integer, String> HTTPS_URL_WITH_PORT = (Integer port) -> String.format("https://localhost:%s/", port);
     public static final Function<Integer, String> HTTP_URL_WITH_PORT = (Integer port) -> String.format("http://localhost:%s/", port);
+
+    public static final X509TrustManager[] trustAllCerts = new X509TrustManager[]{new X509TrustManager() {
+        @Override
+        public void checkClientTrusted(X509Certificate[] chain, String authType) {
+        }
+
+        @Override
+        public void checkServerTrusted(X509Certificate[] chain, String authType) {
+        }
+
+        @Override
+        public X509Certificate[] getAcceptedIssuers() {
+            return new X509Certificate[]{};
+        }
+    }};
+
     protected static final AtomicInteger ports = new AtomicInteger(10000);
     @Getter
     private static final OkHttpClient client = createHttpsClient();
 
     @Getter
     private static final OkHttpClient untrustedClient = untrustedHttpsClient();
+
+
 
     private static OkHttpClient createHttpsClient() {
         HandshakeCertificates.Builder builder = new HandshakeCertificates.Builder();
@@ -71,20 +89,6 @@ public abstract class IntegrationTestClass {
 
     @NotNull
     protected static OkHttpClient.Builder untrustedClientBuilder() {
-        TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
-            @Override
-            public void checkClientTrusted(X509Certificate[] chain, String authType) {
-            }
-
-            @Override
-            public void checkServerTrusted(X509Certificate[] chain, String authType) {
-            }
-
-            @Override
-            public X509Certificate[] getAcceptedIssuers() {
-                return new X509Certificate[]{};
-            }
-        }};
 
         SSLContext sslContext;
         try {
