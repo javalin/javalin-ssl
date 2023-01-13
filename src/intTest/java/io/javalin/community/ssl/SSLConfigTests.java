@@ -10,6 +10,7 @@ import okhttp3.Response;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.SslConnectionFactory;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
@@ -26,6 +27,7 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 public class SSLConfigTests extends IntegrationTestClass {
 
     @Test
+    @DisplayName("Test that the insecure connector is disabled when insecure is set to false")
     void testDisableInsecure() {
         int insecurePort = ports.getAndIncrement();
         int securePort = ports.getAndIncrement();
@@ -48,6 +50,7 @@ public class SSLConfigTests extends IntegrationTestClass {
     }
 
     @Test
+    @DisplayName("Test that the secure connector is disabled when insecure is set to true")
     void testDisableSecure() {
         int insecurePort = ports.getAndIncrement();
         int securePort = ports.getAndIncrement();
@@ -68,6 +71,7 @@ public class SSLConfigTests extends IntegrationTestClass {
     }
 
     @Test
+    @DisplayName("Test that the insecure port can be changed")
     void testInsecurePortChange() {
         try (Javalin ignored = IntegrationTestClass.createTestApp(config -> {
             config.secure = false;
@@ -82,6 +86,7 @@ public class SSLConfigTests extends IntegrationTestClass {
     }
 
     @Test
+    @DisplayName("Test that the secure port can be changed")
     void testSecurePortChange() {
         try (Javalin ignored = IntegrationTestClass.createTestApp(config -> {
             config.insecure = false;
@@ -97,6 +102,7 @@ public class SSLConfigTests extends IntegrationTestClass {
     }
 
     @Test
+    @DisplayName("Test that the insecure connector works with http1.1")
     void testInsecureHttp1() {
         int insecurePort = ports.getAndIncrement();
         String http = HTTP_URL_WITH_PORT.apply(insecurePort);
@@ -112,6 +118,7 @@ public class SSLConfigTests extends IntegrationTestClass {
     }
 
     @Test
+    @DisplayName("Test that http2 can be disabled on the insecure connector")
     void testInsecureDisableHttp2() {
         OkHttpClient http2client = new OkHttpClient.Builder().protocols(Collections.singletonList(Protocol.H2_PRIOR_KNOWLEDGE)).build();
         OkHttpClient http1Client = new OkHttpClient.Builder().build();
@@ -130,6 +137,7 @@ public class SSLConfigTests extends IntegrationTestClass {
     }
 
     @Test
+    @DisplayName("Test that http2 can be disabled on the secure connector")
     void testSecureDisableHttp2() {
         int insecurePort = ports.getAndIncrement();
         int securePort = ports.getAndIncrement();
@@ -147,6 +155,7 @@ public class SSLConfigTests extends IntegrationTestClass {
     }
 
     @Test
+    @DisplayName("Test that the insecure connector works with http2")
     void testInsecureHttp2() {
         OkHttpClient client = new OkHttpClient.Builder().protocols(Collections.singletonList(Protocol.H2_PRIOR_KNOWLEDGE)).build();
         int insecurePort = ports.getAndIncrement();
@@ -166,6 +175,7 @@ public class SSLConfigTests extends IntegrationTestClass {
     }
 
     @Test
+    @DisplayName("Test that the secure connector works with http2")
     void testSecureHttp2() {
         int insecurePort = ports.getAndIncrement();
         int securePort = ports.getAndIncrement();
@@ -182,6 +192,7 @@ public class SSLConfigTests extends IntegrationTestClass {
     }
 
     @Test
+    @DisplayName("Test that by default both connectors are enabled, and that http1 and http2 works")
     void testDefault() {
         int insecurePort = ports.getAndIncrement();
         int securePort = ports.getAndIncrement();
@@ -200,6 +211,7 @@ public class SSLConfigTests extends IntegrationTestClass {
     }
 
     @Test
+    @DisplayName("Test that the host can be changed")
     void testMatchingHost() {
         int insecurePort = ports.getAndIncrement();
         int securePort = ports.getAndIncrement();
@@ -219,6 +231,7 @@ public class SSLConfigTests extends IntegrationTestClass {
     }
 
     @Test
+    @DisplayName("Test that the host change fails when it doesn't match")
     void testWrongHost() {
         int insecurePort = ports.getAndIncrement();
         int securePort = ports.getAndIncrement();
@@ -234,6 +247,7 @@ public class SSLConfigTests extends IntegrationTestClass {
     }
 
     @Test
+    @DisplayName("Test that sniHostCheck works when it matches")
     void testEnabledSniHostCheckAndMatchingHostname() {
         int insecurePort = ports.getAndIncrement();
         int securePort = ports.getAndIncrement();
@@ -255,6 +269,7 @@ public class SSLConfigTests extends IntegrationTestClass {
     }
 
     @Test
+    @DisplayName("Test that sniHostCheck fails when it doesn't match over https")
     void testEnabledSniHostCheckAndWrongHostname() {
         int insecurePort = ports.getAndIncrement();
         int securePort = ports.getAndIncrement();
@@ -281,6 +296,7 @@ public class SSLConfigTests extends IntegrationTestClass {
     }
 
     @Test
+    @DisplayName("Test that sniHostCheck can be disabled and a request with a wrong hostname can be made")
     void testDisabledSniHostCheck() {
         int insecurePort = ports.getAndIncrement();
         int securePort = ports.getAndIncrement();
@@ -301,6 +317,7 @@ public class SSLConfigTests extends IntegrationTestClass {
     }
 
     @Test
+    @DisplayName("Test that the connectors can be configured through the consumer")
     void testConnectorConfigConsumer(){
         int insecurePort = ports.getAndIncrement();
         int securePort = ports.getAndIncrement();
@@ -327,6 +344,7 @@ public class SSLConfigTests extends IntegrationTestClass {
     }
 
     @Test
+    @DisplayName("Test that the Security Provider can be automatically configured when the config is set to null")
     void testNullSecurityProvider(){
         int securePort = ports.getAndIncrement();
         String https = HTTPS_URL_WITH_PORT.apply(securePort);
@@ -344,6 +362,7 @@ public class SSLConfigTests extends IntegrationTestClass {
     }
 
     @Test
+    @DisplayName("Test that the Security Provider works when it is set to the default")
     void testDefaultSecurityProvider(){
         int securePort = ports.getAndIncrement();
         String https = HTTPS_URL_WITH_PORT.apply(securePort);
@@ -361,8 +380,9 @@ public class SSLConfigTests extends IntegrationTestClass {
 
     @Test
     @EnabledOnOs({OS.LINUX, OS.MAC, OS.WINDOWS})
+    @DisplayName("Test the ability to detect if the OS supports Conscrypt")
     void checkSupportedOsUsesConscrypt() {
-        assumeTrue(SSLUtils.osIs64Bit());
+        assumeTrue(SSLUtils.osIsAmd64());
 
         int securePort = ports.getAndIncrement();
         String https = HTTPS_URL_WITH_PORT.apply(securePort);

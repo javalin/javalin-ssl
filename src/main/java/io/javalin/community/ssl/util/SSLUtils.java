@@ -179,7 +179,7 @@ public class SSLUtils {
         if (osName.contains("windows")) {
             return true;
         } else if (osName.contains("linux") || (osName.contains("macosx") || osName.contains("osx"))) {
-            return osIs64Bit();
+            return osIsAmd64();
         } else {
             return false;
         }
@@ -190,7 +190,7 @@ public class SSLUtils {
      *
      * @return true if the current OS runs on an x86_64 architecture.
      */
-    public static boolean osIs64Bit() {
+    public static boolean osIsAmd64() {
         String osArch = System.getProperty("os.arch").toLowerCase();
         osArch = osArch.replaceAll("[^a-z0-9]", "");
 

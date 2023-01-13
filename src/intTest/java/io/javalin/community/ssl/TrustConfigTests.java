@@ -8,6 +8,7 @@ import okhttp3.Response;
 import okhttp3.tls.Certificates;
 import okhttp3.tls.HandshakeCertificates;
 import okhttp3.tls.HeldCertificate;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -110,6 +111,7 @@ public class TrustConfigTests extends IntegrationTestClass {
     }
 
     @Test
+    @DisplayName("Client with no certificate should not be able to access the server")
     void unauthenticatedUserFails() {
         OkHttpClient unauthClient = IntegrationTestClass.getClient(); //This is the client without the client certificate
 
@@ -133,6 +135,7 @@ public class TrustConfigTests extends IntegrationTestClass {
     }
 
     @Test
+    @DisplayName("Client with a wrong certificate should not be able to access the server")
     void wrongCertificateFails() {
         int securePort = ports.getAndIncrement();
         String url = HTTPS_URL_WITH_PORT.apply(securePort);
@@ -202,6 +205,7 @@ public class TrustConfigTests extends IntegrationTestClass {
     }
 
     @Test
+    @DisplayName("Loading PEM from a path works")
     void pemFromPathWorks() {
         trustConfigWorks(trustConfig -> {
             trustConfig.certificateFromPath(Client.CLIENT_PEM_PATH);
@@ -209,6 +213,7 @@ public class TrustConfigTests extends IntegrationTestClass {
     }
 
     @Test
+    @DisplayName("Loading P7B from a path works")
     void p7bFromPathWorks() {
         trustConfigWorks(trustConfig -> {
             trustConfig.certificateFromPath(Client.CLIENT_P7B_PATH);
@@ -216,6 +221,7 @@ public class TrustConfigTests extends IntegrationTestClass {
     }
 
     @Test
+    @DisplayName("Loading DER from a path works")
     void derFromPathWorks() {
         trustConfigWorks(trustConfig -> {
             trustConfig.certificateFromPath(Client.CLIENT_DER_PATH);
@@ -223,6 +229,7 @@ public class TrustConfigTests extends IntegrationTestClass {
     }
 
     @Test
+    @DisplayName("Loading PEM from the classpath works")
     void pemFromClasspathWorks() {
         trustConfigWorks(trustConfig -> {
             trustConfig.certificateFromClasspath(Client.CLIENT_PEM_FILE_NAME);
@@ -230,6 +237,7 @@ public class TrustConfigTests extends IntegrationTestClass {
     }
 
     @Test
+    @DisplayName("Loading P7B from the classpath works")
     void p7bFromClasspathWorks() {
         trustConfigWorks(trustConfig -> {
             trustConfig.certificateFromClasspath(Client.CLIENT_P7B_FILE_NAME);
@@ -237,6 +245,7 @@ public class TrustConfigTests extends IntegrationTestClass {
     }
 
     @Test
+    @DisplayName("Loading DER from the classpath works")
     void derFromClasspathWorks() {
         trustConfigWorks(trustConfig -> {
             trustConfig.certificateFromClasspath(Client.CLIENT_DER_FILE_NAME);
@@ -244,6 +253,7 @@ public class TrustConfigTests extends IntegrationTestClass {
     }
 
     @Test
+    @DisplayName("Loading PEM from an input stream works")
     void pemFromInputStreamWorks() {
         trustConfigWorks(trustConfig -> {
             trustConfig.certificateFromInputStream(Client.CLIENT_PEM_INPUT_STREAM_SUPPLIER.get());
@@ -251,6 +261,7 @@ public class TrustConfigTests extends IntegrationTestClass {
     }
 
     @Test
+    @DisplayName("Loading P7B from an input stream works")
     void p7bFromInputStreamWorks() {
         trustConfigWorks(trustConfig -> {
             trustConfig.certificateFromInputStream(Client.CLIENT_P7B_INPUT_STREAM_SUPPLIER.get());
@@ -258,6 +269,7 @@ public class TrustConfigTests extends IntegrationTestClass {
     }
 
     @Test
+    @DisplayName("Loading DER from an input stream works")
     void derFromInputStreamWorks() {
         trustConfigWorks(trustConfig -> {
             trustConfig.certificateFromInputStream(Client.CLIENT_DER_INPUT_STREAM_SUPPLIER.get());
@@ -265,6 +277,15 @@ public class TrustConfigTests extends IntegrationTestClass {
     }
 
     @Test
+    @DisplayName("Loading PEM from a string works")
+    void pemFromStringWorks() {
+        trustConfigWorks(trustConfig -> {
+            trustConfig.pemFromString(Client.CLIENT_CERTIFICATE_AS_STRING);
+        });
+    }
+
+    @Test
+    @DisplayName("Loading P7B from a string works")
     void p7bFromStringWorks() {
         trustConfigWorks(trustConfig -> {
             trustConfig.p7bCertificateFromString(Client.CLIENT_P7B_CERTIFICATE_AS_STRING);
@@ -272,14 +293,7 @@ public class TrustConfigTests extends IntegrationTestClass {
     }
 
     @Test
-    void pemFromStringWorks() {
-        trustConfigWorks(trustConfig -> {
-            trustConfig.pemFromString(Client.CLIENT_CERTIFICATE_AS_STRING);
-        });
-    }
-
-
-    @Test
+    @DisplayName("Loading a JKS Keystore from a path works")
     void jksFromPathWorks() {
         trustConfigWorks(trustConfig -> {
             trustConfig.trustStoreFromPath(Client.CLIENT_JKS_PATH, Client.KEYSTORE_PASSWORD);
@@ -287,6 +301,7 @@ public class TrustConfigTests extends IntegrationTestClass {
     }
 
     @Test
+    @DisplayName("Loading a P12 Keystore from a path works")
     void p12FromPathWorks() {
         trustConfigWorks(trustConfig -> {
             trustConfig.trustStoreFromPath(Client.CLIENT_P12_PATH, Client.KEYSTORE_PASSWORD);
@@ -294,6 +309,7 @@ public class TrustConfigTests extends IntegrationTestClass {
     }
 
     @Test
+    @DisplayName("Loading a JKS Keystore from the classpath works")
     void jksFromClasspathWorks() {
         trustConfigWorks(trustConfig -> {
             trustConfig.trustStoreFromClasspath(Client.CLIENT_JKS_FILE_NAME, Client.KEYSTORE_PASSWORD);
@@ -301,6 +317,7 @@ public class TrustConfigTests extends IntegrationTestClass {
     }
 
     @Test
+    @DisplayName("Loading a P12 Keystore from the classpath works")
     void p12FromClasspathWorks() {
         trustConfigWorks(trustConfig -> {
             trustConfig.trustStoreFromClasspath(Client.CLIENT_P12_FILE_NAME, Client.KEYSTORE_PASSWORD);
@@ -308,6 +325,7 @@ public class TrustConfigTests extends IntegrationTestClass {
     }
 
     @Test
+    @DisplayName("Loading a JKS Keystore from an input stream works")
     void jksFromInputStreamWorks() {
         trustConfigWorks(trustConfig -> {
             trustConfig.trustStoreFromInputStream(Client.CLIENT_JKS_INPUT_STREAM_SUPPLIER.get(), Client.KEYSTORE_PASSWORD);
@@ -315,6 +333,7 @@ public class TrustConfigTests extends IntegrationTestClass {
     }
 
     @Test
+    @DisplayName("Loading a P12 Keystore from an input stream works")
     void p12FromInputStreamWorks() {
         trustConfigWorks(trustConfig -> {
             trustConfig.trustStoreFromInputStream(Client.CLIENT_P12_INPUT_STREAM_SUPPLIER.get(), Client.KEYSTORE_PASSWORD);

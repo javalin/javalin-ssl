@@ -8,6 +8,7 @@ import nl.altindag.ssl.util.PemUtils;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -88,8 +89,8 @@ public class CertificateAuthorityTests extends IntegrationTestClass {
     }
 
     @Test
+    @DisplayName("Client certificate works when trusting root CA")
     void clientCertificateWorksWhenTrustingRootCA() {
-
         final X509ExtendedKeyManager keyManager = PemUtils.loadIdentityMaterial(CLIENT_FULLCHAIN_CER, CLIENT_KEY_NAME);
 
         SSLFactory sslFactory = SSLFactory.builder()
@@ -104,6 +105,7 @@ public class CertificateAuthorityTests extends IntegrationTestClass {
     }
 
     @Test
+    @DisplayName("Client fails when no certificate is provided")
     void noCertificateFails() {
         SSLFactory sslFactory = SSLFactory.builder()
             .withTrustingAllCertificatesWithoutValidation()
@@ -117,6 +119,7 @@ public class CertificateAuthorityTests extends IntegrationTestClass {
     }
 
     @Test
+    @DisplayName("Client fails when a self-signed certificate is provided, and a CA is trusted")
     void selfsignedCertificateFails() {
         SSLFactory sslFactory = SSLFactory.builder()
             .withIdentityMaterial(PemUtils.parseIdentityMaterial(Client.CLIENT_CERTIFICATE_AS_STRING, Client.CLIENT_PRIVATE_KEY_AS_STRING, "".toCharArray()))
@@ -131,7 +134,9 @@ public class CertificateAuthorityTests extends IntegrationTestClass {
     }
 
     @Test
+    @DisplayName("Client fails when a certificate without chain is provided, and a CA is trusted")
     void certificateWithoutChainFails() {
+
         final X509ExtendedKeyManager keyManager = PemUtils.loadIdentityMaterial(CLIENT_CER, CLIENT_KEY_NAME);
 
         SSLFactory sslFactory = SSLFactory.builder()
@@ -146,6 +151,7 @@ public class CertificateAuthorityTests extends IntegrationTestClass {
     }
 
     @Test
+    @DisplayName("mTLS works when trusting a root CA, and an intermediate CA issues both the client and server certificates")
     void mTLSWithIntermediateIssuerCAAndTrustedRootWorks() {
         final X509ExtendedKeyManager keyManager = PemUtils.loadIdentityMaterial(CLIENT_FULLCHAIN_CER, CLIENT_KEY_NAME);
 
@@ -162,6 +168,7 @@ public class CertificateAuthorityTests extends IntegrationTestClass {
     }
 
     @Test
+    @DisplayName("Hot reloading works when using mTLS")
     void mTLSWithHotReloadingWorks() {
         final X509ExtendedKeyManager keyManager = PemUtils.loadIdentityMaterial(CLIENT_FULLCHAIN_CER, CLIENT_KEY_NAME);
 

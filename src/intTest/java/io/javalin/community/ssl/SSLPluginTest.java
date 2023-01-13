@@ -7,6 +7,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.tls.Certificates;
 import okhttp3.tls.HandshakeCertificates;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -26,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class SSLPluginTest extends IntegrationTestClass {
 
     @Test
+    @DisplayName("Test the reload of a pem identity")
     public void testReloadIdentityPemCert() {
         int securePort = ports.getAndIncrement();
         String https = HTTPS_URL_WITH_PORT.apply(securePort);
@@ -71,7 +73,6 @@ public class SSLPluginTest extends IntegrationTestClass {
         } catch (IOException e) {
             fail(e);
         }
-
     }
 
     public void testReloadIdentityKeystore(String norwayKeyStorePath, String vigoKeyStorePath) throws CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException {
@@ -144,6 +145,7 @@ public class SSLPluginTest extends IntegrationTestClass {
     }
 
     @Test
+    @DisplayName("Test the reload of a p12 identity")
     public void testReloadP12(){
         try {
             testReloadIdentityKeystore(Server.NORWAY_P12_KEY_STORE_PATH, Server.P12_KEY_STORE_PATH);
@@ -153,6 +155,7 @@ public class SSLPluginTest extends IntegrationTestClass {
     }
 
     @Test
+    @DisplayName("Test the reload of JKS identity")
     public void testReloadJks(){
         try {
             testReloadIdentityKeystore(Server.NORWAY_JKS_KEY_STORE_PATH, Server.JKS_KEY_STORE_PATH);
@@ -162,6 +165,7 @@ public class SSLPluginTest extends IntegrationTestClass {
     }
 
     @Test
+    @DisplayName("Test that the reload of a server with no SSL connector fails")
     public void testReloadIdentityNonSslServer(){
         int insecurePort = ports.getAndIncrement();
         String http = HTTP_URL_WITH_PORT.apply(insecurePort);
@@ -186,6 +190,7 @@ public class SSLPluginTest extends IntegrationTestClass {
     }
 
     @Test
+    @DisplayName("Test that the reload of a non started server fails")
     public void testReloadIdentityNonStartedServer(){
         SSLPlugin sslPlugin = new SSLPlugin(sslConfig -> {
             sslConfig.secure = false;
