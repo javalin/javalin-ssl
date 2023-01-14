@@ -348,9 +348,21 @@ public class SSLConfig {
 
     /**
      * Consumer to configure the different {@link ServerConnector} that will be created.
+     * This consumer will be called as the last config step for each connector,
+     * allowing to override any previous configuration.
+     * @deprecated Use {@link #configConnectors(Consumer<ServerConnector>)} instead, access modifier will be changed
+     * to private in the next major release.
+     */
+    @Getter
+    public Consumer<ServerConnector> configConnectors = null;
+
+    /**
+     * Consumer to configure the different {@link ServerConnector} that will be created.
      * This consumer will be called as the last config step for each connector, allowing to override any previous configuration.
      */
-    public Consumer<ServerConnector> configConnectors = null;
+    public void configConnectors(Consumer<ServerConnector> configConnectors) {
+        this.configConnectors = configConnectors;
+    }
 
     /**
      * Security provider to use for the SSLContext.
@@ -364,7 +376,8 @@ public class SSLConfig {
     /**
      * Trust store configuration for the server, if not set, every client will be accepted.
      */
-    public TrustConfig trustConfig = null;
+    @Getter
+    private TrustConfig trustConfig = null;
 
     /**
      * Trust configuration as a consumer.

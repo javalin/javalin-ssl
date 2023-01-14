@@ -59,9 +59,7 @@ public class CertificateAuthorityTests extends IntegrationTestClass {
             config.securePort = securePort;
             config.pemFromClasspath(SERVER_CERT_NAME, SERVER_KEY_NAME);
             config.http2 = false;
-            config.withTrustConfig(trustConfig -> {
-                trustConfig.certificateFromClasspath(ROOT_CERT_NAME);
-            });
+            config.withTrustConfig(trustConfig -> trustConfig.certificateFromClasspath(ROOT_CERT_NAME));
         }).start()) {
             testSuccessfulEndpoint(url, client);
         } catch (Exception e) {
@@ -78,9 +76,7 @@ public class CertificateAuthorityTests extends IntegrationTestClass {
             config.securePort = securePort;
             config.pemFromClasspath(SERVER_CERT_NAME, SERVER_KEY_NAME);
             config.http2 = false;
-            config.withTrustConfig(trustConfig -> {
-                trustConfig.certificateFromClasspath(ROOT_CERT_NAME);
-            });
+            config.withTrustConfig(trustConfig -> trustConfig.certificateFromClasspath(ROOT_CERT_NAME));
         }).start()) {
             testWrongCertOnEndpoint(url, client);
         } catch (Exception e) {
@@ -191,17 +187,15 @@ public class CertificateAuthorityTests extends IntegrationTestClass {
             config.securePort = securePort;
             config.pemFromClasspath(SERVER_CERT_NAME, SERVER_KEY_NAME);
             config.http2 = false;
-            config.configConnectors = (conn) -> conn.setIdleTimeout(0); // disable idle timeout for testing
-            config.withTrustConfig(trustConfig -> {
-                trustConfig.certificateFromClasspath(ROOT_CERT_NAME);
-            });
+            config.configConnectors((conn) -> conn.setIdleTimeout(0)); // disable idle timeout for testing
+            config.withTrustConfig(trustConfig -> trustConfig.certificateFromClasspath(ROOT_CERT_NAME));
         });
 
 
-        try (Javalin app = Javalin.create((javalinConfig) -> {
-            javalinConfig.showJavalinBanner = false;
-            javalinConfig.plugins.register(sslPlugin);
-        }).get("/", ctx -> ctx.result(SUCCESS))
+        try (Javalin ignored = Javalin.create((javalinConfig) -> {
+                javalinConfig.showJavalinBanner = false;
+                javalinConfig.plugins.register(sslPlugin);
+            }).get("/", ctx -> ctx.result(SUCCESS))
             .start()) {
             testSuccessfulEndpoint(url, client); // works
             sslPlugin.reload(config -> {

@@ -327,10 +327,10 @@ public class SSLConfigTests extends IntegrationTestClass {
             config.insecurePort = insecurePort;
             config.securePort = securePort;
             config.pemFromString(Server.CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING);
-            config.configConnectors = connector -> {
+            config.configConnectors(connector -> {
                 connector.setIdleTimeout(1000);
                 connector.setName("customName");
-            };
+            });
         }).start()) {
             testSuccessfulEndpoint(http, Protocol.HTTP_1_1);
             testSuccessfulEndpoint(https, Protocol.HTTP_2);

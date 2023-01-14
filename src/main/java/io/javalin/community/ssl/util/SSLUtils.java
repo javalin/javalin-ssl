@@ -53,8 +53,8 @@ public class SSLUtils {
         parseIdentity(config, builder);
 
         //Add the trust information
-        if(config.trustConfig != null) {
-            parseTrust(config.trustConfig, builder);
+        if(config.getTrustConfig() != null) {
+            parseTrust(config.getTrustConfig(), builder);
             builder.withNeedClientAuthentication();
         }
 

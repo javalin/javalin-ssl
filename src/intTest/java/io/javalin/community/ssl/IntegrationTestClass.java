@@ -12,11 +12,8 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Path;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -103,7 +100,7 @@ public abstract class IntegrationTestClass {
         }
 
         OkHttpClient.Builder newBuilder = new OkHttpClient.Builder();
-        newBuilder.sslSocketFactory(sslContext.getSocketFactory(), (X509TrustManager) trustAllCerts[0]);
+        newBuilder.sslSocketFactory(sslContext.getSocketFactory(), trustAllCerts[0]);
         newBuilder.hostnameVerifier((hostname, session) -> true);
         return newBuilder;
     }

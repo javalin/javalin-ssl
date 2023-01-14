@@ -1,12 +1,9 @@
 package io.javalin.community.ssl;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import nl.altindag.ssl.util.CertificateUtils;
 import nl.altindag.ssl.util.KeyStoreUtils;
 
 import java.io.InputStream;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.KeyStore;
 import java.security.cert.Certificate;

@@ -52,8 +52,8 @@ public class ConnectorFactory {
             connector.setHost(config.host);
         }
 
-        if (config.configConnectors != null) {
-            config.configConnectors.accept(connector);
+        if (config.getConfigConnectors() != null) {
+            config.getConfigConnectors().accept(connector);
         }
 
         return connector;
@@ -100,8 +100,8 @@ public class ConnectorFactory {
             connector.setHost(config.host);
         }
 
-        if (config.configConnectors != null) {
-            config.configConnectors.accept(connector);
+        if (config.getConfigConnectors() != null) {
+            config.getConfigConnectors().accept(connector);
         }
 
         return connector;
