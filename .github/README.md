@@ -64,44 +64,78 @@ Javalin.create { config ->
 
 ```java
 // Connection options
-host=null;                                                            // Host to bind to, by default it will bind to all interfaces.
-insecure=true;                                                        // Toggle the default http (insecure) connector.
-secure=true;                                                          // Toggle the default https (secure) connector.
+host=null;                                                            // Host to bind to, by default it will bind to all interfaces
+insecure=true;                                                        // Toggle the default http (insecure) connector
+secure=true;                                                          // Toggle the default https (secure) connector
 http2=true;                                                           // Toggle HTTP/2 Support
 
-securePort=443;                                                       // Port to use on the SSL (secure) connector.
-insecurePort=80;                                                      // Port to use on the http (insecure) connector.
+securePort=443;                                                       // Port to use on the SSL (secure) connector
+insecurePort=80;                                                      // Port to use on the http (insecure) connector
 
-sniHostCheck=true;                                                    // Enable SNI hostname verification.
+sniHostCheck=true;                                                    // Enable SNI hostname verification
 tlsConfig=TLSConfig.INTERMEDIATE;                                     // Set the TLS configuration. (by default it uses Mozilla's intermediate configuration)
 
 // PEM loading options (mutually exclusive)
-pemFromPath("/path/to/cert.pem","/path/to/key.pem");                  // load from the given paths.
-pemFromPath("/path/to/cert.pem","/path/to/key.pem","keyPassword");    // load from the given paths with the given key password.
-pemFromClasspath("certName.pem","keyName.pem");                       // load from the given paths in the classpath.
-pemFromClasspath("certName.pem","keyName.pem","keyPassword");         // load from the given paths in the classpath with the given key password.
-pemFromInputStream(certInputStream,keyInputStream);                   // load from the given input streams.
-pemFromInputStream(certInputStream,keyInputStream,"keyPassword");     // load from the given input streams with the given key password.
-pemFromString(certString,keyString);                                  // load from the given strings.
-pemFromString(certString,keyString,"keyPassword");                    // load from the given strings with the given key password.
+pemFromPath("/path/to/cert.pem","/path/to/key.pem");                  // load from the given paths
+pemFromPath("/path/to/cert.pem","/path/to/key.pem","keyPassword");    // load from the given paths with the given key password
+pemFromClasspath("certName.pem","keyName.pem");                       // load from the given paths in the classpath
+pemFromClasspath("certName.pem","keyName.pem","keyPassword");         // load from the given paths in the classpath with the given key password
+pemFromInputStream(certInputStream,keyInputStream);                   // load from the given input streams
+pemFromInputStream(certInputStream,keyInputStream,"keyPassword");     // load from the given input streams with the given key password
+pemFromString(certString,keyString);                                  // load from the given strings
+pemFromString(certString,keyString,"keyPassword");                    // load from the given strings with the given key password
 
 // Keystore loading options (PKCS#12/JKS) (mutually exclusive)
 keystoreFromPath("/path/to/keystore.jks","keystorePassword");         // load the keystore from the given path
-keystoreFromClasspath("keyStoreName.p12","keystorePassword");         // load the keystore from the given path in the classpath.
-keystoreFromInputStream(keystoreInputStream,"keystorePassword");      // load the keystore from the given input stream.
+keystoreFromClasspath("keyStoreName.p12","keystorePassword");         // load the keystore from the given path in the classpath
+keystoreFromInputStream(keystoreInputStream,"keystorePassword");      // load the keystore from the given input stream
 
 // Advanced options
-configConnectors = null;                                              // Consumer to configure the connectors.
-securityProvider = Conscrypt.newProvider();                           // Set the security provider to use.
+configConnectors(Consumer<ServerConnector>);                          // Set a Consumer to configure the connectors
+securityProvider = null;                                              // Use a custom security provider
+withTrustConfig(Consumer<TrustConfig>);                               // Set the trust configuration, explained below. (by default all clients are trusted)
 ```
 
-### Hot reloading
-Certificate reloading is supported by default, if you want to replace the certificate you can simply call `SSLPlugin#reload` with the new certificate:
+#### Trust Configuration
+
+If you want to verify the client certificates (such as mTLS) you can set the trust configuration using the `TrustConfig` class.
+In contrast to the identity configuration, you can load multiple certificates from different sources.
+
+By adding a `TrustConfig` to the `SSLPlugin` you will enable client certificate verification.
+```java
+config.plugins.register(new SSLPlugin(ssl->{
+    ssl.pemFromPath("/path/to/cert.pem","/path/to/key.pem"); // Load our identity data
+    // Load the client/CA certificate(s)
+    ssl.withTrustConfig(trust->{
+        trust.certificateFromPath("/path/to/clientCert.pem");
+        trust.certificateFromClasspath("rootCA.pem");
+    });
+}));
+```
 
 ```java
+// Certificate loading options (PEM/DER/P7B)
+certificateFromPath("path/to/certificate.pem");              // load a PEM/DER/P7B cert from the given path
+certificateFromClasspath("certificateName.pem");             // load a PEM/DER/P7B cert from the given path in the classpath
+certificateFromInputStream(inputStream);                     // load a PEM/DER/P7B cert from the given input stream
+p7bCertificateFromString("p7b encoded certificate");         // load a P7B cert from the given string
+pemFromString("pem encoded certificate");                    // load a PEM cert from the given string
 
+// Trust store loading options (JKS/PKCS12)
+trustStoreFromPath("path/to/truststore.jks", "password");    // load a trust store from the given path
+trustStoreFromClasspath("truststore.jks", "password");       // load a trust store from the given path in the classpath
+trustStoreFromInputStream(inputStream, "password");          // load a trust store from the given input stream
+```
+
+
+#### Hot reloading
+Certificate reloading is supported, if you want to replace the certificate you can simply call `SSLPlugin.reload()` with the new configuration.
+
+```java
+// Create the plugin outside the Javalin config to hold a reference to reload it
 SSLPlugin sslPlugin = new SSLPlugin(ssl->{
     ssl.loadPemFromPath("/path/to/cert.pem","/path/to/key.pem");
+    ssl.insecurePort = 8080; // any other config you want to change
 });
 
 Javalin.create(config->{
@@ -111,17 +145,22 @@ Javalin.create(config->{
 
 // later on, when you want to replace the certificate
 sslPlugin.reload(ssl->{
-    //Any options other than loading certificates/keys will be ignored.
+    // any options other than loading certificates/keys will be ignored.
     ssl.loadPemFromPath("/path/to/new/cert.pem","/path/to/new/key.pem");
+    
+    // you can also replace trust configuration
+    ssl.withTrustConfig(trust->{
+        trust.certificateFromPath("/path/to/new/cert.pem");
+    });
 });
 ``` 
+
 
 
 ## Notes
 
 - HTTP/2 **can** be used over an insecure connection.
 - HTTP/3 is **not** yet supported because of some issues with Jetty's implementation.
-- Client-side X.509 authentication is **not** supported.
 - If Jetty responds with an `HTTP ERROR 400 Invalid SNI`, you can disable SNI verification by
   setting `sniHostCheck = false`.
 

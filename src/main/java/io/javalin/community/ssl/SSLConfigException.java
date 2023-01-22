@@ -15,6 +15,9 @@ public class SSLConfigException extends RuntimeException {
         super(type.getMessage() + ": " + extraInformation);
     }
 
+    /**
+     * Types of errors that can occur when configuring SSL.
+     */
     public enum Types {
         INVALID_HOST("Invalid host provided"),
         INVALID_SSL_PORT("Invalid SSL port provided"),

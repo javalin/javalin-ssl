@@ -2,9 +2,9 @@ package io.javalin.community.ssl.util;
 
 import io.javalin.community.ssl.SSLConfig;
 import io.javalin.community.ssl.SSLConfigException;
+import io.javalin.community.ssl.TrustConfig;
 import nl.altindag.ssl.SSLFactory;
 import nl.altindag.ssl.util.JettySslUtils;
-import nl.altindag.ssl.util.KeyManagerUtils;
 import nl.altindag.ssl.util.PemUtils;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
@@ -18,12 +18,14 @@ public class SSLUtils {
 
     /**
      * Helper method to create a {@link SslContextFactory} from the SSLFactory.
+     * This method is used to create the SSLContextFactory for the Jetty server as well as
+     * configure the resulting factory.
      *
      * @param sslFactory The {@link SSLFactory} to use.
+     * @param config The {@link SSLConfig} to use.
      * @return The created {@link SslContextFactory}.
      */
-    public static SslContextFactory.Server createSslContextFactory(SSLFactory sslFactory) {
-
+    public static SslContextFactory.Server createSslContextFactory(SSLFactory sslFactory, SSLConfig config) {
         return JettySslUtils.forServer(sslFactory);
     }
 
@@ -40,8 +42,8 @@ public class SSLUtils {
     /**
      * Helper method to create a {@link SSLFactory} from the given config.
      *
-     * @param config The config to use.
-     * @param reloading  Whether the SSLFactory is being reloaded or is the first time.
+     * @param config    The config to use.
+     * @param reloading Whether the SSLFactory is being reloaded or is the first time.
      * @return The created {@link SSLFactory}.
      */
     public static SSLFactory getSslFactory(SSLConfig config, boolean reloading) {
@@ -50,16 +52,25 @@ public class SSLUtils {
         //Add the identity information
         parseIdentity(config, builder);
 
-        if (!reloading) builder.withSwappableIdentityMaterial();
+        //Add the trust information
+        if(config.getTrustConfig() != null) {
+            parseTrust(config.getTrustConfig(), builder);
+            builder.withNeedClientAuthentication();
+        }
 
-        builder.withSecurityProvider(config.securityProvider);
+        if (!reloading) {
+            builder.withSwappableIdentityMaterial();
+            builder.withSwappableTrustMaterial();
 
-        builder.withCiphers(config.tlsConfig.getCipherSuites());
-        builder.withProtocols(config.tlsConfig.getProtocols());
+            builder.withSecurityProvider(config.securityProvider);
+
+            builder.withCiphers(config.tlsConfig.getCipherSuites());
+            builder.withProtocols(config.tlsConfig.getProtocols());
+        }
+
 
         return builder.build();
     }
-
 
 
     /**
@@ -126,6 +137,23 @@ public class SSLUtils {
         builder.withIdentityMaterial(keyManager);
     }
 
+
+    /**
+     * Helper method to parse the given config and add Trust Material to the given builder.
+     *
+     * @param config The config to use.
+     */
+    public static void parseTrust(TrustConfig config, SSLFactory.Builder builder) {
+        if (!config.certificates.isEmpty()) {
+            builder.withTrustMaterial(config.certificates);
+        }
+
+        if (!config.keyStores.isEmpty()) {
+            config.keyStores.forEach(builder::withTrustMaterial);
+        }
+    }
+
+
     /**
      * Helper method to create a working {@link Provider} for the current JVM.
      */
@@ -151,7 +179,7 @@ public class SSLUtils {
         if (osName.contains("windows")) {
             return true;
         } else if (osName.contains("linux") || (osName.contains("macosx") || osName.contains("osx"))) {
-            return osIs64Bit();
+            return osIsAmd64();
         } else {
             return false;
         }
@@ -162,7 +190,7 @@ public class SSLUtils {
      *
      * @return true if the current OS runs on an x86_64 architecture.
      */
-    public static boolean osIs64Bit() {
+    public static boolean osIsAmd64() {
         String osArch = System.getProperty("os.arch").toLowerCase();
         osArch = osArch.replaceAll("[^a-z0-9]", "");
 

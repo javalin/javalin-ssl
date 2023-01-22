@@ -1,9 +1,11 @@
 package io.javalin.community.ssl;
 
 import io.javalin.Javalin;
+import io.javalin.community.ssl.certs.Server;
 import okhttp3.ConnectionSpec;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -35,6 +37,7 @@ public class TLSConfigTest extends IntegrationTestClass {
     }
 
     @Test
+    @DisplayName("Test that a Modern TLS config does not allow old protocols")
     void testModernConfigWithOldProtocols() {
 
         String[] protocols = substractArray(TLSConfig.OLD.getProtocols(), TLSConfig.MODERN.getProtocols()); // remove modern protocols from old protocols, so that ONLY unsupported protocols are left
@@ -45,7 +48,7 @@ public class TLSConfigTest extends IntegrationTestClass {
         String https = HTTPS_URL_WITH_PORT.apply(securePort);
         try (Javalin ignored = IntegrationTestClass.createTestApp(config -> {
             config.insecure = false;
-            config.pemFromString(CERTIFICATE_AS_STRING, NON_ENCRYPTED_KEY_AS_STRING);
+            config.pemFromString(Server.CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING);
             config.securePort = securePort;
             config.tlsConfig = TLSConfig.MODERN;
         }).start()) {
@@ -55,6 +58,7 @@ public class TLSConfigTest extends IntegrationTestClass {
     }
 
     @Test
+    @DisplayName("Test that a Modern TLS config does not allow old cipher suites")
     void testModernConfigWithOldCipherSuites() {
 
         String[] cipherSuites = substractArray(TLSConfig.OLD.getCipherSuites(), TLSConfig.MODERN.getCipherSuites()); // remove modern cipher suites from old cipher suites, so that we can test ONLY the old cipher suites
@@ -65,7 +69,7 @@ public class TLSConfigTest extends IntegrationTestClass {
         String https = HTTPS_URL_WITH_PORT.apply(securePort);
         try (Javalin ignored = IntegrationTestClass.createTestApp(config -> {
             config.insecure = false;
-            config.pemFromString(CERTIFICATE_AS_STRING, NON_ENCRYPTED_KEY_AS_STRING);
+            config.pemFromString(Server.CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING);
             config.securePort = securePort;
             config.tlsConfig = TLSConfig.MODERN;
         }).start()) {
@@ -75,6 +79,7 @@ public class TLSConfigTest extends IntegrationTestClass {
     }
 
     @Test
+    @DisplayName("Test that an Intermediate TLS config does not allow old protocols")
     void testIntermediateConfigWithOldProtocols() {
 
         String[] protocols = substractArray(TLSConfig.OLD.getProtocols(), TLSConfig.INTERMEDIATE.getProtocols()); // remove intermediate protocols from old protocols, so that ONLY unsupported protocols are left
@@ -85,7 +90,7 @@ public class TLSConfigTest extends IntegrationTestClass {
         String https = HTTPS_URL_WITH_PORT.apply(securePort);
         try (Javalin ignored = IntegrationTestClass.createTestApp(config -> {
             config.insecure = false;
-            config.pemFromString(CERTIFICATE_AS_STRING, NON_ENCRYPTED_KEY_AS_STRING);
+            config.pemFromString(Server.CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING);
             config.securePort = securePort;
             config.tlsConfig = TLSConfig.INTERMEDIATE;
         }).start()) {
@@ -96,6 +101,7 @@ public class TLSConfigTest extends IntegrationTestClass {
 
 
     @Test
+    @DisplayName("Test that an Intermediate TLS config does not allow old cipher suites")
     void testIntermediateConfigWithOldCipherSuites() {
 
         String[] cipherSuites = substractArray(TLSConfig.OLD.getCipherSuites(), TLSConfig.INTERMEDIATE.getCipherSuites()); // remove intermediate cipher suites from old cipher suites, so that we can test ONLY the old cipher suites
@@ -106,7 +112,7 @@ public class TLSConfigTest extends IntegrationTestClass {
         String https = HTTPS_URL_WITH_PORT.apply(securePort);
         try (Javalin ignored = IntegrationTestClass.createTestApp(config -> {
             config.insecure = false;
-            config.pemFromString(CERTIFICATE_AS_STRING, NON_ENCRYPTED_KEY_AS_STRING);
+            config.pemFromString(Server.CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING);
             config.securePort = securePort;
             config.tlsConfig = TLSConfig.INTERMEDIATE;
         }).start()) {

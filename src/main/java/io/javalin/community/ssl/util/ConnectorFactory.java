@@ -22,7 +22,6 @@ public class ConnectorFactory {
 
     private SslContextFactory.Server sslContextFactory = null;
 
-
     /**
      * Create and return an insecure connector to the server.
      *
@@ -53,8 +52,8 @@ public class ConnectorFactory {
             connector.setHost(config.host);
         }
 
-        if (config.configConnectors != null) {
-            config.configConnectors.accept(connector);
+        if (config.getConfigConnectors() != null) {
+            config.getConfigConnectors().accept(connector);
         }
 
         return connector;
@@ -101,8 +100,8 @@ public class ConnectorFactory {
             connector.setHost(config.host);
         }
 
-        if (config.configConnectors != null) {
-            config.configConnectors.accept(connector);
+        if (config.getConfigConnectors() != null) {
+            config.getConfigConnectors().accept(connector);
         }
 
         return connector;

@@ -107,7 +107,9 @@ public class SSLPlugin implements Plugin {
      * Any configuration changes will be ignored, only the certificate and key material will be updated.
      *
      * @param newConfig A config containing the new certificate and key material.
+     * @deprecated Use {@link #reload(Consumer)} instead.
      */
+    @Deprecated(forRemoval = true,since = "5.3.2")
     public void reload(SSLConfig newConfig) {
         if(sslFactory == null)
             throw new IllegalStateException("Cannot reload before the plugin has been applied to a Javalin instance, a server has been patched or if the ssl connector is disabled.");
@@ -120,12 +122,16 @@ public class SSLPlugin implements Plugin {
      * Method to hot-swap the certificate and key material of the plugin.
      * Any configuration changes will be ignored, only the certificate and key material will be updated.
      *
-     * @param newConfigConsumer A consumer providing the new certificate and key material.
+     * @param newConfig A consumer providing the new certificate and key material.
      */
-    public void reload(Consumer<SSLConfig> newConfigConsumer) {
-        SSLConfig newConfig = new SSLConfig();
-        newConfigConsumer.accept(newConfig);
-        reload(newConfig);
+    public void reload(Consumer<SSLConfig> newConfig) {
+        SSLConfig conf = new SSLConfig();
+        newConfig.accept(conf);
+        if(sslFactory == null)
+            throw new IllegalStateException("Cannot reload before the plugin has been applied to a Javalin instance, a server has been patched or if the ssl connector is disabled.");
+
+        SSLFactory newFactory = getSslFactory(conf,true);
+        SSLFactoryUtils.reload(sslFactory, newFactory);
     }
 
     /**
@@ -142,10 +148,9 @@ public class SSLPlugin implements Plugin {
         if (config.secure || config.enableHttp3) {
             sslFactory = getSslFactory(config);
             sslContextFactory =
-                createSslContextFactory(sslFactory);
+                createSslContextFactory(sslFactory, config);
         } else {
-            sslContextFactory =
-                null;
+            sslContextFactory =  null;
         }
 
         return (server) -> {
