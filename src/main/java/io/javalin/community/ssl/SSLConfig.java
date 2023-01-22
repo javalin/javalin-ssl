@@ -354,6 +354,7 @@ public class SSLConfig {
      * to private in the next major release.
      */
     @Getter
+    @Deprecated(forRemoval = true, since = "5.3.2")
     public Consumer<ServerConnector> configConnectors = null;
 
     /**
@@ -383,7 +384,7 @@ public class SSLConfig {
      * Trust configuration as a consumer.
      * @param trustConfigConsumer consumer to configure the trust configuration.
      */
-    public void withTrustConfig(Consumer<TrustConfig> trustConfigConsumer) { //TODO: Document in readme, Update TrustConfig docs and update website.
+    public void withTrustConfig(Consumer<TrustConfig> trustConfigConsumer) {
         trustConfig = new TrustConfig();
         trustConfigConsumer.accept(trustConfig);
     }
