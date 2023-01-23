@@ -163,6 +163,7 @@ sslPlugin.reload(ssl->{
 - HTTP/3 is **not** yet supported because of some issues with Jetty's implementation.
 - If Jetty responds with an `HTTP ERROR 400 Invalid SNI`, you can disable SNI verification by
   setting `sniHostCheck = false`.
+- Minimizing your jar can lead to issues, [more info](https://github.com/javalin/javalin-ssl/issues/59).   
 
 ## Depends on
 
