@@ -2,19 +2,18 @@ package io.javalin.community.ssl;
 
 import io.javalin.Javalin;
 import io.javalin.community.ssl.certs.Server;
-import okhttp3.ConnectionSpec;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
+import okhttp3.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import javax.net.ssl.SSLHandshakeException;
+import java.io.IOException;
 import java.net.UnknownServiceException;
 import java.util.Arrays;
 import java.util.Collections;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Tag("integration")
 public class TLSConfigTest extends IntegrationTestClass {
@@ -30,7 +29,6 @@ public class TLSConfigTest extends IntegrationTestClass {
             .cipherSuites(config.getCipherSuites())
             .build();
 
-        new TLSConfig(new String[]{""}, new String[]{""});
         return untrustedClientBuilder()
             .connectionSpecs(Collections.singletonList(spec))
             .build();
@@ -121,4 +119,35 @@ public class TLSConfigTest extends IntegrationTestClass {
         }
     }
 
+    @Test
+    @DisplayName("Test an Intermediate TLS config works with TLSv1.3")
+    void testIntermediateConfigWithTLSv13() {
+
+        ConnectionSpec spec = new ConnectionSpec.Builder(ConnectionSpec.RESTRICTED_TLS)
+            .tlsVersions(TlsVersion.TLS_1_3)
+            .build();
+
+        OkHttpClient client = untrustedClientBuilder()
+            .connectionSpecs(Collections.singletonList(spec))
+            .build();
+
+
+        int securePort = ports.getAndIncrement();
+        String https = HTTPS_URL_WITH_PORT.apply(securePort);
+        try (Javalin ignored = IntegrationTestClass.createTestApp(config -> {
+            config.insecure = false;
+            config.pemFromString(Server.CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING);
+            config.securePort = securePort;
+            config.tlsConfig = TLSConfig.INTERMEDIATE;
+        }).start()) {
+            //Should work with TLSv1.3
+            try (Response response = client.newCall(new Request.Builder().url(https).build()).execute()) {
+                assertEquals(200, response.code());
+                assertEquals(TlsVersion.TLS_1_3,response.handshake().tlsVersion());
+            } catch (Exception e) {
+                e.printStackTrace();
+                fail(e);
+            }
+        }
+    }
 }
