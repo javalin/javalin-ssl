@@ -43,7 +43,7 @@ Javalin.create(config->{
     ...  // your Javalin config here
     config.plugins.register(new SSLPlugin(ssl->{
         ... // your SSL configuration here
-        ssl.loadPemFromPath("/path/to/cert.pem","/path/to/key.pem");
+        ssl.pemFromPath("/path/to/cert.pem","/path/to/key.pem");
     }));
 });
 ```
@@ -55,7 +55,7 @@ Javalin.create { config ->
     ... // your Javalin config here
     config.plugins.register(SSLPlugin { ssl ->
         ... // your SSL configuration here
-        ssl.loadPemFromPath("/path/to/cert.pem", "/path/to/key.pem")
+        ssl.pemFromPath("/path/to/cert.pem", "/path/to/key.pem")
     })
 }
 ```
