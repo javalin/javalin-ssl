@@ -22,13 +22,13 @@ As simple as adding a dependency:
 <dependency>
   <groupId>io.javalin.community.ssl</groupId>
   <artifactId>ssl-plugin</artifactId>
-  <version>5.3.2</version>
+  <version>5.4.0</version>
 </dependency>
 ```
 ### Gradle
 
 ```kotlin
-implementation('io.javalin.community.ssl:ssl-plugin:5.3.2')
+implementation('io.javalin.community.ssl:ssl-plugin:5.4.0')
 ```
 
 
@@ -169,7 +169,7 @@ sslPlugin.reload(ssl->{
 
 | Package                                       | Version | License                                                                                                              |
 |-----------------------------------------------|---------|----------------------------------------------------------------------------------------------------------------------|
-| [Javalin](https://github.com/javalin/javalin) | `5.3.2` | [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) |
+| [Javalin](https://github.com/javalin/javalin) | `5.4.0` | [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) |
  | [SSLContext Kickstart](https://github.com/Hakky54/sslcontext-kickstart) | `7.4.9` | [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) |
 
 ## Contributing
