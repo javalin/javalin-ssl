@@ -14,7 +14,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
-import org.junit.jupiter.api.condition.OS;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -379,7 +378,7 @@ public class SSLConfigTests extends IntegrationTestClass {
     }
 
     @Test
-    @EnabledOnOs({OS.LINUX, OS.MAC, OS.WINDOWS})
+    @EnabledOnOs(architectures = "x86_64")
     @DisplayName("Test the ability to detect if the OS supports Conscrypt")
     void checkSupportedOsUsesConscrypt() {
         assumeTrue(SSLUtils.osIsAmd64());
