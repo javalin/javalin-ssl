@@ -101,6 +101,32 @@ public class SSLConfigTests extends IntegrationTestClass {
     }
 
     @Test
+    @DisplayName("Test that redirecting from http to https works")
+    void testRedirect(){
+        int insecurePort = ports.getAndIncrement();
+        int securePort = ports.getAndIncrement();
+        String http = HTTP_URL_WITH_PORT.apply(insecurePort);
+        String https = HTTPS_URL_WITH_PORT.apply(securePort);
+
+        OkHttpClient noRedirectClient = untrustedClientBuilder().followSslRedirects(false).build();
+        try (Javalin ignored = IntegrationTestClass.createTestApp(config -> {
+            config.pemFromString(Server.CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING);
+            config.securePort = securePort;
+            config.insecurePort = insecurePort;
+            config.redirect = true;
+        }).start()) {
+            Response redirect = noRedirectClient.newCall(new Request.Builder().url(http).build()).execute();
+            assertTrue(redirect.isRedirect());
+            assertEquals(https, redirect.header("Location"));
+            Response redirected = getClient().newCall(new Request.Builder().url(http).build()).execute();
+            assertEquals(200,redirected.code());
+            assertEquals(SUCCESS,redirected.body().string());
+        } catch (IOException e) {
+            fail(e);
+        }
+    }
+
+    @Test
     @DisplayName("Test that the insecure connector works with http1.1")
     void testInsecureHttp1() {
         int insecurePort = ports.getAndIncrement();

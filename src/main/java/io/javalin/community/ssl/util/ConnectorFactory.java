@@ -34,6 +34,7 @@ public class ConnectorFactory {
         HttpConfiguration httpConfiguration = new HttpConfiguration();
         httpConfiguration.setUriCompliance(UriCompliance.RFC3986);  // accept ambiguous values in path and let Javalin handle them
         httpConfiguration.setSendServerVersion(false);
+        httpConfiguration.setSecurePort(config.securePort);
 
         //The factory for HTTP/1.1 connections.
         HttpConnectionFactory http11 = new HttpConnectionFactory(httpConfiguration);

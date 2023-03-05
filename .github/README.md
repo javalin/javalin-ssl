@@ -71,6 +71,7 @@ http2=true;                                                           // Toggle 
 
 securePort=443;                                                       // Port to use on the SSL (secure) connector
 insecurePort=80;                                                      // Port to use on the http (insecure) connector
+redirect=false;                                                       // Redirect all http requests to https
 
 sniHostCheck=true;                                                    // Enable SNI hostname verification
 tlsConfig=TLSConfig.INTERMEDIATE;                                     // Set the TLS configuration. (by default it uses Mozilla's intermediate configuration)

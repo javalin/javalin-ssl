@@ -43,6 +43,11 @@ public class SSLConfig {
     public int insecurePort = 80;
 
     /**
+     * Enable http to https redirection.
+     */
+    public boolean redirect = false;
+
+    /**
      * Toggle HTTP/2 Support
      */
     public boolean http2 = true;

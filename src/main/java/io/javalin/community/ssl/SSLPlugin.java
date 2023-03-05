@@ -8,6 +8,7 @@ import nl.altindag.ssl.SSLFactory;
 import nl.altindag.ssl.util.SSLFactoryUtils;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.SecuredRedirectHandler;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.jetbrains.annotations.NotNull;
 
@@ -171,6 +172,9 @@ public class SSLPlugin implements Plugin {
             }
 
             connectorList.forEach(server::addConnector);
+
+            if(config.redirect)
+                server.setHandler(new SecuredRedirectHandler());
         };
     }
 
