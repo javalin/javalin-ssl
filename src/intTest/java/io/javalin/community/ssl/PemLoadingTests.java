@@ -1,16 +1,16 @@
 package io.javalin.community.ssl;
 
 import io.javalin.community.ssl.certs.Server;
-import nl.altindag.ssl.exception.CertificateParseException;
 import nl.altindag.ssl.exception.GenericIOException;
-import nl.altindag.ssl.exception.PrivateKeyParseException;
+import nl.altindag.ssl.pem.exception.CertificateParseException;
+import nl.altindag.ssl.pem.exception.PrivateKeyParseException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.InputStream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Tag("integration")
 public class PemLoadingTests extends IntegrationTestClass {

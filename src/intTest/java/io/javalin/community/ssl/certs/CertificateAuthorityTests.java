@@ -4,7 +4,7 @@ import io.javalin.Javalin;
 import io.javalin.community.ssl.IntegrationTestClass;
 import io.javalin.community.ssl.SSLPlugin;
 import nl.altindag.ssl.SSLFactory;
-import nl.altindag.ssl.util.PemUtils;
+import nl.altindag.ssl.pem.util.PemUtils;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
