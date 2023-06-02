@@ -9,13 +9,14 @@ plugins {
 
 group = 'io.javalin.community.ssl'
 //Must be formatted following the RegEx: /version\s*=\s*'\S+'/g
-version = '5.5.0'
+version = '5.5.1-SNAPSHOT'
 
 jacoco {
     toolVersion = '0.8.8'
 }
 
 repositories {
+    mavenLocal()
     mavenCentral()
     maven {
         url "https://maven.reposilite.com/snapshots" //Javalin Snapshots
@@ -41,11 +42,14 @@ configurations {
 }
 
 dependencies {
-    def javalin = "5.5.0"
+    def javalin = "5.5.1-SNAPSHOT"
     def junit = '5.9.1'
-    def sslContextKickstart = '7.5.0'
+    def sslContextKickstart = '8.0.0'
     def okhttp = "4.11.0"
     def conscrypt = "2.5.2"
+    def annotations = "24.0.1"
+
+    implementation "org.jetbrains:annotations:${annotations}"
 
     compileOnly("io.javalin:javalin:$javalin")
     implementation(platform("io.javalin:javalin-parent:$javalin")) //Javalin BOM
