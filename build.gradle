@@ -49,7 +49,7 @@ dependencies {
     def conscrypt = "2.5.2"
     def annotations = "24.0.1"
 
-    implementation "org.jetbrains:annotations:${annotations}"
+    compileOnly("org.jetbrains:annotations:$annotations")
 
     compileOnly("io.javalin:javalin:$javalin")
     implementation(platform("io.javalin:javalin-parent:$javalin")) //Javalin BOM
