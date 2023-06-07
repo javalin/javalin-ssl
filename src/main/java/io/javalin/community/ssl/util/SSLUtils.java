@@ -4,8 +4,8 @@ import io.javalin.community.ssl.SSLConfig;
 import io.javalin.community.ssl.SSLConfigException;
 import io.javalin.community.ssl.TrustConfig;
 import nl.altindag.ssl.SSLFactory;
-import nl.altindag.ssl.util.JettySslUtils;
-import nl.altindag.ssl.util.PemUtils;
+import nl.altindag.ssl.jetty.util.JettySslUtils;
+import nl.altindag.ssl.pem.util.PemUtils;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 import javax.net.ssl.X509ExtendedKeyManager;
