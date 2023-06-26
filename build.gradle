@@ -44,7 +44,7 @@ configurations {
 dependencies {
     def javalin = "5.6.1"
     def junit = '5.9.1'
-    def sslContextKickstart = '8.1.1'
+    def sslContextKickstart = '8.1.2'
     def okhttp = "4.11.0"
     def conscrypt = "2.5.2"
     def annotations = "24.0.1"
