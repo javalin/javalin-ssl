@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import javax.net.ssl.X509ExtendedKeyManager;
 import java.io.IOException;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -168,17 +169,18 @@ public class CertificateAuthorityTests extends IntegrationTestClass {
     void mTLSWithHotReloadingWorks() {
         final X509ExtendedKeyManager keyManager = PemUtils.loadIdentityMaterial(CLIENT_FULLCHAIN_CER, CLIENT_KEY_NAME);
 
-        SSLFactory sslFactory = SSLFactory.builder()
-            .withIdentityMaterial(keyManager)
-            .withTrustMaterial(PemUtils.loadTrustMaterial(ROOT_CERT_NAME)) // root cert of the client above
-            .withUnsafeHostnameVerifier() // we don't care about the hostname, we just want to test the certificate
-            .build();
+        Supplier<OkHttpClient> client = () -> {
+            SSLFactory sslFactory = SSLFactory.builder()
+                .withIdentityMaterial(keyManager)
+                .withTrustMaterial(PemUtils.loadTrustMaterial(ROOT_CERT_NAME)) // root cert of the client above
+                .withUnsafeHostnameVerifier() // we don't care about the hostname, we just want to test the certificate
+                .build();
 
-        OkHttpClient client = new OkHttpClient.Builder()
-            .sslSocketFactory(sslFactory.getSslSocketFactory(), sslFactory.getTrustManager().orElseThrow())
-            .hostnameVerifier(sslFactory.getHostnameVerifier())
-            .build();
-
+            return new OkHttpClient.Builder()
+                .sslSocketFactory(sslFactory.getSslSocketFactory(), sslFactory.getTrustManager().orElseThrow())
+                .hostnameVerifier(sslFactory.getHostnameVerifier())
+                .build();
+        };
         int securePort = ports.getAndIncrement();
         String url = HTTPS_URL_WITH_PORT.apply(securePort);
 
@@ -197,21 +199,21 @@ public class CertificateAuthorityTests extends IntegrationTestClass {
                 javalinConfig.plugins.register(sslPlugin);
             }).get("/", ctx -> ctx.result(SUCCESS))
             .start()) {
-            testSuccessfulEndpoint(url, client); // works
+            testSuccessfulEndpoint(url, client.get()); // works
             sslPlugin.reload(config -> {
                 config.pemFromClasspath(SERVER_CERT_NAME, SERVER_KEY_NAME);
                 config.withTrustConfig(trustConfig -> {
                     trustConfig.certificateFromClasspath(Server.CERTIFICATE_FILE_NAME); // this is some other certificate
                 });
             });
-            testWrongCertOnEndpoint(url, client); // fails because the server now has a different trust material
+            testWrongCertOnEndpoint(url, client.get()); // fails because the server now has a different trust material
             sslPlugin.reload(config -> {
                 config.pemFromClasspath(SERVER_CERT_NAME, SERVER_KEY_NAME);
                 config.withTrustConfig(trustConfig -> {
                     trustConfig.certificateFromClasspath(ROOT_CERT_NAME); // back to the original certificate
                 });
             });
-            testSuccessfulEndpoint(url, client); // works again
+            testSuccessfulEndpoint(url, client.get()); // works again
         } catch (Exception e) {
             fail(e);
         }
