@@ -9,7 +9,6 @@ module io.javalin.community.ssl {
   requires nl.altindag.ssl;
   requires nl.altindag.ssl.jetty;
   requires nl.altindag.ssl.pem;
-  requires org.conscrypt;
 
   requires static lombok;
 }

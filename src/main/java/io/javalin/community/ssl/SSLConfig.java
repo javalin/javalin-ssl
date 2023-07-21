@@ -373,7 +373,7 @@ public class SSLConfig {
     /**
      * Security provider to use for the SSLContext.
      */
-    public Provider securityProvider = SSLUtils.getSecurityProvider();
+    public Provider securityProvider = null;
 
     ///////////////////////////////////////////////////////////////
     // Trust Store

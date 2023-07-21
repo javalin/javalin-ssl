@@ -62,7 +62,8 @@ public class SSLUtils {
             builder.withSwappableIdentityMaterial();
             builder.withSwappableTrustMaterial();
 
-            builder.withSecurityProvider(config.securityProvider);
+            if(config.securityProvider != null)
+                builder.withSecurityProvider(config.securityProvider);
 
             builder.withCiphers(config.tlsConfig.getCipherSuites());
             builder.withProtocols(config.tlsConfig.getProtocols());
@@ -154,16 +155,6 @@ public class SSLUtils {
     }
 
 
-    /**
-     * Helper method to create a working {@link Provider} for the current JVM.
-     */
-    public static Provider getSecurityProvider() {
-        if (osSupportsConscrypt()) {
-            return new org.conscrypt.OpenSSLProvider();
-        } else {
-            return null;
-        }
-    }
 
     /**
      * Checks if the current OS is supported by Conscrypt.
