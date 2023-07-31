@@ -9,7 +9,7 @@ plugins {
 
 group = 'io.javalin.community.ssl'
 //Must be formatted following the RegEx: /version\s*=\s*'\S+'/g
-version = '5.6.1'
+version = '5.6.2'
 
 jacoco {
     toolVersion = '0.8.8'
@@ -42,7 +42,7 @@ configurations {
 }
 
 dependencies {
-    def javalin = "5.6.1"
+    def javalin = "5.6.2"
     def junit = '5.10.0'
     def sslContextKickstart = '8.1.4'
     def okhttp = "4.11.0"
