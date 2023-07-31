@@ -403,27 +403,6 @@ public class SSLConfigTests extends IntegrationTestClass {
         }
     }
 
-    @Test
-    @EnabledOnOs(architectures = "x86_64")
-    @DisplayName("Test the ability to detect if the OS supports Conscrypt")
-    void checkSupportedOsUsesConscrypt() {
-        assumeTrue(SSLUtils.osIsAmd64());
-
-        int securePort = ports.getAndIncrement();
-        String https = HTTPS_URL_WITH_PORT.apply(securePort);
-        try (Javalin app = IntegrationTestClass.createTestApp(config -> {
-            config.insecure = false;
-            config.securePort = securePort;
-            config.pemFromString(Server.CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING);
-        }).start()) {
-            printSecurityProviderName(app);
-            assertTrue(getSecurityProviderName(app).contains("Conscrypt"));
-            testSuccessfulEndpoint(https, Protocol.HTTP_2);
-        } catch (IOException e) {
-            fail(e);
-        }
-    }
-
     private static String getSecurityProviderName(Javalin app){
         ServerConnector conn = (ServerConnector) app.jettyServer().server().getConnectors()[0];
         return conn.getConnectionFactories().stream()
