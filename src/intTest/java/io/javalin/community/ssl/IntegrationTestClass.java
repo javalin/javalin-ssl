@@ -2,7 +2,6 @@ package io.javalin.community.ssl;
 
 import io.javalin.Javalin;
 import io.javalin.community.ssl.certs.Server;
-import lombok.Getter;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -54,12 +53,9 @@ public abstract class IntegrationTestClass {
     }};
 
     protected static final AtomicInteger ports = new AtomicInteger(10000);
-    @Getter
     private static final OkHttpClient client = createHttpsClient();
 
-    @Getter
     private static final OkHttpClient untrustedClient = untrustedHttpsClient();
-
 
 
     private static OkHttpClient createHttpsClient() {
@@ -124,6 +120,13 @@ public abstract class IntegrationTestClass {
         IntegrationTestClass.testSuccessfulEndpoint(getClient(), url, protocol);
     }
 
+    public static OkHttpClient getClient() {
+        return IntegrationTestClass.client;
+    }
+
+    public static OkHttpClient getUntrustedClient() {
+        return IntegrationTestClass.untrustedClient;
+    }
 
 
     void assertWorks(Protocol protocol, Consumer<SSLConfig> config) {

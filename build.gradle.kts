@@ -4,7 +4,6 @@ plugins {
     id("java-library")
     id("maven-publish")
     id("jacoco")
-    id("io.freefair.lombok") version "8.1.0"
     id("signing")
     id("io.github.gradle-nexus.publish-plugin") version "1.3.0"
     val kotlinVersion = "1.9.0"

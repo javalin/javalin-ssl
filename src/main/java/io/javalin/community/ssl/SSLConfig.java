@@ -1,7 +1,5 @@
 package io.javalin.community.ssl;
 
-import io.javalin.community.ssl.util.SSLUtils;
-import lombok.Getter;
 import org.eclipse.jetty.server.ServerConnector;
 import org.jetbrains.annotations.Nullable;
 
@@ -54,6 +52,7 @@ public class SSLConfig {
 
     /**
      * Disable SNI checks.
+     *
      * @see <a href="https://www.eclipse.org/jetty/documentation/jetty-11/operations-guide/index.html#og-protocols-ssl-sni">Configuring SNI</a>
      */
     public boolean sniHostCheck = true;
@@ -83,10 +82,23 @@ public class SSLConfig {
 
     public InnerConfig inner = new InnerConfig();
 
+    @Deprecated
+    public Consumer<ServerConnector> getConfigConnectors() {
+        return this.configConnectors;
+    }
+
+    public TrustConfig getTrustConfig() {
+        return this.trustConfig;
+    }
+
     /**
      * Configuration for the SSL (secure) connector, meant to be accessed using its setters.
      */
     public static class InnerConfig {
+
+        public IdentityLoadingType getIdentityLoadingType() {
+            return this.identityLoadingType;
+        }
 
         /**
          * Type of identity loading types.
@@ -102,7 +114,6 @@ public class SSLConfig {
             KEY_STORE_INPUT_STREAM
         }
 
-        @Getter
         IdentityLoadingType identityLoadingType = IdentityLoadingType.NONE;
 
         /**
@@ -307,7 +318,8 @@ public class SSLConfig {
 
     /**
      * Load a key store from a given path in the system.
-     * @param keyStorePath path to the key store file.
+     *
+     * @param keyStorePath     path to the key store file.
      * @param keyStorePassword password for the key store.
      */
     public void keystoreFromPath(String keyStorePath, String keyStorePassword) {
@@ -321,8 +333,9 @@ public class SSLConfig {
 
     /**
      * Load a key store from a given input stream.
+     *
      * @param keyStoreInputStream input stream to the key store file.
-     * @param keyStorePassword password for the key store.
+     * @param keyStorePassword    password for the key store.
      */
     public void keystoreFromInputStream(InputStream keyStoreInputStream, String keyStorePassword) {
         if (inner.identityLoadingType != InnerConfig.IdentityLoadingType.NONE) {
@@ -335,7 +348,8 @@ public class SSLConfig {
 
     /**
      * Load a key store from the classpath.
-     * @param keyStoreFile name of the key store file in the classpath.
+     *
+     * @param keyStoreFile     name of the key store file in the classpath.
      * @param keyStorePassword password for the key store.
      */
     public void keystoreFromClasspath(String keyStoreFile, String keyStorePassword) {
@@ -351,14 +365,7 @@ public class SSLConfig {
     // Advanced Options
     ///////////////////////////////////////////////////////////////
 
-    /**
-     * Consumer to configure the different {@link ServerConnector} that will be created.
-     * This consumer will be called as the last config step for each connector,
-     * allowing to override any previous configuration.
-     * @deprecated Use {@link #configConnectors(Consumer<ServerConnector>)} instead, access modifier will be changed
-     * to private in the next major release.
-     */
-    @Getter
+
     @Deprecated(forRemoval = true, since = "5.3.2")
     public Consumer<ServerConnector> configConnectors = null;
 
@@ -382,11 +389,11 @@ public class SSLConfig {
     /**
      * Trust store configuration for the server, if not set, every client will be accepted.
      */
-    @Getter
     private TrustConfig trustConfig = null;
 
     /**
      * Trust configuration as a consumer.
+     *
      * @param trustConfigConsumer consumer to configure the trust configuration.
      */
     public void withTrustConfig(Consumer<TrustConfig> trustConfigConsumer) {

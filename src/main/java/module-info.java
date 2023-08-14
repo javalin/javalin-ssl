@@ -10,6 +10,5 @@ module io.javalin.community.ssl {
   requires nl.altindag.ssl.jetty;
   requires nl.altindag.ssl.pem;
 
-  requires static lombok;
-    requires kotlin.stdlib;
+  requires kotlin.stdlib;
 }

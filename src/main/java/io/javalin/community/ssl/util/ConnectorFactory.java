@@ -1,26 +1,37 @@
 package io.javalin.community.ssl.util;
 
 import io.javalin.community.ssl.SSLConfig;
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.eclipse.jetty.alpn.server.ALPNServerConnectionFactory;
 import org.eclipse.jetty.http.UriCompliance;
 import org.eclipse.jetty.http2.server.HTTP2CServerConnectionFactory;
 import org.eclipse.jetty.http2.server.HTTP2ServerConnectionFactory;
-import org.eclipse.jetty.server.*;
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.HttpConfiguration;
+import org.eclipse.jetty.server.HttpConnectionFactory;
+import org.eclipse.jetty.server.SecureRequestCustomizer;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 /**
  * Helper class to create the requested {@link ServerConnector}s from the given config.
  */
-@AllArgsConstructor
-@RequiredArgsConstructor
 public class ConnectorFactory {
 
     private SSLConfig config;
     private Server server;
 
     private SslContextFactory.Server sslContextFactory = null;
+
+    public ConnectorFactory() {
+    }
+
+    public ConnectorFactory(SSLConfig config, Server server, SslContextFactory.Server sslContextFactory) {
+        this.config = config;
+        this.server = server;
+        this.sslContextFactory = sslContextFactory;
+    }
 
     /**
      * Create and return an insecure connector to the server.
