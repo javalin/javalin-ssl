@@ -25,7 +25,7 @@ jobs:
         uses: gradle/wrapper-validation-action@v1
 
       - name: Setup and Run Gradle
-        uses: gradle/gradle-build-action@v2.7.0
+        uses: gradle/gradle-build-action@v2.8.0
         with:
           arguments: check
   coverage:
@@ -50,7 +50,7 @@ jobs:
         uses: gradle/wrapper-validation-action@v1
 
       - name: Setup and Run Gradle
-        uses: gradle/gradle-build-action@v2.7.0
+        uses: gradle/gradle-build-action@v2.8.0
         with:
           arguments: ${{ matrix.test-type }}TestsCoverageReport
 
@@ -88,7 +88,7 @@ jobs:
         uses: gradle/wrapper-validation-action@v1
 
       - name: Publish to Reposilite
-        uses: gradle/gradle-build-action@v2.7.0
+        uses: gradle/gradle-build-action@v2.8.0
         env:
           MAVEN_NAME: '${{ secrets.MAVEN_NAME }}'
           MAVEN_TOKEN: '${{ secrets.MAVEN_TOKEN }}'
@@ -100,7 +100,7 @@ jobs:
 
       - name: Publish to Maven Central
         if: "!contains(env.CURRENT_VERSION, 'SNAPSHOT')"
-        uses: gradle/gradle-build-action@v2.7.0
+        uses: gradle/gradle-build-action@v2.8.0
         env:
           ORG_GRADLE_PROJECT_sonatypeUsername: '${{ secrets.ORG_GRADLE_PROJECT_SONATYPEUSERNAME }}'
           ORG_GRADLE_PROJECT_sonatypePassword: '${{ secrets.ORG_GRADLE_PROJECT_SONATYPEPASSWORD }}'
