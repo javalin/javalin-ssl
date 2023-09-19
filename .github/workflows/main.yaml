@@ -33,9 +33,6 @@ jobs:
     needs:
       - test
     name: "📄 Codecov Report"
-    strategy:
-      matrix:
-        test-type: [unit, integration]
     steps:
       - name: Setup Java JDK
         uses: actions/setup-java@v3.12.0
@@ -52,13 +49,12 @@ jobs:
       - name: Setup and Run Gradle
         uses: gradle/gradle-build-action@v2.7.0
         with:
-          arguments: ${{ matrix.test-type }}TestsCoverageReport
+          arguments: jacocoTestReport
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3.1.4
         with:
-          files: "${{ github.workspace }}/build/reports/jacoco/${{ matrix.test-type }}TestsCoverageReport/${{ matrix.test-type }}TestsCoverageReport.xml"
-          flags: "${{ matrix.test-type }}Tests"
+          files: "${{ github.workspace }}/build/reports/jacoco/test/jacocoTestReport.xml"
           verbose: true
           token: "${{ secrets.CODECOV_TOKEN }}"
   publish:

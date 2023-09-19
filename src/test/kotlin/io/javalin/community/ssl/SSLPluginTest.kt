@@ -59,8 +59,8 @@ class SSLPluginTest : IntegrationTestClass() {
         try {
             Javalin.create { config: JavalinConfig ->
                 config.showJavalinBanner = false
-                config.plugins.register(sslPlugin)
-            }["/", { ctx: Context -> ctx.result(SUCCESS) }].start().use { _ ->
+                config.registerPlugin(sslPlugin)
+            }["/", { ctx: Context -> ctx.result(SUCCESS) }].start().let { _ ->
 
                 // Initial connection
                 var res = client.newCall(Request.Builder().url(https).build()).execute()
@@ -147,8 +147,8 @@ class SSLPluginTest : IntegrationTestClass() {
         try {
             Javalin.create { config: JavalinConfig ->
                 config.showJavalinBanner = false
-                config.plugins.register(sslPlugin)
-            }["/", { ctx: Context -> ctx.result(SUCCESS) }].start().use { _ ->
+                config.registerPlugin(sslPlugin)
+            }["/", { ctx: Context -> ctx.result(SUCCESS) }].start().let { _ ->
 
                 // Initial connection
                 var res = client.newCall(Request.Builder().url(https).build()).execute()
@@ -208,8 +208,8 @@ class SSLPluginTest : IntegrationTestClass() {
         try {
             Javalin.create { config: JavalinConfig ->
                 config.showJavalinBanner = false
-                config.plugins.register(sslPlugin)
-            }["/", { ctx: Context -> ctx.result(SUCCESS) }].start().use { _ ->
+                config.registerPlugin(sslPlugin)
+            }["/", { ctx: Context -> ctx.result(SUCCESS) }].start().let { _ ->
                 val res = OkHttpClient().newCall(Request.Builder().url(http).build()).execute()
                 Assertions.assertTrue(res.isSuccessful)
                 Assertions.assertThrows(IllegalStateException::class.java) {

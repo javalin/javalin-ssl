@@ -41,7 +41,7 @@ class TrustConfigTests : IntegrationTestClass() {
             config.pemFromString(Client.SERVER_CERTIFICATE_AS_STRING, Client.SERVER_PRIVATE_KEY_AS_STRING)
             config.withTrustConfig { trustConfig: TrustConfig -> trustConfig.pemFromString(Client.CLIENT_CERTIFICATE_AS_STRING) }
         }
-            .start().use { _ ->
+            .start().let { _ ->
                 Assertions.assertThrows<Exception>(Exception::class.java) {
                     unauthClient.newCall(
                         Request.Builder().url(url).build()
@@ -61,7 +61,7 @@ class TrustConfigTests : IntegrationTestClass() {
             config.http2 = false // Disable HTTP/2 to avoid "connection closed" errors in tests due to connection reuse
             config.pemFromString(Client.SERVER_CERTIFICATE_AS_STRING, Client.SERVER_PRIVATE_KEY_AS_STRING)
             config.withTrustConfig { trustConfig: TrustConfig -> trustConfig.pemFromString(Client.CLIENT_CERTIFICATE_AS_STRING) }
-        }.start().use { ignored ->
+        }.start().let { _ ->
             //wrongClient.get().newCall(new Request.Builder().url(url).build()).execute();
             val req = HttpRequest.newBuilder()
                 .uri(URI.create(url))
@@ -307,7 +307,7 @@ class TrustConfigTests : IntegrationTestClass() {
             }
         }
 
-        protected fun trustConfigWorks(consumer: Consumer<TrustConfig>?) {
+        protected fun trustConfigWorks(consumer: Consumer<TrustConfig>) {
             val securePort = ports.getAndIncrement()
             val url = HTTPS_URL_WITH_PORT.apply(securePort)
             try {
@@ -317,7 +317,7 @@ class TrustConfigTests : IntegrationTestClass() {
                     config.pemFromString(Client.SERVER_CERTIFICATE_AS_STRING, Client.SERVER_PRIVATE_KEY_AS_STRING)
                     config.http2 = false
                     config.withTrustConfig(consumer)
-                }.start().use { ignored ->
+                }.start().let { _ ->
                     testSuccessfulEndpoint(url)
                     testWrongCertOnEndpoint(url)
                 }

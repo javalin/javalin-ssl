@@ -121,9 +121,9 @@ class CertificateAuthorityTests : IntegrationTestClass() {
         try {
             Javalin.create { javalinConfig: JavalinConfig ->
                 javalinConfig.showJavalinBanner = false
-                javalinConfig.plugins.register(sslPlugin)
+                javalinConfig.registerPlugin(sslPlugin)
             }["/", { ctx: Context -> ctx.result(SUCCESS) }]
-                .start().use { _ ->
+                .start().let { _ ->
                     testSuccessfulEndpoint(url, client.get()) // works
                     sslPlugin.reload { config: SSLConfig ->
                         config.pemFromClasspath(SERVER_CERT_NAME, SERVER_KEY_NAME)
@@ -185,7 +185,7 @@ class CertificateAuthorityTests : IntegrationTestClass() {
                             ROOT_CERT_NAME
                         )
                     }
-                }.start().use { _ -> testSuccessfulEndpoint(url, client) }
+                }.start().let { _ -> testSuccessfulEndpoint(url, client) }
             } catch (e: Exception) {
                 Assertions.fail<Any>(e)
             }
@@ -205,7 +205,7 @@ class CertificateAuthorityTests : IntegrationTestClass() {
                             ROOT_CERT_NAME
                         )
                     }
-                }.start().use { _ -> testWrongCertOnEndpoint(url, client) }
+                }.start().let { _ -> testWrongCertOnEndpoint(url, client) }
             } catch (e: Exception) {
                 Assertions.fail<Any>(e)
             }

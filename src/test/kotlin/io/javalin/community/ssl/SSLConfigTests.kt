@@ -28,7 +28,7 @@ class SSLConfigTests : IntegrationTestClass() {
                 config.pemFromString(Server.CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING)
                 config.securePort = securePort
                 config.insecurePort = insecurePort
-            }.start().use { app ->
+            }.start().let { app ->
                 Assertions.assertThrows(Exception::class.java) {
                     client.newCall(Request.Builder().url(http).build()).execute()
                 } // should throw exception
@@ -54,7 +54,7 @@ class SSLConfigTests : IntegrationTestClass() {
                 config.secure = false
                 config.insecurePort = insecurePort
                 config.securePort = securePort
-            }.start().use { _ ->
+            }.start().let { _ ->
                 Assertions.assertThrows(Exception::class.java) {
                     client.newCall(Request.Builder().url(https).build()).execute()
                 } // should throw exception
@@ -74,7 +74,7 @@ class SSLConfigTests : IntegrationTestClass() {
             createTestApp { config: SSLConfig ->
                 config.secure = false
                 config.insecurePort = 8080
-            }.start().use { _ ->
+            }.start().let { _ ->
                 val response = client.newCall(Request.Builder().url("http://localhost:8080/").build())
                     .execute() // should not throw exception
                 Assertions.assertEquals(200, response.code)
@@ -93,7 +93,7 @@ class SSLConfigTests : IntegrationTestClass() {
                 config.insecure = false
                 config.pemFromString(Server.CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING)
                 config.securePort = 8443
-            }.start().use { _ ->
+            }.start().let { _ ->
                 val response = client.newCall(Request.Builder().url("https://localhost:8443/").build())
                     .execute() // should not throw exception
                 Assertions.assertEquals(200, response.code)
@@ -118,7 +118,7 @@ class SSLConfigTests : IntegrationTestClass() {
                 config.securePort = securePort
                 config.insecurePort = insecurePort
                 config.redirect = true
-            }.start().use { _ ->
+            }.start().let { _ ->
                 val redirect = noRedirectClient.newCall(Request.Builder().url(http).build()).execute()
                 Assertions.assertTrue(redirect.isRedirect)
                 Assertions.assertEquals(https, redirect.header("Location"))
@@ -141,7 +141,7 @@ class SSLConfigTests : IntegrationTestClass() {
                 config.secure = false
                 config.http2 = false
                 config.insecurePort = insecurePort
-            }.start().use { _ -> testSuccessfulEndpoint(http, okhttp3.Protocol.HTTP_1_1) }
+            }.start().let { _ -> testSuccessfulEndpoint(http, okhttp3.Protocol.HTTP_1_1) }
         } catch (e: IOException) {
             Assertions.fail<Any>(e)
         }
@@ -160,7 +160,7 @@ class SSLConfigTests : IntegrationTestClass() {
                 config.secure = false
                 config.http2 = false
                 config.insecurePort = insecurePort
-            }.start().use { _ ->
+            }.start().let { _ ->
                 Assertions.assertThrows(Exception::class.java) {
                     http2client.newCall(
                         Request.Builder().url(http).build()
@@ -184,7 +184,7 @@ class SSLConfigTests : IntegrationTestClass() {
                 config.pemFromString(Server.CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING)
                 config.securePort = securePort
                 config.insecurePort = insecurePort
-            }.start().use { _ -> testSuccessfulEndpoint(https, okhttp3.Protocol.HTTP_1_1) }
+            }.start().let { _ -> testSuccessfulEndpoint(https, okhttp3.Protocol.HTTP_1_1) }
         } catch (e: IOException) {
             Assertions.fail<Any>(e)
         }
@@ -203,7 +203,7 @@ class SSLConfigTests : IntegrationTestClass() {
                 config.http2 = true
                 config.insecurePort = insecurePort
                 config.securePort = securePort
-            }.start().use { _ -> testSuccessfulEndpoint(client, http, okhttp3.Protocol.H2_PRIOR_KNOWLEDGE) }
+            }.start().let { _ -> testSuccessfulEndpoint(client, http, okhttp3.Protocol.H2_PRIOR_KNOWLEDGE) }
         } catch (e: IOException) {
             Assertions.fail<Any>(e)
         }
@@ -219,7 +219,7 @@ class SSLConfigTests : IntegrationTestClass() {
                 config.pemFromString(Server.CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING)
                 config.securePort = securePort
                 config.insecurePort = insecurePort
-            }.start().use { _ -> testSuccessfulEndpoint(https, okhttp3.Protocol.HTTP_2) }
+            }.start().let { _ -> testSuccessfulEndpoint(https, okhttp3.Protocol.HTTP_2) }
         } catch (e: IOException) {
             Assertions.fail<Any>(e)
         }
@@ -237,7 +237,7 @@ class SSLConfigTests : IntegrationTestClass() {
                 config.insecurePort = insecurePort
                 config.securePort = securePort
                 config.pemFromString(Server.CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING)
-            }.start().use { _ ->
+            }.start().let { _ ->
                 testSuccessfulEndpoint(http, okhttp3.Protocol.HTTP_1_1)
                 testSuccessfulEndpoint(https, okhttp3.Protocol.HTTP_2)
             }
@@ -259,7 +259,7 @@ class SSLConfigTests : IntegrationTestClass() {
                 config.securePort = securePort
                 config.pemFromString(Server.CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING)
                 config.host = "localhost"
-            }.start().use { _ ->
+            }.start().let { _ ->
                 testSuccessfulEndpoint(http, okhttp3.Protocol.HTTP_1_1)
                 testSuccessfulEndpoint(https, okhttp3.Protocol.HTTP_2)
             }
@@ -279,7 +279,7 @@ class SSLConfigTests : IntegrationTestClass() {
                 config.securePort = securePort
                 config.pemFromString(Server.CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING)
                 config.host = "wronghost"
-            }.start().use { _ -> Assertions.fail<Any>() }
+            }.start().let { _ -> Assertions.fail<Any>() }
         } catch (ignored: Exception) {}
     }
 
@@ -297,7 +297,7 @@ class SSLConfigTests : IntegrationTestClass() {
                 config.pemFromString(Server.CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING)
                 config.host = "localhost"
                 config.sniHostCheck = true
-            }.start().use { _ ->
+            }.start().let { _ ->
                 testSuccessfulEndpoint(http, okhttp3.Protocol.HTTP_1_1)
                 testSuccessfulEndpoint(https, okhttp3.Protocol.HTTP_2)
             }
@@ -320,7 +320,7 @@ class SSLConfigTests : IntegrationTestClass() {
                 config.pemFromString(Server.GOOGLE_CERTIFICATE_AS_STRING, Server.GOOGLE_KEY_AS_STRING)
                 config.host = "localhost"
                 config.sniHostCheck = true
-            }.start().use { _ ->
+            }.start().let { _ ->
                 //http request should be successful
                 testSuccessfulEndpoint(untrustedClient, http, okhttp3.Protocol.HTTP_1_1)
                 //https request should fail
@@ -350,7 +350,7 @@ class SSLConfigTests : IntegrationTestClass() {
                 config.pemFromString(Server.GOOGLE_CERTIFICATE_AS_STRING, Server.GOOGLE_KEY_AS_STRING)
                 config.host = "localhost"
                 config.sniHostCheck = false
-            }.start().use { _ ->
+            }.start().let { _ ->
                 testSuccessfulEndpoint(untrustedClient, http, okhttp3.Protocol.HTTP_1_1)
                 testSuccessfulEndpoint(untrustedClient, https, okhttp3.Protocol.HTTP_2)
             }
@@ -375,10 +375,10 @@ class SSLConfigTests : IntegrationTestClass() {
                     connector.setIdleTimeout(1000)
                     connector.name = "customName"
                 }
-            }.start().use { app ->
+            }.start().let { app ->
                 testSuccessfulEndpoint(http, okhttp3.Protocol.HTTP_1_1)
                 testSuccessfulEndpoint(https, okhttp3.Protocol.HTTP_2)
-                for (connector in app.cfg.pvt.server!!.getConnectors()) {
+                for (connector in app.unsafeConfig().pvt.server!!.getConnectors()) {
                     Assertions.assertEquals(1000, connector.idleTimeout)
                     Assertions.assertEquals("customName", connector.name)
                 }
@@ -399,7 +399,7 @@ class SSLConfigTests : IntegrationTestClass() {
                 config.securePort = securePort
                 config.pemFromString(Server.CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING)
                 config.securityProvider = null
-            }.start().use { app ->
+            }.start().let { app ->
                 printSecurityProviderName(app)
                 testSuccessfulEndpoint(https, okhttp3.Protocol.HTTP_2)
             }
@@ -418,7 +418,7 @@ class SSLConfigTests : IntegrationTestClass() {
                 config.insecure = false
                 config.securePort = securePort
                 config.pemFromString(Server.CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING)
-            }.start().use { app ->
+            }.start().let { app ->
                 printSecurityProviderName(app)
                 testSuccessfulEndpoint(https, okhttp3.Protocol.HTTP_2)
             }

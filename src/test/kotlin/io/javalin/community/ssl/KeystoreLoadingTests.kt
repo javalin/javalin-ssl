@@ -231,7 +231,7 @@ class KeystoreLoadingTests : IntegrationTestClass() {
         Assertions.assertThrows(GenericKeyStoreException::class.java) {
             assertSslWorks { config: SSLConfig ->
                 config.keystoreFromInputStream(
-                    MALFORMED_JKS_INPUT_STREAM_SUPPLIER.get(), Server.KEY_STORE_PASSWORD
+                    MALFORMED_JKS_INPUT_STREAM_SUPPLIER.invoke(), Server.KEY_STORE_PASSWORD
                 )
             }
         }
@@ -242,7 +242,7 @@ class KeystoreLoadingTests : IntegrationTestClass() {
         Assertions.assertThrows(GenericKeyStoreException::class.java) {
             assertSslWorks { config: SSLConfig ->
                 config.keystoreFromInputStream(
-                    MALFORMED_P12_INPUT_STREAM_SUPPLIER.get(), Server.KEY_STORE_PASSWORD
+                    MALFORMED_P12_INPUT_STREAM_SUPPLIER.invoke(), Server.KEY_STORE_PASSWORD
                 )
             }
         }
@@ -272,19 +272,11 @@ class KeystoreLoadingTests : IntegrationTestClass() {
             }
         }
 
-        val MALFORMED_JKS_INPUT_STREAM_SUPPLIER = Supplier {
-            try {
-                return@Supplier KeystoreLoadingTests::class.java.getResourceAsStream(MALFORMED_JKS_FILE_NAME)
-            } catch (e: Exception) {
-                throw GenericIOException(e)
-            }
+        val MALFORMED_JKS_INPUT_STREAM_SUPPLIER : () -> InputStream = {
+            this::class.java.classLoader.getResourceAsStream(MALFORMED_JKS_FILE_NAME)!!
         }
-        val MALFORMED_P12_INPUT_STREAM_SUPPLIER = Supplier {
-            try {
-                return@Supplier KeystoreLoadingTests::class.java.getResourceAsStream(MALFORMED_JKS_FILE_NAME)
-            } catch (e: Exception) {
-                throw GenericIOException(e)
-            }
+        val MALFORMED_P12_INPUT_STREAM_SUPPLIER : () -> InputStream = {
+            this::class.java.classLoader.getResourceAsStream(MALFORMED_P12_FILE_NAME)!!
         }
     }
 }

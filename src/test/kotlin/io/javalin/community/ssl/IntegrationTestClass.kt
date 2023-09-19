@@ -35,7 +35,7 @@ abstract class IntegrationTestClass {
             sslConfig.securePort = securePort
         }
         try {
-            createTestApp(config).use { app ->
+            createTestApp(config).let { app ->
                 app.start()
                 val response = client.newCall(Request.Builder().url(url).build()).execute()
                 Assertions.assertEquals(200, response.code)
@@ -131,10 +131,10 @@ abstract class IntegrationTestClass {
         }
 
         @JvmStatic
-        fun createTestApp(config: Consumer<SSLConfig>?): Javalin {
+        fun createTestApp(config: Consumer<SSLConfig>): Javalin {
             return Javalin.create { javalinConfig: JavalinConfig ->
                 javalinConfig.showJavalinBanner = false
-                javalinConfig.plugins.register(SSLPlugin(config))
+                javalinConfig.registerPlugin(SSLPlugin(config))
             }["/", { ctx: Context -> ctx.result(SUCCESS) }]
         }
 

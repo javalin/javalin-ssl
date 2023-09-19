@@ -9,11 +9,13 @@ plugins {
     val kotlinVersion = "1.9.0"
     kotlin("jvm") version kotlinVersion
     kotlin("kapt") version kotlinVersion
+    id("org.jetbrains.dokka") version "1.9.0"
+
 }
 
 group = "io.javalin.community.ssl"
 //Must be formatted following the RegEx: /version\s*=\s*"\S+"/g
-version = "5.6.2"
+version = "6.0.0-SNAPSHOT"
 
 jacoco {
     toolVersion = "0.8.8"
@@ -29,22 +31,8 @@ repositories {
     }
 }
 
-sourceSets {
-    create("intTest") {
-        compileClasspath += sourceSets.main.get().output
-        runtimeClasspath += sourceSets.main.get().output
-    }
-}
-
-val intTestImplementation: Configuration by configurations.getting {
-    extendsFrom(configurations.implementation.get())
-}
-val intTestRuntimeOnly: Configuration by configurations.getting
-
-configurations["intTestRuntimeOnly"].extendsFrom(configurations.runtimeOnly.get())
-
 dependencies {
-    val javalin = "5.6.2"
+    val javalin = "6.0.0-SNAPSHOT"
     val junit = "5.10.0"
     val sslContextKickstart = "8.1.5"
     val okhttp = "4.11.0"
@@ -60,32 +48,25 @@ dependencies {
     implementation("org.eclipse.jetty.http2:http2-server")
     implementation("org.eclipse.jetty:jetty-alpn-conscrypt-server")
     implementation("org.eclipse.jetty:jetty-alpn-java-server")
-    //implementation("org.eclipse.jetty.http3:http3-server")
+    implementation("org.eclipse.jetty.http3:http3-server")
 
     implementation("io.github.hakky54:sslcontext-kickstart:$sslContextKickstart")
     implementation("io.github.hakky54:sslcontext-kickstart-for-jetty:$sslContextKickstart")
     implementation("io.github.hakky54:sslcontext-kickstart-for-pem:$sslContextKickstart")
 
-    testImplementation("org.junit.jupiter:junit-jupiter-api:$junit")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:$junit")
+    testImplementation("io.javalin:javalin:$javalin")
+    testImplementation("org.slf4j:slf4j-simple")
+    testImplementation("com.squareup.okhttp3:okhttp:$okhttp")
+    testImplementation("com.squareup.okhttp3:okhttp-tls:$okhttp")
 
-    intTestImplementation("io.javalin:javalin:$javalin")
-    intTestImplementation(platform("io.javalin:javalin-parent:$javalin"))
+}
 
-    intTestImplementation("io.github.hakky54:sslcontext-kickstart:$sslContextKickstart")
-    intTestImplementation("io.github.hakky54:sslcontext-kickstart-for-jetty:$sslContextKickstart")
-    intTestImplementation("io.github.hakky54:sslcontext-kickstart-for-pem:$sslContextKickstart")
-
-    intTestImplementation("org.slf4j:slf4j-simple")
-    intTestImplementation("org.eclipse.jetty.http2:http2-server")
-    intTestImplementation("org.eclipse.jetty:jetty-alpn-java-server")
-    intTestImplementation("org.eclipse.jetty:jetty-alpn-conscrypt-server")
-
-    intTestImplementation("com.squareup.okhttp3:okhttp:$okhttp")
-    intTestImplementation("com.squareup.okhttp3:okhttp-tls:$okhttp")
-    intTestImplementation("org.junit.jupiter:junit-jupiter-api:$junit")
-
-    intTestRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit")
+val javadocJar by tasks.registering(Jar::class) {
+    dependsOn(tasks.dokkaHtml)
+    archiveClassifier.set("javadoc")
+    from(tasks.dokkaHtml.flatMap { it.outputDirectory })
 }
 
 publishing {
@@ -111,6 +92,7 @@ publishing {
             version = project.version as String
 
             from(components.getByName("java"))
+            artifact(javadocJar.get())
 
             pom {
                 name.set("Javalin SSL Plugin")
@@ -167,62 +149,28 @@ tasks.withType(Javadoc) {
     options.addStringOption("charSet", "UTF-8")
 } */
 
+
+
+tasks.register<Jar>("dokkaJavadocJar") {
+    dependsOn(tasks.dokkaJavadoc)
+    from(tasks.dokkaJavadoc.flatMap { it.outputDirectory })
+    archiveClassifier.set("javadoc")
+}
+
 java {
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
     withSourcesJar()
-    withJavadocJar()
+    //withJavadocJar()
+    modularity.inferModulePath.set(true)
 }
 
-
-
-val integrationTests = task<Test>("integrationTests") {
-    description = "Runs the integration tests."
-    group = "verification"
-
-    testClassesDirs = sourceSets["intTest"].output.classesDirs
-    classpath = sourceSets["intTest"].runtimeClasspath
-
-    shouldRunAfter("test")
-
-    outputs.upToDateWhen { false }
-
-    testLogging {
-        exceptionFormat = TestExceptionFormat.FULL
-        showStackTraces = true
-    }
-
-    useJUnitPlatform {
-        includeTags("integration")
-    }
-
-    finalizedBy("integrationTestsCoverageReport")
-
-}
-
-tasks.register<JacocoReport>("integrationTestsCoverageReport") {
-    description = "Generates code coverage report for the integrationTest task."
-    group = "verification"
-
-    dependsOn("integrationTests")
-
-    sourceSets(sourceSets.main.get())
-    executionData("integrationTests")
-    mustRunAfter("integrationTests")
-
-   reports {
-        xml.required.set(true)
-    }
-
-}
-
-tasks.register<JacocoReport>("unitTestsCoverageReport") {
+tasks.jacocoTestReport{
     description = "Generates code coverage report for the test task."
     group = "verification"
 
     dependsOn("test")
-
-    sourceSets(sourceSets.main.get())
+    executionData.from(fileTree(project.projectDir).include("/jacoco/*.exec"))
     executionData("test")
     mustRunAfter("test")
 
@@ -234,16 +182,12 @@ tasks.register<JacocoReport>("unitTestsCoverageReport") {
 
 tasks.test {
     useJUnitPlatform()
-    finalizedBy("unitTestsCoverageReport")
+    finalizedBy(tasks.jacocoTestReport)
 
     testLogging {
         exceptionFormat = TestExceptionFormat.FULL
         showStackTraces = true
     }
-}
-
-tasks.check{
-    dependsOn(integrationTests)
 }
 
 
