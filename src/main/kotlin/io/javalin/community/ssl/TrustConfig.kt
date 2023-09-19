@@ -1,48 +1,45 @@
-package io.javalin.community.ssl;
+package io.javalin.community.ssl
 
-import nl.altindag.ssl.util.CertificateUtils;
-import nl.altindag.ssl.util.KeyStoreUtils;
-
-import java.io.InputStream;
-import java.nio.file.Paths;
-import java.security.KeyStore;
-import java.security.cert.Certificate;
-import java.util.ArrayList;
-import java.util.List;
+import nl.altindag.ssl.util.CertificateUtils
+import nl.altindag.ssl.util.KeyStoreUtils
+import java.io.InputStream
+import java.nio.file.Paths
+import java.security.KeyStore
+import java.security.cert.Certificate
 
 /**
  * Configuration for the trust store, used to verify the identity of the clients.
  * Using this configuration, the server will only accept connections from clients that are trusted.
  * If no trust store is configured, the server will accept any client.
  */
+class TrustConfig {
 
-public class TrustConfig {
-
+    private var certificateMutableList: MutableList<Certificate> = ArrayList()
 
     /**
      * List of certificates to be trusted, can be loaded using the helper methods or directly.
      * This list is complementary to the keys
      */
-    public List<Certificate> certificates = new ArrayList<>();
+    val certificates: List<Certificate> = certificateMutableList
+
+    var keyStoreMutableList: MutableList<KeyStore> = ArrayList()
 
     /**
      * List of KeyStores to be trusted, can be loaded using the helper methods or directly.
      */
-    public List<KeyStore> keyStores = new ArrayList<>();
-
+    var keyStore: List<KeyStore> = keyStoreMutableList
 
     ///////////////////////////////////////////////////////////////
     // Certificate Loading Methods (PEM, P7B and DER)
     ///////////////////////////////////////////////////////////////
-
     /**
      * Load certificate data from a given path in the system.
      * The certificate can be in PEM, P7B/PKCS#7 or DER format.
      *
      * @param certificatePath path to the certificate file.
      */
-    public void certificateFromPath(String certificatePath) {
-        certificates.addAll(CertificateUtils.loadCertificate(Paths.get(certificatePath)));
+    fun certificateFromPath(certificatePath: String) {
+        certificateMutableList.addAll(CertificateUtils.loadCertificate(Paths.get(certificatePath)))
     }
 
     /**
@@ -51,8 +48,8 @@ public class TrustConfig {
      *
      * @param certificateFile The name of the certificate file in the classpath.
      */
-    public void certificateFromClasspath(String certificateFile) {
-        certificates.addAll(CertificateUtils.loadCertificate(certificateFile));
+    fun certificateFromClasspath(certificateFile: String) {
+        certificateMutableList.addAll(CertificateUtils.loadCertificate(certificateFile))
     }
 
     /**
@@ -61,8 +58,8 @@ public class TrustConfig {
      *
      * @param certificateInputStream input stream to the certificate file.
      */
-    public void certificateFromInputStream(InputStream certificateInputStream) {
-        certificates.addAll(CertificateUtils.loadCertificate(certificateInputStream));
+    fun certificateFromInputStream(certificateInputStream: InputStream) {
+        certificateMutableList.addAll(CertificateUtils.loadCertificate(certificateInputStream))
     }
 
     /**
@@ -71,8 +68,8 @@ public class TrustConfig {
      *
      * @param certificateString P7B encoded certificate.
      */
-    public void p7bCertificateFromString(String certificateString) {
-        certificates.addAll(CertificateUtils.parseP7bCertificate(certificateString));
+    fun p7bCertificateFromString(certificateString: String) {
+        certificateMutableList.addAll(CertificateUtils.parseP7bCertificate(certificateString))
     }
 
     /**
@@ -80,16 +77,12 @@ public class TrustConfig {
      * The certificate must be in PEM format.
      * @param certificateString PEM encoded certificate.
      */
-    public void pemFromString(String certificateString) {
-        certificates.addAll(CertificateUtils.parsePemCertificate(certificateString));
+    fun pemFromString(certificateString: String) {
+        certificateMutableList.addAll(CertificateUtils.parsePemCertificate(certificateString))
     }
-
-
     ///////////////////////////////////////////////////////////////
     // Trust Store Loading Methods (JKS, PKCS12)
     ///////////////////////////////////////////////////////////////
-
-
     /**
      * Load a trust store from a given path in the system.
      * The trust store can be in JKS or PKCS12 format.
@@ -97,8 +90,8 @@ public class TrustConfig {
      * @param trustStorePath path to the trust store file.
      * @param trustStorePassword password for the trust store.
      */
-    public void trustStoreFromPath(String trustStorePath, String trustStorePassword) {
-        keyStores.add(KeyStoreUtils.loadKeyStore(Paths.get(trustStorePath), trustStorePassword.toCharArray()));
+    fun trustStoreFromPath(trustStorePath: String, trustStorePassword: String) {
+        keyStoreMutableList.add(KeyStoreUtils.loadKeyStore(Paths.get(trustStorePath), trustStorePassword.toCharArray()))
     }
 
     /**
@@ -108,8 +101,8 @@ public class TrustConfig {
      * @param trustStoreInputStream input stream to the trust store file.
      * @param trustStorePassword password for the trust store.
      */
-    public void trustStoreFromInputStream(InputStream trustStoreInputStream, String trustStorePassword) {
-        keyStores.add(KeyStoreUtils.loadKeyStore(trustStoreInputStream, trustStorePassword.toCharArray()));
+    fun trustStoreFromInputStream(trustStoreInputStream: InputStream, trustStorePassword: String) {
+        keyStoreMutableList.add(KeyStoreUtils.loadKeyStore(trustStoreInputStream, trustStorePassword.toCharArray()))
     }
 
     /**
@@ -117,7 +110,7 @@ public class TrustConfig {
      * @param trustStoreFile The name of the trust store file in the classpath.
      * @param trustStorePassword password for the trust store.
      */
-    public void trustStoreFromClasspath(String trustStoreFile, String trustStorePassword) {
-        keyStores.add(KeyStoreUtils.loadKeyStore(trustStoreFile, trustStorePassword.toCharArray()));
+    fun trustStoreFromClasspath(trustStoreFile: String, trustStorePassword: String) {
+        keyStoreMutableList.add(KeyStoreUtils.loadKeyStore(trustStoreFile, trustStorePassword.toCharArray()))
     }
 }
