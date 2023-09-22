@@ -48,7 +48,7 @@ class TLSConfig(
                 "TLS_DHE_RSA_WITH_AES_256_GCM_SHA384",
                 "TLS_DHE_RSA_WITH_AES_128_GCM_SHA256",
                 "TLS_DHE_RSA_WITH_CHACHA20_POLY1305_SHA256"
-            ), arrayOf("TLSv1.2","TLSv1.3")
+            ), arrayOf("TLSv1.3","TLSv1.2")
         )
 
         /**
@@ -82,7 +82,7 @@ class TLSConfig(
                 "TLS_RSA_WITH_AES_128_CBC_SHA",
                 "TLS_RSA_WITH_AES_256_CBC_SHA",
                 "TLS_RSA_WITH_3DES_EDE_CBC_SHA"
-            ), arrayOf("TLSv1", "TLSv1.1", "TLSv1.2", "TLSv1.3")
+            ), arrayOf("TLSv1.3","TLSv1.2", "TLSv1.1", "TLSv1")
         )
     }
 }

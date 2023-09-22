@@ -33,11 +33,13 @@ repositories {
 
 dependencies {
     val javalin = "6.0.0-SNAPSHOT"
-    val junit = "5.10.0"
     val sslContextKickstart = "8.1.5"
-    val okhttp = "4.11.0"
+
     val annotations = "24.0.1"
     val kotlinVersion = "1.9.0"
+
+    val junit = "5.10.0"
+    val okhttp = "4.11.0"
 
     compileOnly("org.jetbrains:annotations:$annotations")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
@@ -140,16 +142,6 @@ nexusPublishing {
         sonatype()
     }
 }
-
-/* TODO: Replace with kdoc
-tasks.withType(Javadoc) {
-    failOnError false
-    options.addStringOption("Xdoclint:none", "-quiet")
-    options.addStringOption("encoding", "UTF-8")
-    options.addStringOption("charSet", "UTF-8")
-} */
-
-
 
 tasks.register<Jar>("dokkaJavadocJar") {
     dependsOn(tasks.dokkaJavadoc)

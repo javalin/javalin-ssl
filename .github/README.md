@@ -7,7 +7,7 @@
 
 # SSL Plugin [![GitHub Workflow Status (branch)](https://img.shields.io/github/actions/workflow/status/javalin/javalin-ssl/main.yaml?branch=main&label=main&logo=githubactions&logoColor=white)](https://github.com/javalin/javalin-ssl/actions?query=branch%3Amain) [![GitHub Workflow Status (branch)](https://img.shields.io/github/actions/workflow/status/javalin/javalin-ssl/main.yaml?branch=dev&label=dev&logo=githubactions&logoColor=white)](https://github.com/javalin/javalin-ssl/actions?query=branch%3Adev) [![Coverage](https://codecov.io/gh/javalin/javalin-ssl/branch/dev/graphs/badge.svg)](https://app.codecov.io/gh/javalin/javalin-ssl) [![javadoc](https://javadoc.io/badge2/io.javalin.community.ssl/ssl-plugin/javadoc.svg)](https://javadoc.io/doc/io.javalin.community.ssl/ssl-plugin)
 
-Straightforward SSL and HTTP/2 Configuration for Javalin!
+Straightforward SSL, HTTP/2 and HTTP/3 Configuration for Javalin!
 
 If you're not familiar with the HTTPS protocol we have a great guide at the [Javalin website](https://javalin.io/tutorials/javalin-ssl-tutorial).
 
@@ -53,28 +53,34 @@ Javalin.create(config->{
 ```kotlin
 Javalin.create { config ->
     ... // your Javalin config here
-    config.plugins.register(SSLPlugin { ssl ->
+    config.registerPlugin(SSL) {
         ... // your SSL configuration here
-        ssl.pemFromPath("/path/to/cert.pem", "/path/to/key.pem")
-    })
+        it.pemFromPath("/path/to/cert.pem", "/path/to/key.pem")
+    }
 }
 ```
 
 ### Available config options
 
-```java
+```kotlin
+
 // Connection options
 host=null;                                                            // Host to bind to, by default it will bind to all interfaces
 insecure=true;                                                        // Toggle the default http (insecure) connector
 secure=true;                                                          // Toggle the default https (secure) connector
 http2=true;                                                           // Toggle HTTP/2 Support
+http3=false;                                                          // Toggle HTTP/3 Support
 
-securePort=443;                                                       // Port to use on the SSL (secure) connector
-insecurePort=80;                                                      // Port to use on the http (insecure) connector
+securePort=443;                                                       // Port to use on the SSL (secure) connector (TCP)
+insecurePort=80;                                                      // Port to use on the http (insecure) connector (TCP)
+http3Port=443;                                                        // Port to use on the http3 connector (UDP)
 redirect=false;                                                       // Redirect all http requests to https
+disableHttp3Upgrade=false;                                            // Disable the HTTP/3 upgrade header 
+
+
 
 sniHostCheck=true;                                                    // Enable SNI hostname verification
-tlsConfig=TLSConfig.INTERMEDIATE;                                     // Set the TLS configuration. (by default it uses Mozilla's intermediate configuration)
+tlsConfig=TLSConfig.INTERMEDIATE;                                     // Set the TLS configuration. (by default Mozilla's intermediate)
 
 // PEM loading options (mutually exclusive)
 pemFromPath("/path/to/cert.pem","/path/to/key.pem");                  // load from the given paths
@@ -92,9 +98,9 @@ keystoreFromClasspath("keyStoreName.p12","keystorePassword");         // load th
 keystoreFromInputStream(keystoreInputStream,"keystorePassword");      // load the keystore from the given input stream
 
 // Advanced options
-configConnectors(Consumer<ServerConnector>);                          // Set a Consumer to configure the connectors
+configConnectors { con -> con.dump() }                                // Set a Consumer to configure the connectors
 securityProvider = null;                                              // Use a custom security provider
-withTrustConfig(Consumer<TrustConfig>);                               // Set the trust configuration, explained below. (by default all clients are trusted)
+withTrustConfig { trust -> trust.pemFromString("cert") }              // Set the trust configuration, explained below.
 ```
 
 #### Trust Configuration
@@ -114,7 +120,7 @@ config.plugins.register(new SSLPlugin(ssl->{
 }));
 ```
 
-```java
+```kotlin
 // Certificate loading options (PEM/DER/P7B)
 certificateFromPath("path/to/certificate.pem");              // load a PEM/DER/P7B cert from the given path
 certificateFromClasspath("certificateName.pem");             // load a PEM/DER/P7B cert from the given path in the classpath
@@ -132,28 +138,28 @@ trustStoreFromInputStream(inputStream, "password");          // load a trust sto
 #### Hot reloading
 Certificate reloading is supported, if you want to replace the certificate you can simply call `SSLPlugin.reload()` with the new configuration.
 
-```java
+```kotlin
 // Create the plugin outside the Javalin config to hold a reference to reload it
-SSLPlugin sslPlugin = new SSLPlugin(ssl->{
-    ssl.loadPemFromPath("/path/to/cert.pem","/path/to/key.pem");
-    ssl.insecurePort = 8080; // any other config you want to change
-});
+val sslPlugin = SSLPlugin { 
+    it.loadPemFromPath("/path/to/cert.pem","/path/to/key.pem");
+    it.insecurePort = 8080; // any other config you want to change
+}
 
-Javalin.create(config->{
+Javalin.create {
     ...  // your Javalin config here
-    config.plugins.register(sslPlugin);
-});
+    it.registerPlugin(sslPlugin)
+}
 
 // later on, when you want to replace the certificate
-sslPlugin.reload(ssl->{
+sslPlugin.reload {
     // any options other than loading certificates/keys will be ignored.
-    ssl.loadPemFromPath("/path/to/new/cert.pem","/path/to/new/key.pem");
-    
+    it.pemFromPath("/path/to/new/cert.pem","/path/to/new/key.pem");
+
     // you can also replace trust configuration
-    ssl.withTrustConfig(trust->{
-        trust.certificateFromPath("/path/to/new/cert.pem");
-    });
-});
+    it.withTrustConfig{ trust ->
+        trust.certificateFromPath("path/to/new/certificate.pem");
+    }
+}
 ``` 
 
 
@@ -161,7 +167,6 @@ sslPlugin.reload(ssl->{
 ## Notes
 
 - HTTP/2 **can** be used over an insecure connection.
-- HTTP/3 is **not** yet supported because of some issues with Jetty's implementation.
 - If Jetty responds with an `HTTP ERROR 400 Invalid SNI`, you can disable SNI verification by
   setting `sniHostCheck = false`.
 - Minimizing your jar can lead to issues, [more info](https://github.com/javalin/javalin-ssl/issues/59).   

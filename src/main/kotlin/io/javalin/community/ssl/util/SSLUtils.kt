@@ -72,10 +72,10 @@ object SSLUtils {
      */
     @Throws(SSLConfigException::class)
     private fun parseIdentity(config: SSLConfig, builder: SSLFactory.Builder) {
-        when(config.loadedIdentity){
+        when(config.pvt.loadedIdentity){
             SSLConfig.LoadedIdentity.NONE -> throw SSLConfigException(SSLConfigException.Types.MISSING_CERT_AND_KEY_FILE)
-            SSLConfig.LoadedIdentity.KEY_MANAGER -> builder.withIdentityMaterial(config.keyManager)
-            SSLConfig.LoadedIdentity.KEY_STORE -> builder.withIdentityMaterial(config.keyStore, config.identityPassword!!.toCharArray())
+            SSLConfig.LoadedIdentity.KEY_MANAGER -> builder.withIdentityMaterial(config.pvt.keyManager)
+            SSLConfig.LoadedIdentity.KEY_STORE -> builder.withIdentityMaterial(config.pvt.keyStore, config.pvt.identityPassword!!.toCharArray())
         }
     }
 

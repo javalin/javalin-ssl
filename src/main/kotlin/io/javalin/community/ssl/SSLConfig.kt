@@ -14,7 +14,7 @@ import javax.net.ssl.X509ExtendedKeyManager
 /**
  * Data class to hold the configuration for the plugin.
  */
-@Suppress("unused")
+
 class SSLConfig : PluginConfiguration {
     /**
      * Host to bind to.
@@ -76,58 +76,70 @@ class SSLConfig : PluginConfiguration {
      * Enables HTTP/3 Support.
      */
     @JvmField
-    val enableHttp3 = false
+    var http3 = false
 
     /**
      * Disables the handler that adds an "Alt-Svc" header to any non HTTP/3 response.
      */
     @JvmField
-    val disableHttp3Upgrade = false
+    var disableHttp3Upgrade = false
 
     /**
      * UDP Port to use on the HTTP/3 connector.
      */
     @JvmField
-    val http3Port = 443
-
-    /**
-     * Identity manager to use for the SSLContext.
-     * It's meant to be configured using the different loading methods but can be set directly.
-     * Exclusive with [keyStore].
-     */
-    var keyManager : X509ExtendedKeyManager? = null
-        private set(value) {
-            if (loadedIdentity != LoadedIdentity.NONE) {
-                throw SSLConfigException(SSLConfigException.Types.MULTIPLE_IDENTITY_LOADING_OPTIONS)
-            } else if (value != null) {
-                loadedIdentity = LoadedIdentity.KEY_MANAGER
-                field = value
-            }
-        }
-
-    /**
-     * Key store to use for the SSLContext.
-     * It's meant to be configured using the different loading methods but can be set directly.
-     * Exclusive with [keyManager].
-     */
-    var keyStore : KeyStore? = null
-        private set(value) {
-            if (loadedIdentity != LoadedIdentity.NONE) {
-                throw SSLConfigException(SSLConfigException.Types.MULTIPLE_IDENTITY_LOADING_OPTIONS)
-            } else if (value != null) {
-                loadedIdentity = LoadedIdentity.KEY_STORE
-                field = value
-            }
-        }
-
-    var identityPassword: String? = null
-        private set
+    var http3Port = 443
 
     enum class LoadedIdentity {
         NONE, KEY_MANAGER, KEY_STORE
     }
-    var loadedIdentity: LoadedIdentity = LoadedIdentity.NONE
-        private set
+
+    /**
+     * Internal configuration holder for the identity. DO NOT USE DIRECTLY.
+     */
+    val pvt = PrivateConfig()
+
+    /**
+     * Internal data class to hold the identity configuration. DO NOT USE DIRECTLY.
+     */
+    class PrivateConfig {
+
+        /**
+         * Identity manager to use for the SSLContext.
+         * It's meant to be configured using the different loading methods but can be set directly.
+         * Exclusive with [keyStore].
+         */
+        var keyManager : X509ExtendedKeyManager? = null
+            set(value) {
+                if (loadedIdentity != LoadedIdentity.NONE) {
+                    throw SSLConfigException(SSLConfigException.Types.MULTIPLE_IDENTITY_LOADING_OPTIONS)
+                } else if (value != null) {
+                    loadedIdentity = LoadedIdentity.KEY_MANAGER
+                    field = value
+                }
+            }
+
+        /**
+         * Key store to use for the SSLContext.
+         * It's meant to be configured using the different loading methods but can be set directly.
+         * Exclusive with [keyManager].
+         */
+        var keyStore : KeyStore? = null
+            set(value) {
+                if (loadedIdentity != LoadedIdentity.NONE) {
+                    throw SSLConfigException(SSLConfigException.Types.MULTIPLE_IDENTITY_LOADING_OPTIONS)
+                } else if (value != null) {
+                    loadedIdentity = LoadedIdentity.KEY_STORE
+                    field = value
+                }
+            }
+
+        var identityPassword: String? = null
+
+        var loadedIdentity: LoadedIdentity = LoadedIdentity.NONE
+            private set
+
+    }
 
     ///////////////////////////////////////////////////////////////
     // PEM Loading Methods
@@ -143,7 +155,7 @@ class SSLConfig : PluginConfiguration {
     fun pemFromPath(certificatePath: String, privateKeyPath: String, password: String? = null) {
         val certPath = Paths.get(certificatePath)
         val keyPath = Paths.get(privateKeyPath)
-        keyManager = password?.let {
+        pvt.keyManager = password?.let {
             PemUtils.loadIdentityMaterial(certPath, keyPath, password.toCharArray())
         } ?: PemUtils.loadIdentityMaterial(certPath, keyPath)
     }
@@ -157,7 +169,7 @@ class SSLConfig : PluginConfiguration {
      */
     @JvmOverloads
     fun pemFromClasspath(certificateFile: String, privateKeyFile: String, password: String? = null) {
-        keyManager = password?.let {
+        pvt.keyManager = password?.let {
             PemUtils.loadIdentityMaterial(certificateFile, privateKeyFile, password.toCharArray())
         } ?: PemUtils.loadIdentityMaterial(certificateFile, privateKeyFile)
     }
@@ -172,7 +184,7 @@ class SSLConfig : PluginConfiguration {
      */
     @JvmOverloads
     fun pemFromInputStream(certificateInputStream: InputStream, privateKeyInputStream: InputStream, password: String? = null) {
-        keyManager = password?.let {
+        pvt.keyManager = password?.let {
             PemUtils.loadIdentityMaterial(certificateInputStream, privateKeyInputStream, password.toCharArray())
         } ?: PemUtils.loadIdentityMaterial(certificateInputStream, privateKeyInputStream)
     }
@@ -186,7 +198,7 @@ class SSLConfig : PluginConfiguration {
      */
     @JvmOverloads
     fun pemFromString(certificateString: String, privateKeyString: String, password: String? = null) {
-        keyManager = PemUtils.parseIdentityMaterial(certificateString, privateKeyString, password?.toCharArray() )
+        pvt.keyManager = PemUtils.parseIdentityMaterial(certificateString, privateKeyString, password?.toCharArray() )
     }
 
     ///////////////////////////////////////////////////////////////
@@ -201,8 +213,8 @@ class SSLConfig : PluginConfiguration {
      */
     @JvmOverloads
     fun keystoreFromPath(keyStorePath: String, keyStorePassword: String, identityPassword: String? = null) {
-        keyStore = KeyStoreUtils.loadKeyStore(Paths.get(keyStorePath), keyStorePassword.toCharArray())
-        this.identityPassword = identityPassword ?: keyStorePassword
+        pvt.keyStore = KeyStoreUtils.loadKeyStore(Paths.get(keyStorePath), keyStorePassword.toCharArray())
+        pvt.identityPassword = identityPassword ?: keyStorePassword
     }
 
     /**
@@ -214,8 +226,8 @@ class SSLConfig : PluginConfiguration {
      */
     @JvmOverloads
     fun keystoreFromInputStream(keyStoreInputStream: InputStream, keyStorePassword: String, identityPassword: String? = null) {
-        keyStore = KeyStoreUtils.loadKeyStore(keyStoreInputStream, keyStorePassword.toCharArray())
-        this.identityPassword = identityPassword ?: keyStorePassword
+        pvt.keyStore = KeyStoreUtils.loadKeyStore(keyStoreInputStream, keyStorePassword.toCharArray())
+        pvt.identityPassword = identityPassword ?: keyStorePassword
     }
 
     /**
@@ -227,8 +239,8 @@ class SSLConfig : PluginConfiguration {
      */
     @JvmOverloads
     fun keystoreFromClasspath(keyStoreFile: String, keyStorePassword: String, identityPassword: String? = null) {
-        keyStore = KeyStoreUtils.loadKeyStore(keyStoreFile, keyStorePassword.toCharArray())
-        this.identityPassword = identityPassword ?: keyStorePassword
+        pvt.keyStore = KeyStoreUtils.loadKeyStore(keyStoreFile, keyStorePassword.toCharArray())
+        pvt.identityPassword = identityPassword ?: keyStorePassword
     }
 
     ///////////////////////////////////////////////////////////////
@@ -248,6 +260,7 @@ class SSLConfig : PluginConfiguration {
     /**
      * Security provider to use for the SSLContext.
      */
+    @JvmField
     var securityProvider: Provider? = null
 
     ///////////////////////////////////////////////////////////////

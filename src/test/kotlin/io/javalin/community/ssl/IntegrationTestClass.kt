@@ -34,16 +34,17 @@ abstract class IntegrationTestClass {
             sslConfig.insecurePort = insecurePort
             sslConfig.securePort = securePort
         }
+        val app : Javalin by lazy { createTestApp(config) }
         try {
-            createTestApp(config).let { app ->
-                app.start()
-                val response = client.newCall(Request.Builder().url(url).build()).execute()
-                Assertions.assertEquals(200, response.code)
-                Assertions.assertEquals(SUCCESS, Objects.requireNonNull(response.body)?.string())
-                response.close()
-            }
+            app.start()
+            val response = client.newCall(Request.Builder().url(url).build()).execute()
+            Assertions.assertEquals(200, response.code)
+            Assertions.assertEquals(SUCCESS, Objects.requireNonNull(response.body)?.string())
+            response.close()
         } catch (e: IOException) {
             Assertions.fail<Any>(e)
+        } finally {
+            app.stop()
         }
     }
 

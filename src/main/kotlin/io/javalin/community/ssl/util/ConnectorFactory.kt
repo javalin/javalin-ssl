@@ -15,7 +15,7 @@ class ConnectorFactory (private var config: SSLConfig, private var sslContextFac
     /**
      * Create and return an insecure connector to the server.
      *
-     * @return The created [Connector].
+     * @return The created [ServerConnector].
      */
     fun createInsecureConnector(server: Server?, httpConfiguration: HttpConfiguration): ServerConnector {
         val connector: ServerConnector
@@ -43,7 +43,7 @@ class ConnectorFactory (private var config: SSLConfig, private var sslContextFac
     /**
      * Create and apply an SSL connector to the server.
      *
-     * @return The created [Connector].
+     * @return The created [ServerConnector].
      */
     fun createSecureConnector(server: Server?, httpConfiguration: HttpConfiguration): ServerConnector {
         val connector: ServerConnector
