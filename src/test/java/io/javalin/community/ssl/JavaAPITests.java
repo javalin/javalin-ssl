@@ -20,13 +20,10 @@ public class JavaAPITests {
             conf.insecure = true;                                                       // Toggle the default http (insecure) connector
             conf.secure = true;                                                         // Toggle the default https (secure) connector
             conf.http2 = true;                                                          // Toggle HTTP/2 Support
-            conf.http3 = false;                                                         // Toggle HTTP/3 Support
 
             conf.securePort = 443;                                                      // Port to use on the SSL (secure) connector (TCP)
             conf.insecurePort = 80;                                                     // Port to use on the http (insecure) connector (TCP)
-            conf.http3Port = 443;                                                       // Port to use on the http3 connector (UDP)
             conf.redirect = false;                                                      // Redirect all http requests to https
-            conf.disableHttp3Upgrade = false;                                           // Disable the HTTP/3 upgrade header
 
             conf.sniHostCheck = true;                                                   // Enable SNI hostname verification
             conf.tlsConfig = TLSConfig.Companion.getINTERMEDIATE();                     // Set the TLS configuration. (by default it uses Mozilla's intermediate configuration)

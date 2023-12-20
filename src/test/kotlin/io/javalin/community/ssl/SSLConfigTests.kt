@@ -378,7 +378,7 @@ class SSLConfigTests : IntegrationTestClass() {
             }.start().let { app ->
                 testSuccessfulEndpoint(http, okhttp3.Protocol.HTTP_1_1)
                 testSuccessfulEndpoint(https, okhttp3.Protocol.HTTP_2)
-                for (connector in app.unsafeConfig().pvt.server!!.getConnectors()) {
+                for (connector in app.unsafeConfig().pvt.jetty.server!!.connectors) {
                     Assertions.assertEquals(1000, connector.idleTimeout)
                     Assertions.assertEquals("customName", connector.name)
                 }

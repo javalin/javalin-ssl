@@ -23,8 +23,8 @@ import javax.net.ssl.SSLSession
 import javax.net.ssl.X509TrustManager
 
 abstract class IntegrationTestClass {
-    private fun assertWorks(protocol: Protocol, config: Consumer<SSLConfig>) {
-        var config = config
+    private fun assertWorks(protocol: Protocol, givenConfig: Consumer<SSLConfig>) {
+        var config = givenConfig
         val insecurePort = ports.getAndIncrement()
         val securePort = ports.getAndIncrement()
         val http = HTTP_URL_WITH_PORT.apply(insecurePort)
@@ -136,7 +136,10 @@ abstract class IntegrationTestClass {
             return Javalin.create { javalinConfig: JavalinConfig ->
                 javalinConfig.showJavalinBanner = false
                 javalinConfig.registerPlugin(SSLPlugin(config))
-            }["/", { ctx: Context -> ctx.result(SUCCESS) }]
+                javalinConfig.router.mount{
+                    it.get("/", { ctx: Context -> ctx.result(SUCCESS) })
+                }
+            }
         }
 
         @JvmStatic

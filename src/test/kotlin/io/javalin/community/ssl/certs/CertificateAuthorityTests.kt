@@ -104,7 +104,7 @@ class CertificateAuthorityTests : IntegrationTestClass() {
                 .withUnsafeHostnameVerifier() // we don't care about the hostname, we just want to test the certificate
                 .build()
             OkHttpClient.Builder()
-                .sslSocketFactory(sslFactory.sslSocketFactory,sslFactory.trustManager.orElseThrow())
+                .sslSocketFactory(sslFactory.sslSocketFactory, sslFactory.trustManager.orElseThrow())
                 .hostnameVerifier(sslFactory.hostnameVerifier)
                 .build()
         }
@@ -115,34 +115,36 @@ class CertificateAuthorityTests : IntegrationTestClass() {
             config.securePort = securePort
             config.pemFromClasspath(SERVER_CERT_NAME, SERVER_KEY_NAME)
             config.http2 = false
-            config.configConnectors { conn: ServerConnector -> conn.setIdleTimeout(0) } // disable idle timeout for testing
+            config.configConnectors { conn: ServerConnector -> conn.idleTimeout = 0 } // disable idle timeout for testing
             config.withTrustConfig { trustConfig: TrustConfig -> trustConfig.certificateFromClasspath(ROOT_CERT_NAME) }
         }
         try {
             Javalin.create { javalinConfig: JavalinConfig ->
                 javalinConfig.showJavalinBanner = false
                 javalinConfig.registerPlugin(sslPlugin)
-            }["/", { ctx: Context -> ctx.result(SUCCESS) }]
-                .start().let { _ ->
-                    testSuccessfulEndpoint(url, client.get()) // works
-                    sslPlugin.reload { config: SSLConfig ->
-                        config.pemFromClasspath(SERVER_CERT_NAME, SERVER_KEY_NAME)
-                        config.withTrustConfig { trustConfig: TrustConfig ->
-                            trustConfig.certificateFromClasspath(Server.CERTIFICATE_FILE_NAME) // this is some other certificate
-                        }
-                    }
-                    testWrongCertOnEndpoint(
-                        url,
-                        client.get()
-                    ) // fails because the server now has a different trust material
-                    sslPlugin.reload { config: SSLConfig ->
-                        config.pemFromClasspath(SERVER_CERT_NAME, SERVER_KEY_NAME)
-                        config.withTrustConfig { trustConfig: TrustConfig ->
-                            trustConfig.certificateFromClasspath(ROOT_CERT_NAME) // back to the original certificate
-                        }
-                    }
-                    testSuccessfulEndpoint(url, client.get()) // works again
+                javalinConfig.router.mount {
+                    it.get("/") { ctx: Context -> ctx.result(SUCCESS) }
                 }
+            }.start().let { _ ->
+                testSuccessfulEndpoint(url, client.get()) // works
+                sslPlugin.reload { config: SSLConfig ->
+                    config.pemFromClasspath(SERVER_CERT_NAME, SERVER_KEY_NAME)
+                    config.withTrustConfig { trustConfig: TrustConfig ->
+                        trustConfig.certificateFromClasspath(Server.CERTIFICATE_FILE_NAME) // this is some other certificate
+                    }
+                }
+                testWrongCertOnEndpoint(
+                    url,
+                    client.get()
+                ) // fails because the server now has a different trust material
+                sslPlugin.reload { config: SSLConfig ->
+                    config.pemFromClasspath(SERVER_CERT_NAME, SERVER_KEY_NAME)
+                    config.withTrustConfig { trustConfig: TrustConfig ->
+                        trustConfig.certificateFromClasspath(ROOT_CERT_NAME) // back to the original certificate
+                    }
+                }
+                testSuccessfulEndpoint(url, client.get()) // works again
+            }
         } catch (e: Exception) {
             Assertions.fail<Any>(e)
         }
@@ -155,6 +157,7 @@ class CertificateAuthorityTests : IntegrationTestClass() {
         const val CLIENT_KEY_NAME = "ca/client.key"
         const val SERVER_CERT_NAME = "ca/server.cer"
         const val SERVER_KEY_NAME = "ca/server.key"
+
         @Throws(IOException::class)
         protected fun testSuccessfulEndpoint(url: String, client: OkHttpClient) {
             val response = client.newCall(Request.Builder().url(url).build()).execute()

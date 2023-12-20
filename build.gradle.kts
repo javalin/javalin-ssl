@@ -1,4 +1,5 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     id("java-library")
@@ -6,7 +7,7 @@ plugins {
     id("jacoco")
     id("signing")
     id("io.github.gradle-nexus.publish-plugin") version "1.3.0"
-    val kotlinVersion = "1.9.0"
+    val kotlinVersion = "1.9.21"
     kotlin("jvm") version kotlinVersion
     kotlin("kapt") version kotlinVersion
     id("org.jetbrains.dokka") version "1.9.0"
@@ -32,7 +33,7 @@ repositories {
 }
 
 dependencies {
-    val javalin = "6.0.0-SNAPSHOT"
+    val javalin = "6.0.0-beta.4"
     val sslContextKickstart = "8.1.5"
 
     val annotations = "24.0.1"
@@ -50,7 +51,6 @@ dependencies {
     implementation("org.eclipse.jetty.http2:http2-server")
     implementation("org.eclipse.jetty:jetty-alpn-conscrypt-server")
     implementation("org.eclipse.jetty:jetty-alpn-java-server")
-    implementation("org.eclipse.jetty.http3:http3-server")
 
     implementation("io.github.hakky54:sslcontext-kickstart:$sslContextKickstart")
     implementation("io.github.hakky54:sslcontext-kickstart-for-jetty:$sslContextKickstart")
@@ -66,6 +66,8 @@ dependencies {
 }
 
 val javadocJar by tasks.registering(Jar::class) {
+    group = "documentation"
+    description = "Generates a jar file containing the generated Javadoc API documentation."
     dependsOn(tasks.dokkaHtml)
     archiveClassifier.set("javadoc")
     from(tasks.dokkaHtml.flatMap { it.outputDirectory })
@@ -155,6 +157,12 @@ java {
     withSourcesJar()
     //withJavadocJar()
     modularity.inferModulePath.set(true)
+}
+
+kotlin {
+    compilerOptions{
+        jvmTarget.set(JvmTarget.JVM_11)
+    }
 }
 
 tasks.jacocoTestReport{

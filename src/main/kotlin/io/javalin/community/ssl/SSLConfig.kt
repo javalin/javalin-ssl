@@ -1,6 +1,5 @@
 package io.javalin.community.ssl
 
-import io.javalin.plugin.PluginConfiguration
 import nl.altindag.ssl.pem.util.PemUtils
 import nl.altindag.ssl.util.KeyStoreUtils
 import org.eclipse.jetty.server.ServerConnector
@@ -15,7 +14,7 @@ import javax.net.ssl.X509ExtendedKeyManager
  * Data class to hold the configuration for the plugin.
  */
 
-class SSLConfig : PluginConfiguration {
+class SSLConfig {
     /**
      * Host to bind to.
      */
@@ -71,24 +70,6 @@ class SSLConfig : PluginConfiguration {
      */
     @JvmField
     var tlsConfig: TLSConfig = TLSConfig.INTERMEDIATE
-
-    /**
-     * Enables HTTP/3 Support.
-     */
-    @JvmField
-    var http3 = false
-
-    /**
-     * Disables the handler that adds an "Alt-Svc" header to any non HTTP/3 response.
-     */
-    @JvmField
-    var disableHttp3Upgrade = false
-
-    /**
-     * UDP Port to use on the HTTP/3 connector.
-     */
-    @JvmField
-    var http3Port = 443
 
     enum class LoadedIdentity {
         NONE, KEY_MANAGER, KEY_STORE
