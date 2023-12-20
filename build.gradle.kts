@@ -34,13 +34,13 @@ repositories {
 
 dependencies {
     val javalin = "6.0.0-beta.4"
-    val sslContextKickstart = "8.1.5"
+    val sslContextKickstart = "8.2.0"
 
-    val annotations = "24.0.1"
+    val annotations = "24.1.0"
     val kotlinVersion = "1.9.0"
 
-    val junit = "5.10.0"
-    val okhttp = "4.11.0"
+    val junit = "5.10.1"
+    val okhttp = "4.12.0"
 
     compileOnly("org.jetbrains:annotations:$annotations")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
@@ -59,7 +59,7 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit")
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junit")
     testImplementation("io.javalin:javalin:$javalin")
-    testImplementation("org.slf4j:slf4j-simple")
+    testImplementation("org.slf4j:slf4j-simple:2.0.5")
     testImplementation("com.squareup.okhttp3:okhttp:$okhttp")
     testImplementation("com.squareup.okhttp3:okhttp-tls:$okhttp")
 
