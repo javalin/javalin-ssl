@@ -20,6 +20,7 @@ buildNumber.properties
 .gradle
 **/build/
 !src/**/build/
+bin
 
 # Ignore Gradle GUI config
 gradle-app.setting
@@ -37,3 +38,6 @@ gradle-app.setting
 # Eclipse Core
 # JDT-specific (Eclipse Java Development Tools)
 /.run/
+
+# Vscode
+.vscode
