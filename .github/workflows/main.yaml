@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java_version: [11, 17, 18] # Test all LTS releases and the latest one
+        java_version: [11, 17, 21] # Test all LTS releases and the latest one
         os: [windows-latest, macOS-latest, ubuntu-latest]
     steps:
       - name: Checkout
@@ -57,11 +57,12 @@ jobs:
           files: "${{ github.workspace }}/build/reports/jacoco/test/jacocoTestReport.xml"
           verbose: true
           token: "${{ secrets.CODECOV_TOKEN }}"
-  publish:
+  publish-release:
+    #TODO Support releases on 5.x
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && github.repository == 'javalin/javalin-ssl'
     needs:
       - test
-    name: "🛫 Publish to maven repo"
+    name: "🛫 Publish to maven central"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -106,8 +107,8 @@ jobs:
         with:
           arguments: publishToSonatype closeAndReleaseStagingRepository
 
-      - name: Create Pre-Release
-        if: contains(env.CURRENT_VERSION, 'SNAPSHOT')
+      - name: Create Pre-Release for Betas
+        if: contains(env.CURRENT_VERSION, 'beta')
         uses: ncipollo/release-action@v1.12.0
         with:
           tag: ${{ env.CURRENT_VERSION }}
@@ -118,13 +119,6 @@ jobs:
             ## Download Instructions
             ### Maven
             ```xml
-            <repository>
-              <id>reposilite-repository-snapshots</id>
-              <name>Reposilite Repository</name>
-              <url>https://maven.reposilite.com/snapshots</url>
-            </repository>
-            ```
-            ```xml
             <dependency>
               <groupId>io.javalin.community.ssl</groupId>
               <artifactId>ssl-plugin</artifactId>
@@ -133,16 +127,11 @@ jobs:
             ```
             ### Gradle
             ```groovy
-            maven {
-              url "https://maven.reposilite.com/snapshots"
-            }
-            ```
-            ```groovy
               implementation('io.javalin.community.ssl:ssl-plugin:${{ env.CURRENT_VERSION }}')
             ```
 
       - name: Create Release
-        if: "!contains(env.CURRENT_VERSION, 'SNAPSHOT')"
+        if: "!contains(env.CURRENT_VERSION, 'beta') && !contains(env.CURRENT_VERSION, 'SNAPSHOT')"
         uses: ncipollo/release-action@v1.12.0
         with:
           tag: ${{ env.CURRENT_VERSION }}
@@ -162,6 +151,32 @@ jobs:
             ```groovy
               implementation('io.javalin.community.ssl:ssl-plugin:${{ env.CURRENT_VERSION }}')
             ```
+  publish-snapshot:
+    if: github.ref == 'refs/heads/dev' && github.event_name != 'pull_request' && github.repository == 'javalin/javalin-ssl'
+    needs:
+      - test
+    name: "🛫 Publish snapshot to reposilite"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
 
+      - name: Set up JDK
+        uses: actions/setup-java@v3.12.0
+        with:
+          distribution: 'zulu'
+          java-version: '17'
 
+      - name: Validate Wrapper
+        uses: gradle/wrapper-validation-action@v1
 
+      - name: Publish to Reposilite
+        uses: gradle/gradle-build-action@v2.7.0
+        env:
+          MAVEN_NAME: '${{ secrets.MAVEN_NAME }}'
+          MAVEN_TOKEN: '${{ secrets.MAVEN_TOKEN }}'
+          ORG_GRADLE_PROJECT_signingKey: '${{ secrets.GPG_KEY }}'
+          ORG_GRADLE_PROJECT_signingPassword: '${{ secrets.GPG_PASSPHRASE }}'
+          ORG_GRADLE_PROJECT_signingKeyId: '${{ secrets.GPG_KEYID }}'
+        with:
+          arguments: publishMavenPublicationToReposiliteRepository
