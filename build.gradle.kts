@@ -7,10 +7,10 @@ plugins {
     id("jacoco")
     id("signing")
     id("io.github.gradle-nexus.publish-plugin") version "1.3.0"
-    val kotlinVersion = "1.9.21"
+    val kotlinVersion = "1.9.22"
     kotlin("jvm") version kotlinVersion
     kotlin("kapt") version kotlinVersion
-    id("org.jetbrains.dokka") version "1.9.0"
+    id("org.jetbrains.dokka") version "1.9.10"
 
 }
 
