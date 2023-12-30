@@ -25,8 +25,7 @@ import javax.net.ssl.SSLSession
 @Tag("integration")
 class SSLPluginTest : IntegrationTestClass() {
     @Test
-    @DisplayName("Test the reload of a pem identity")
-    fun testReloadIdentityPemCert() {
+     fun `Test the reload of a pem identity`() {
         val securePort = ports.getAndIncrement()
         val https = HTTPS_URL_WITH_PORT.apply(securePort)
 
@@ -183,8 +182,7 @@ class SSLPluginTest : IntegrationTestClass() {
     }
 
     @Test
-    @DisplayName("Test the reload of a p12 identity")
-    fun testReloadP12() {
+     fun `Test the reload of a p12 identity`() {
         try {
             testReloadIdentityKeystore(Server.NORWAY_P12_KEY_STORE_PATH, Server.P12_KEY_STORE_PATH)
         } catch (e: Exception) {
@@ -193,8 +191,7 @@ class SSLPluginTest : IntegrationTestClass() {
     }
 
     @Test
-    @DisplayName("Test the reload of JKS identity")
-    fun testReloadJks() {
+     fun `Test the reload of JKS identity`() {
         try {
             testReloadIdentityKeystore(Server.NORWAY_JKS_KEY_STORE_PATH, Server.JKS_KEY_STORE_PATH)
         } catch (e: Exception) {
@@ -203,8 +200,7 @@ class SSLPluginTest : IntegrationTestClass() {
     }
 
     @Test
-    @DisplayName("Test that the reload of a server with no SSL connector fails")
-    fun testReloadIdentityNonSslServer() {
+     fun `Test that the reload of a server with no SSL connector fails`() {
         val insecurePort = ports.getAndIncrement()
         val http = HTTP_URL_WITH_PORT.apply(insecurePort)
         val sslPlugin = SSLPlugin { sslConfig: SSLConfig ->
@@ -235,8 +231,7 @@ class SSLPluginTest : IntegrationTestClass() {
     }
 
     @Test
-    @DisplayName("Test that the reload of a non started server fails")
-    fun testReloadIdentityNonStartedServer() {
+     fun `Test that the reload of a non started server fails`() {
         val sslPlugin = SSLPlugin { sslConfig: SSLConfig ->
             sslConfig.secure = false
             sslConfig.insecurePort = ports.getAndIncrement()

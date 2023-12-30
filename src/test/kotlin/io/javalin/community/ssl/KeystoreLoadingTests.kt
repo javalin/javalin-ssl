@@ -226,8 +226,7 @@ class KeystoreLoadingTests : IntegrationTestClass() {
     }
 
     @Test
-    @DisplayName("Loading a malformed JKS keystore from an input stream fails")
-    fun loadMalformedJKSFromInputStream() {
+     fun `Loading a malformed JKS keystore from an input stream fails`() {
         Assertions.assertThrows(GenericKeyStoreException::class.java) {
             assertSslWorks { config: SSLConfig ->
                 config.keystoreFromInputStream(

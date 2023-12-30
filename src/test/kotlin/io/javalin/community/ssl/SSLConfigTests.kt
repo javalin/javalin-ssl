@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.IOException
 import java.util.*
+import java.util.function.Supplier
 
 @Tag("integration")
 class SSLConfigTests : IntegrationTestClass() {
@@ -43,8 +44,7 @@ class SSLConfigTests : IntegrationTestClass() {
     }
 
     @Test
-    @DisplayName("Test that the secure connector is disabled when insecure is set to true")
-    fun testDisableSecure() {
+    fun `Test that the secure connector is disabled when insecure is set to true`() {
         val insecurePort = ports.getAndIncrement()
         val securePort = ports.getAndIncrement()
         val http = HTTP_URL_WITH_PORT.apply(insecurePort)
@@ -68,8 +68,7 @@ class SSLConfigTests : IntegrationTestClass() {
     }
 
     @Test
-    @DisplayName("Test that the insecure port can be changed")
-    fun testInsecurePortChange() {
+    fun `Test that the insecure port can be changed`() {
         try {
             createTestApp { config: SSLConfig ->
                 config.secure = false
@@ -86,8 +85,7 @@ class SSLConfigTests : IntegrationTestClass() {
     }
 
     @Test
-    @DisplayName("Test that the secure port can be changed")
-    fun testSecurePortChange() {
+    fun `Test that the secure port can be changed`() {
         try {
             createTestApp { config: SSLConfig ->
                 config.insecure = false
@@ -105,8 +103,7 @@ class SSLConfigTests : IntegrationTestClass() {
     }
 
     @Test
-    @DisplayName("Test that redirecting from http to https works")
-    fun testRedirect() {
+     fun `Test that redirecting from http to https works`() {
         val insecurePort = ports.getAndIncrement()
         val securePort = ports.getAndIncrement()
         val http = HTTP_URL_WITH_PORT.apply(insecurePort)
@@ -132,8 +129,7 @@ class SSLConfigTests : IntegrationTestClass() {
     }
 
     @Test
-    @DisplayName("Test that the insecure connector works with http1.1")
-    fun testInsecureHttp1() {
+     fun `Test that the insecure connector works with http1-1`() {
         val insecurePort = ports.getAndIncrement()
         val http = HTTP_URL_WITH_PORT.apply(insecurePort)
         try {
@@ -148,8 +144,7 @@ class SSLConfigTests : IntegrationTestClass() {
     }
 
     @Test
-    @DisplayName("Test that http2 can be disabled on the insecure connector")
-    fun testInsecureDisableHttp2() {
+     fun `Test that http2 can be disabled on the insecure connector`() {
         val http2client: OkHttpClient =
             listOf(okhttp3.Protocol.H2_PRIOR_KNOWLEDGE).let{ OkHttpClient.Builder().protocols(it).build() }
         val http1Client: OkHttpClient = OkHttpClient.Builder().build()
@@ -226,8 +221,7 @@ class SSLConfigTests : IntegrationTestClass() {
     }
 
     @Test
-    @DisplayName("Test that by default both connectors are enabled, and that http1 and http2 works")
-    fun testDefault() {
+     fun `Test that by default both connectors are enabled, and that http1 and http2 works`() {
         val insecurePort = ports.getAndIncrement()
         val securePort = ports.getAndIncrement()
         val http = HTTP_URL_WITH_PORT.apply(insecurePort)
@@ -247,8 +241,7 @@ class SSLConfigTests : IntegrationTestClass() {
     }
 
     @Test
-    @DisplayName("Test that the host can be changed")
-    fun testMatchingHost() {
+     fun `Test that the host can be changed`() {
         val insecurePort = ports.getAndIncrement()
         val securePort = ports.getAndIncrement()
         val http = HTTP_URL_WITH_PORT.apply(insecurePort)
@@ -269,8 +262,7 @@ class SSLConfigTests : IntegrationTestClass() {
     }
 
     @Test
-    @DisplayName("Test that the host change fails when it doesn't match")
-    fun testWrongHost() {
+     fun `Test that the host change fails when it doesn't match`() {
         val insecurePort = ports.getAndIncrement()
         val securePort = ports.getAndIncrement()
         try {
@@ -284,8 +276,7 @@ class SSLConfigTests : IntegrationTestClass() {
     }
 
     @Test
-    @DisplayName("Test that sniHostCheck works when it matches")
-    fun testEnabledSniHostCheckAndMatchingHostname() {
+     fun `Test that sniHostCheck works when it matches`() {
         val insecurePort = ports.getAndIncrement()
         val securePort = ports.getAndIncrement()
         val http = HTTP_URL_WITH_PORT.apply(insecurePort)
@@ -307,8 +298,7 @@ class SSLConfigTests : IntegrationTestClass() {
     }
 
     @Test
-    @DisplayName("Test that sniHostCheck fails when it doesn't match over https")
-    fun testEnabledSniHostCheckAndWrongHostname() {
+     fun `Test that sniHostCheck fails when it doesn't match over https`() {
         val insecurePort = ports.getAndIncrement()
         val securePort = ports.getAndIncrement()
         val http = HTTP_URL_WITH_PORT.apply(insecurePort)
@@ -337,8 +327,7 @@ class SSLConfigTests : IntegrationTestClass() {
     }
 
     @Test
-    @DisplayName("Test that sniHostCheck can be disabled and a request with a wrong hostname can be made")
-    fun testDisabledSniHostCheck() {
+     fun `Test that sniHostCheck can be disabled and a request with a wrong hostname can be made`() {
         val insecurePort = ports.getAndIncrement()
         val securePort = ports.getAndIncrement()
         val http = HTTP_URL_WITH_PORT.apply(insecurePort)
@@ -360,8 +349,7 @@ class SSLConfigTests : IntegrationTestClass() {
     }
 
     @Test
-    @DisplayName("Test that the connectors can be configured through the consumer")
-    fun testConnectorConfigConsumer() {
+     fun `Test that the connectors can be configured through the consumer`() {
         val insecurePort = ports.getAndIncrement()
         val securePort = ports.getAndIncrement()
         val http = HTTP_URL_WITH_PORT.apply(insecurePort)
@@ -389,8 +377,7 @@ class SSLConfigTests : IntegrationTestClass() {
     }
 
     @Test
-    @DisplayName("Test that the Security Provider can be automatically configured when the config is set to null")
-    fun testNullSecurityProvider() {
+     fun `Test that the Security Provider can be automatically configured when the config is set to null`() {
         val securePort = ports.getAndIncrement()
         val https = HTTPS_URL_WITH_PORT.apply(securePort)
         try {
@@ -409,8 +396,7 @@ class SSLConfigTests : IntegrationTestClass() {
     }
 
     @Test
-    @DisplayName("Test that the Security Provider works when it is set to the default")
-    fun testDefaultSecurityProvider() {
+     fun `Test that the Security Provider works when it is set to the default`() {
         val securePort = ports.getAndIncrement()
         val https = HTTPS_URL_WITH_PORT.apply(securePort)
         try {
@@ -424,6 +410,27 @@ class SSLConfigTests : IntegrationTestClass() {
             }
         } catch (e: IOException) {
             Assertions.fail<Any>(e)
+        }
+    }
+
+    @Test
+    fun `Test no identity loaded`() {
+        Assertions.assertThrows(SSLConfigException::class.java) {
+            createTestApp { config: SSLConfig ->
+                config.insecure = false
+                config.securePort = 8443
+            }.start()
+        }
+        Assertions.assertTrue {
+            try {
+                createTestApp {
+                    it.insecure = false
+                    it.securePort = 8443
+                }.start()
+                return@assertTrue false
+            } catch (e: SSLConfigException) {
+                return@assertTrue e.message?.contains(SSLConfigException.Types.MISSING_CERT_AND_KEY_FILE.message) == true
+            }
         }
     }
 

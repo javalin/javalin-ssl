@@ -29,8 +29,7 @@ import javax.net.ssl.SSLSession
 @Tag("integration")
 class TrustConfigTests : IntegrationTestClass() {
     @Test
-    @DisplayName("Client with no certificate should not be able to access the server")
-    fun unauthenticatedUserFails() {
+     fun `Client with no certificate should not be able to access the server`() {
         val unauthClient = client //This is the client without the client certificate
         val securePort = ports.getAndIncrement()
         val url = HTTPS_URL_WITH_PORT.apply(securePort)
@@ -51,8 +50,7 @@ class TrustConfigTests : IntegrationTestClass() {
     }
 
     @Test
-    @DisplayName("Client with a wrong certificate should not be able to access the server")
-    fun wrongCertificateFails() {
+     fun `Client with a wrong certificate should not be able to access the server`() {
         val securePort = ports.getAndIncrement()
         val url = HTTPS_URL_WITH_PORT.apply(securePort)
         createTestApp { config: SSLConfig ->
@@ -74,74 +72,62 @@ class TrustConfigTests : IntegrationTestClass() {
     }
 
     @Test
-    @DisplayName("Loading PEM from a path works")
-    fun pemFromPathWorks() {
+     fun `Loading PEM from a path works`() {
         trustConfigWorks { trustConfig: TrustConfig -> trustConfig.certificateFromPath(Client.CLIENT_PEM_PATH) }
     }
 
     @Test
-    @DisplayName("Loading P7B from a path works")
-    fun p7bFromPathWorks() {
+     fun `Loading P7B from a path works`() {
         trustConfigWorks { trustConfig: TrustConfig -> trustConfig.certificateFromPath(Client.CLIENT_P7B_PATH) }
     }
 
     @Test
-    @DisplayName("Loading DER from a path works")
-    fun derFromPathWorks() {
+     fun `Loading DER from a path works`() {
         trustConfigWorks { trustConfig: TrustConfig -> trustConfig.certificateFromPath(Client.CLIENT_DER_PATH) }
     }
 
     @Test
-    @DisplayName("Loading PEM from the classpath works")
-    fun pemFromClasspathWorks() {
+     fun `Loading PEM from the classpath works`() {
         trustConfigWorks { trustConfig: TrustConfig -> trustConfig.certificateFromClasspath(Client.CLIENT_PEM_FILE_NAME) }
     }
 
     @Test
-    @DisplayName("Loading P7B from the classpath works")
-    fun p7bFromClasspathWorks() {
+     fun `Loading P7B from the classpath works`() {
         trustConfigWorks { trustConfig: TrustConfig -> trustConfig.certificateFromClasspath(Client.CLIENT_P7B_FILE_NAME) }
     }
 
     @Test
-    @DisplayName("Loading DER from the classpath works")
-    fun derFromClasspathWorks() {
+     fun `Loading DER from the classpath works`() {
         trustConfigWorks { trustConfig: TrustConfig -> trustConfig.certificateFromClasspath(Client.CLIENT_DER_FILE_NAME) }
     }
 
     @Test
-    @DisplayName("Loading PEM from an input stream works")
-    fun pemFromInputStreamWorks() {
+     fun `Loading PEM from an input stream works`() {
         trustConfigWorks { trustConfig: TrustConfig -> trustConfig.certificateFromInputStream(Client.CLIENT_PEM_INPUT_STREAM_SUPPLIER.get()) }
     }
 
     @Test
-    @DisplayName("Loading P7B from an input stream works")
-    fun p7bFromInputStreamWorks() {
+     fun `Loading P7B from an input stream works`() {
         trustConfigWorks { trustConfig: TrustConfig -> trustConfig.certificateFromInputStream(Client.CLIENT_P7B_INPUT_STREAM_SUPPLIER.get()) }
     }
 
     @Test
-    @DisplayName("Loading DER from an input stream works")
-    fun derFromInputStreamWorks() {
+     fun `Loading DER from an input stream works`() {
         trustConfigWorks { trustConfig: TrustConfig -> trustConfig.certificateFromInputStream(Client.CLIENT_DER_INPUT_STREAM_SUPPLIER.get()) }
     }
 
     @Test
-    @DisplayName("Loading PEM from a string works")
-    fun pemFromStringWorks() {
+     fun `Loading PEM from a string works`() {
         trustConfigWorks { trustConfig: TrustConfig -> trustConfig.pemFromString(Client.CLIENT_CERTIFICATE_AS_STRING) }
     }
 
     @Test
-    @DisplayName("Loading P7B from a string works")
-    fun p7bFromStringWorks() {
+     fun `Loading P7B from a string works`() {
         trustConfigWorks { trustConfig: TrustConfig -> trustConfig.p7bCertificateFromString(Client.CLIENT_P7B_CERTIFICATE_AS_STRING) }
     }
 
     @Test
-    @DisplayName("Loading a JKS Keystore from a path works")
-    fun jksFromPathWorks() {
+     fun `Loading a JKS Keystore from a path works`() {
         trustConfigWorks { trustConfig: TrustConfig ->
             trustConfig.trustStoreFromPath(
                 Client.CLIENT_JKS_PATH,
@@ -151,8 +137,7 @@ class TrustConfigTests : IntegrationTestClass() {
     }
 
     @Test
-    @DisplayName("Loading a P12 Keystore from a path works")
-    fun p12FromPathWorks() {
+     fun `Loading a P12 Keystore from a path works`() {
         trustConfigWorks { trustConfig: TrustConfig ->
             trustConfig.trustStoreFromPath(
                 Client.CLIENT_P12_PATH,
@@ -162,8 +147,7 @@ class TrustConfigTests : IntegrationTestClass() {
     }
 
     @Test
-    @DisplayName("Loading a JKS Keystore from the classpath works")
-    fun jksFromClasspathWorks() {
+     fun `Loading a JKS Keystore from the classpath works`() {
         trustConfigWorks { trustConfig: TrustConfig ->
             trustConfig.trustStoreFromClasspath(
                 Client.CLIENT_JKS_FILE_NAME,
@@ -173,8 +157,7 @@ class TrustConfigTests : IntegrationTestClass() {
     }
 
     @Test
-    @DisplayName("Loading a P12 Keystore from the classpath works")
-    fun p12FromClasspathWorks() {
+     fun `Loading a P12 Keystore from the classpath works`() {
         trustConfigWorks { trustConfig: TrustConfig ->
             trustConfig.trustStoreFromClasspath(
                 Client.CLIENT_P12_FILE_NAME,
@@ -184,8 +167,7 @@ class TrustConfigTests : IntegrationTestClass() {
     }
 
     @Test
-    @DisplayName("Loading a JKS Keystore from an input stream works")
-    fun jksFromInputStreamWorks() {
+     fun `Loading a JKS Keystore from an input stream works`() {
         trustConfigWorks { trustConfig: TrustConfig ->
             trustConfig.trustStoreFromInputStream(
                 Client.CLIENT_JKS_INPUT_STREAM_SUPPLIER.get(),
@@ -195,8 +177,7 @@ class TrustConfigTests : IntegrationTestClass() {
     }
 
     @Test
-    @DisplayName("Loading a P12 Keystore from an input stream works")
-    fun p12FromInputStreamWorks() {
+     fun `Loading a P12 Keystore from an input stream works`() {
         trustConfigWorks { trustConfig: TrustConfig ->
             trustConfig.trustStoreFromInputStream(
                 Client.CLIENT_P12_INPUT_STREAM_SUPPLIER.get(),
