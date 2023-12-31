@@ -13,7 +13,8 @@ If you're not familiar with the HTTPS protocol we have a great guide at the [Jav
 
 ## Getting started
 
-[![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/javalin/javalin-ssl?label=Latest%20Release)](https://github.com/javalin/javalin-ssl/releases) ![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/javalin/javalin-ssl?include_prereleases&label=Latest%20Snapshot)
+[![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/javalin/javalin-ssl?label=Latest%20Release)](https://github.com/javalin/javalin-ssl/releases) [![Maven metadata URL](https://img.shields.io/maven-metadata/v?metadataUrl=https%3A%2F%2Frepo.reposilite.com%2Fsnapshots%2Fio%2Fjavalin%2Fcommunity%2Fssl%2Fssl-plugin%2Fmaven-metadata.xml&label=Latest%20Snapshot)](https://repo.reposilite.com/#/snapshots/io/javalin/community/ssl/ssl-plugin)
+
 
 As simple as adding a dependency:
 ### Maven
