@@ -7,7 +7,7 @@
 
 # SSL Plugin [![GitHub Workflow Status (branch)](https://img.shields.io/github/actions/workflow/status/javalin/javalin-ssl/main.yaml?branch=main&label=main&logo=githubactions&logoColor=white)](https://github.com/javalin/javalin-ssl/actions?query=branch%3Amain) [![GitHub Workflow Status (branch)](https://img.shields.io/github/actions/workflow/status/javalin/javalin-ssl/main.yaml?branch=dev&label=dev&logo=githubactions&logoColor=white)](https://github.com/javalin/javalin-ssl/actions?query=branch%3Adev) [![Coverage](https://codecov.io/gh/javalin/javalin-ssl/branch/dev/graphs/badge.svg)](https://app.codecov.io/gh/javalin/javalin-ssl) [![javadoc](https://javadoc.io/badge2/io.javalin.community.ssl/ssl-plugin/javadoc.svg)](https://javadoc.io/doc/io.javalin.community.ssl/ssl-plugin)
 
-Straightforward SSL, HTTP/2 and HTTP/3 Configuration for Javalin!
+Straightforward SSL and HTTP/2 Configuration for Javalin!
 
 If you're not familiar with the HTTPS protocol we have a great guide at the [Javalin website](https://javalin.io/tutorials/javalin-ssl-tutorial).
 
@@ -176,7 +176,7 @@ sslPlugin.reload {
 
 | Package                                       | Version | License                                                                                                              |
 |-----------------------------------------------|---------|----------------------------------------------------------------------------------------------------------------------|
-| [Javalin](https://github.com/javalin/javalin) | `5.6.2` | [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) |
+| [Javalin](https://github.com/javalin/javalin) | `5.6.3` | [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) |
  | [SSLContext Kickstart](https://github.com/Hakky54/sslcontext-kickstart) | `8.1.4` | [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) |
 
 ## Contributing
