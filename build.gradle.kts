@@ -59,7 +59,7 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit")
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junit")
     testImplementation("io.javalin:javalin:$javalin")
-    testImplementation("org.slf4j:slf4j-simple:2.0.10")
+    testImplementation("org.slf4j:slf4j-simple:2.0.11")
     testImplementation("com.squareup.okhttp3:okhttp:$okhttp")
     testImplementation("com.squareup.okhttp3:okhttp-tls:$okhttp")
 
