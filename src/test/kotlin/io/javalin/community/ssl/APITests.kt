@@ -11,7 +11,7 @@ class APITests : IntegrationTestClass(){
     @Test
     fun `plugin can be loaded using factory method`() {
         Javalin.create { config ->
-            config.registerPlugin(SSLPlugin{
+            config.registerPlugin(SslPlugin{
                 it.insecurePort = 9999
                 it.secure = false
             })
@@ -35,7 +35,7 @@ class APITests : IntegrationTestClass(){
         val keystoreInputStream: java.io.InputStream = TODO()
         val keyPassword: String = TODO()
 
-        val plugin = SSLPlugin {
+        val plugin = SslPlugin {
                // Connection options
             it.host=null                                                            // Host to bind to, by default it will bind to all interfaces
             it.insecure=true                                                        // Toggle the default http (insecure) connector
@@ -47,7 +47,7 @@ class APITests : IntegrationTestClass(){
             it.redirect=false                                                       // Redirect all http requests to https
 
             it.sniHostCheck=true                                                    // Enable SNI hostname verification
-            it.tlsConfig=TLSConfig.INTERMEDIATE                                     // Set the TLS configuration. (by default it uses Mozilla's intermediate configuration)
+            it.tlsConfig=TlsConfig.INTERMEDIATE                                     // Set the TLS configuration. (by default it uses Mozilla's intermediate configuration)
 
                // PEM loading options (mutually exclusive)
             it.pemFromPath("/path/to/cert.pem","/path/to/key.pem")                  // load from the given paths
@@ -70,7 +70,7 @@ class APITests : IntegrationTestClass(){
             it.withTrustConfig { trust -> trust.pemFromString("cert") }              // Set the trust configuration, explained below. (by default all clients are trusted)
         }
 
-        SSLPlugin{ config ->
+        SslPlugin{ config ->
             config.withTrustConfig{
                    // Certificate loading options (PEM/DER/P7B)
                 it.certificateFromPath("path/to/certificate.pem")              // load a PEM/DER/P7B cert from the given path

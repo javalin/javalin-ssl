@@ -23,14 +23,14 @@ import javax.net.ssl.SSLSession
 import javax.net.ssl.X509TrustManager
 
 abstract class IntegrationTestClass {
-    private fun assertWorks(protocol: Protocol, givenConfig: Consumer<SSLConfig>) {
+    private fun assertWorks(protocol: Protocol, givenConfig: Consumer<SslConfig>) {
         var config = givenConfig
         val insecurePort = ports.getAndIncrement()
         val securePort = ports.getAndIncrement()
         val http = HTTP_URL_WITH_PORT.apply(insecurePort)
         val https = HTTPS_URL_WITH_PORT.apply(securePort)
         val url = if (protocol == Protocol.HTTP) http else https
-        config = config.andThen { sslConfig: SSLConfig ->
+        config = config.andThen { sslConfig: SslConfig ->
             sslConfig.insecurePort = insecurePort
             sslConfig.securePort = securePort
         }
@@ -48,11 +48,11 @@ abstract class IntegrationTestClass {
         }
     }
 
-    fun assertSslWorks(config: Consumer<SSLConfig>) {
+    fun assertSslWorks(config: Consumer<SslConfig>) {
         assertWorks(Protocol.HTTPS, config)
     }
 
-    fun assertHttpWorks(config: Consumer<SSLConfig>) {
+    fun assertHttpWorks(config: Consumer<SslConfig>) {
         assertWorks(Protocol.HTTP, config)
     }
 
@@ -132,10 +132,10 @@ abstract class IntegrationTestClass {
         }
 
         @JvmStatic
-        fun createTestApp(config: Consumer<SSLConfig>): Javalin {
+        fun createTestApp(config: Consumer<SslConfig>): Javalin {
             return Javalin.create { javalinConfig: JavalinConfig ->
                 javalinConfig.showJavalinBanner = false
-                javalinConfig.registerPlugin(SSLPlugin(config))
+                javalinConfig.registerPlugin(SslPlugin(config))
                 javalinConfig.router.mount{
                     it.get("/", { ctx: Context -> ctx.result(SUCCESS) })
                 }

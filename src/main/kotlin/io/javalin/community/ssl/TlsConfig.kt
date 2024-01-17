@@ -5,7 +5,7 @@ package io.javalin.community.ssl
  *
  * @see [Security/Server Side TLS](https://wiki.mozilla.org/Security/Server_Side_TLS)
  */
-class TLSConfig(
+class TlsConfig(
     /**
      * String array of cipher suites to use, following the guidelines in the [ Jetty documentation](https://www.eclipse.org/jetty/documentation/jetty-11/operations-guide/index.html#og-protocols-ssl-customize-ciphers).
      */
@@ -17,7 +17,7 @@ class TLSConfig(
 ) {
 
     override fun toString(): String {
-        return "TLSConfig(cipherSuites=" + cipherSuites.contentDeepToString() + ", protocols=" + protocols.contentDeepToString() + ")"
+        return "TlsConfig(cipherSuites=" + cipherSuites.contentDeepToString() + ", protocols=" + protocols.contentDeepToString() + ")"
     }
 
     companion object {
@@ -26,7 +26,7 @@ class TLSConfig(
         /**
          * For modern clients that support TLS 1.3, with no need for backwards compatibility
          */
-        val MODERN = TLSConfig(
+        val MODERN = TlsConfig(
             arrayOf(
                 "TLS_AES_128_GCM_SHA256",
                 "TLS_AES_256_GCM_SHA384",
@@ -37,7 +37,7 @@ class TLSConfig(
         /**
          * Recommended configuration for a general-purpose server
          */
-        val INTERMEDIATE = TLSConfig(
+        val INTERMEDIATE = TlsConfig(
             arrayOf(
                 "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256",
                 "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256",
@@ -54,7 +54,7 @@ class TLSConfig(
         /**
          * For services accessed by very old clients or libraries, such as Internet Explorer 8 (Windows XP), Java 6, or OpenSSL 0.9.8
          */
-        val OLD = TLSConfig(
+        val OLD = TlsConfig(
             arrayOf(
                 "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256",
                 "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256",

@@ -14,7 +14,7 @@ import javax.net.ssl.X509ExtendedKeyManager
  * Data class to hold the configuration for the plugin.
  */
 
-class SSLConfig {
+class SslConfig {
     /**
      * Host to bind to.
      */
@@ -69,7 +69,7 @@ class SSLConfig {
      * TLS Security configuration
      */
     @JvmField
-    var tlsConfig: TLSConfig = TLSConfig.INTERMEDIATE
+    var tlsConfig: TlsConfig = TlsConfig.INTERMEDIATE
 
     enum class LoadedIdentity {
         NONE, KEY_MANAGER, KEY_STORE
@@ -93,7 +93,7 @@ class SSLConfig {
         var keyManager : X509ExtendedKeyManager? = null
             set(value) {
                 if (loadedIdentity != LoadedIdentity.NONE) {
-                    throw SSLConfigException(SSLConfigException.Types.MULTIPLE_IDENTITY_LOADING_OPTIONS)
+                    throw SslConfigException(SslConfigException.Types.MULTIPLE_IDENTITY_LOADING_OPTIONS)
                 } else if (value != null) {
                     loadedIdentity = LoadedIdentity.KEY_MANAGER
                     field = value
@@ -108,7 +108,7 @@ class SSLConfig {
         var keyStore : KeyStore? = null
             set(value) {
                 if (loadedIdentity != LoadedIdentity.NONE) {
-                    throw SSLConfigException(SSLConfigException.Types.MULTIPLE_IDENTITY_LOADING_OPTIONS)
+                    throw SslConfigException(SslConfigException.Types.MULTIPLE_IDENTITY_LOADING_OPTIONS)
                 } else if (value != null) {
                     loadedIdentity = LoadedIdentity.KEY_STORE
                     field = value

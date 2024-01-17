@@ -42,7 +42,7 @@ You can pass a config object when registering the plugin
 ```java
 Javalin.create(config->{
     ...  // your Javalin config here
-    config.plugins.register(new SSLPlugin(ssl->{
+    config.plugins.register(new SslPlugin(ssl->{
         ... // your SSL configuration here
         ssl.pemFromPath("/path/to/cert.pem","/path/to/key.pem");
     }));
@@ -81,7 +81,7 @@ disableHttp3Upgrade=false;                                            // Disable
 
 
 sniHostCheck=true;                                                    // Enable SNI hostname verification
-tlsConfig=TLSConfig.INTERMEDIATE;                                     // Set the TLS configuration. (by default Mozilla's intermediate)
+tlsConfig=TlsConfig.INTERMEDIATE;                                     // Set the TLS configuration. (by default Mozilla's intermediate)
 
 // PEM loading options (mutually exclusive)
 pemFromPath("/path/to/cert.pem","/path/to/key.pem");                  // load from the given paths
@@ -109,9 +109,9 @@ withTrustConfig { trust -> trust.pemFromString("cert") }              // Set the
 If you want to verify the client certificates (such as mTLS) you can set the trust configuration using the `TrustConfig` class.
 In contrast to the identity configuration, you can load multiple certificates from different sources.
 
-By adding a `TrustConfig` to the `SSLPlugin` you will enable client certificate verification.
+By adding a `TrustConfig` to the `SslPlugin` you will enable client certificate verification.
 ```java
-config.plugins.register(new SSLPlugin(ssl->{
+config.plugins.register(new SslPlugin(ssl->{
     ssl.pemFromPath("/path/to/cert.pem","/path/to/key.pem"); // Load our identity data
     // Load the client/CA certificate(s)
     ssl.withTrustConfig(trust->{
@@ -137,11 +137,11 @@ trustStoreFromInputStream(inputStream, "password");          // load a trust sto
 
 
 #### Hot reloading
-Certificate reloading is supported, if you want to replace the certificate you can simply call `SSLPlugin.reload()` with the new configuration.
+Certificate reloading is supported, if you want to replace the certificate you can simply call `SslPlugin.reload()` with the new configuration.
 
 ```kotlin
 // Create the plugin outside the Javalin config to hold a reference to reload it
-val sslPlugin = SSLPlugin { 
+val sslPlugin = SslPlugin { 
     it.loadPemFromPath("/path/to/cert.pem","/path/to/key.pem");
     it.insecurePort = 8080; // any other config you want to change
 }

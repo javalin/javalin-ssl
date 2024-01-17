@@ -1,9 +1,9 @@
 package io.javalin.community.ssl
 
 /**
- * Exception thrown when the SSLConfig is invalid.
+ * Exception thrown when the SslConfig is invalid.
  */
-class SSLConfigException : RuntimeException {
+class SslConfigException : RuntimeException {
     constructor(type: Types) : super(type.message)
 
     /**

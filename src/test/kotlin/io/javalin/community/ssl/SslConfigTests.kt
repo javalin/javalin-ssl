@@ -8,15 +8,13 @@ import org.eclipse.jetty.server.ConnectionFactory
 import org.eclipse.jetty.server.ServerConnector
 import org.eclipse.jetty.server.SslConnectionFactory
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.IOException
 import java.util.*
-import java.util.function.Supplier
 
 @Tag("integration")
-class SSLConfigTests : IntegrationTestClass() {
+class SslConfigTests : IntegrationTestClass() {
     @Test
     fun `Test that the insecure connector is disabled when insecure is set to false`() {
         val insecurePort = ports.getAndIncrement()
@@ -24,7 +22,7 @@ class SSLConfigTests : IntegrationTestClass() {
         val http = HTTP_URL_WITH_PORT.apply(insecurePort)
         val https = HTTPS_URL_WITH_PORT.apply(securePort)
         try {
-            createTestApp { config: SSLConfig ->
+            createTestApp { config: SslConfig ->
                 config.insecure = false
                 config.pemFromString(Server.CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING)
                 config.securePort = securePort
@@ -50,7 +48,7 @@ class SSLConfigTests : IntegrationTestClass() {
         val http = HTTP_URL_WITH_PORT.apply(insecurePort)
         val https = HTTPS_URL_WITH_PORT.apply(securePort)
         try {
-            createTestApp { config: SSLConfig ->
+            createTestApp { config: SslConfig ->
                 config.secure = false
                 config.insecurePort = insecurePort
                 config.securePort = securePort
@@ -70,7 +68,7 @@ class SSLConfigTests : IntegrationTestClass() {
     @Test
     fun `Test that the insecure port can be changed`() {
         try {
-            createTestApp { config: SSLConfig ->
+            createTestApp { config: SslConfig ->
                 config.secure = false
                 config.insecurePort = 8080
             }.start().let { _ ->
@@ -87,7 +85,7 @@ class SSLConfigTests : IntegrationTestClass() {
     @Test
     fun `Test that the secure port can be changed`() {
         try {
-            createTestApp { config: SSLConfig ->
+            createTestApp { config: SslConfig ->
                 config.insecure = false
                 config.pemFromString(Server.CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING)
                 config.securePort = 8443
@@ -110,7 +108,7 @@ class SSLConfigTests : IntegrationTestClass() {
         val https = HTTPS_URL_WITH_PORT.apply(securePort)
         val noRedirectClient: OkHttpClient = untrustedClientBuilder().also { it.followSslRedirects(false) }.build()
         try {
-            createTestApp { config: SSLConfig ->
+            createTestApp { config: SslConfig ->
                 config.pemFromString(Server.CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING)
                 config.securePort = securePort
                 config.insecurePort = insecurePort
@@ -133,7 +131,7 @@ class SSLConfigTests : IntegrationTestClass() {
         val insecurePort = ports.getAndIncrement()
         val http = HTTP_URL_WITH_PORT.apply(insecurePort)
         try {
-            createTestApp { config: SSLConfig ->
+            createTestApp { config: SslConfig ->
                 config.secure = false
                 config.http2 = false
                 config.insecurePort = insecurePort
@@ -151,7 +149,7 @@ class SSLConfigTests : IntegrationTestClass() {
         val insecurePort = ports.getAndIncrement()
         val http = HTTP_URL_WITH_PORT.apply(insecurePort)
         try {
-            createTestApp { config: SSLConfig ->
+            createTestApp { config: SslConfig ->
                 config.secure = false
                 config.http2 = false
                 config.insecurePort = insecurePort
@@ -174,7 +172,7 @@ class SSLConfigTests : IntegrationTestClass() {
         val securePort = ports.getAndIncrement()
         val https = HTTPS_URL_WITH_PORT.apply(securePort)
         try {
-            createTestApp { config: SSLConfig ->
+            createTestApp { config: SslConfig ->
                 config.http2 = false
                 config.pemFromString(Server.CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING)
                 config.securePort = securePort
@@ -193,7 +191,7 @@ class SSLConfigTests : IntegrationTestClass() {
         val securePort = ports.getAndIncrement()
         val http = HTTP_URL_WITH_PORT.apply(insecurePort)
         try {
-            createTestApp { config: SSLConfig ->
+            createTestApp { config: SslConfig ->
                 config.secure = false
                 config.http2 = true
                 config.insecurePort = insecurePort
@@ -210,7 +208,7 @@ class SSLConfigTests : IntegrationTestClass() {
         val securePort = ports.getAndIncrement()
         val https = HTTPS_URL_WITH_PORT.apply(securePort)
         try {
-            createTestApp { config: SSLConfig ->
+            createTestApp { config: SslConfig ->
                 config.pemFromString(Server.CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING)
                 config.securePort = securePort
                 config.insecurePort = insecurePort
@@ -227,7 +225,7 @@ class SSLConfigTests : IntegrationTestClass() {
         val http = HTTP_URL_WITH_PORT.apply(insecurePort)
         val https = HTTPS_URL_WITH_PORT.apply(securePort)
         try {
-            createTestApp { config: SSLConfig ->
+            createTestApp { config: SslConfig ->
                 config.insecurePort = insecurePort
                 config.securePort = securePort
                 config.pemFromString(Server.CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING)
@@ -247,7 +245,7 @@ class SSLConfigTests : IntegrationTestClass() {
         val http = HTTP_URL_WITH_PORT.apply(insecurePort)
         val https = HTTPS_URL_WITH_PORT.apply(securePort)
         try {
-            createTestApp { config: SSLConfig ->
+            createTestApp { config: SslConfig ->
                 config.insecurePort = insecurePort
                 config.securePort = securePort
                 config.pemFromString(Server.CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING)
@@ -266,7 +264,7 @@ class SSLConfigTests : IntegrationTestClass() {
         val insecurePort = ports.getAndIncrement()
         val securePort = ports.getAndIncrement()
         try {
-            createTestApp { config: SSLConfig ->
+            createTestApp { config: SslConfig ->
                 config.insecurePort = insecurePort
                 config.securePort = securePort
                 config.pemFromString(Server.CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING)
@@ -282,7 +280,7 @@ class SSLConfigTests : IntegrationTestClass() {
         val http = HTTP_URL_WITH_PORT.apply(insecurePort)
         val https = HTTPS_URL_WITH_PORT.apply(securePort)
         try {
-            createTestApp { config: SSLConfig ->
+            createTestApp { config: SslConfig ->
                 config.insecurePort = insecurePort
                 config.securePort = securePort
                 config.pemFromString(Server.CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING)
@@ -304,7 +302,7 @@ class SSLConfigTests : IntegrationTestClass() {
         val http = HTTP_URL_WITH_PORT.apply(insecurePort)
         val https = HTTPS_URL_WITH_PORT.apply(securePort)
         try {
-            createTestApp { config: SSLConfig ->
+            createTestApp { config: SslConfig ->
                 config.insecurePort = insecurePort
                 config.securePort = securePort
                 config.pemFromString(Server.GOOGLE_CERTIFICATE_AS_STRING, Server.GOOGLE_KEY_AS_STRING)
@@ -333,7 +331,7 @@ class SSLConfigTests : IntegrationTestClass() {
         val http = HTTP_URL_WITH_PORT.apply(insecurePort)
         val https = HTTPS_URL_WITH_PORT.apply(securePort)
         try {
-            createTestApp { config: SSLConfig ->
+            createTestApp { config: SslConfig ->
                 config.insecurePort = insecurePort
                 config.securePort = securePort
                 config.pemFromString(Server.GOOGLE_CERTIFICATE_AS_STRING, Server.GOOGLE_KEY_AS_STRING)
@@ -355,7 +353,7 @@ class SSLConfigTests : IntegrationTestClass() {
         val http = HTTP_URL_WITH_PORT.apply(insecurePort)
         val https = HTTPS_URL_WITH_PORT.apply(securePort)
         try {
-            createTestApp { config: SSLConfig ->
+            createTestApp { config: SslConfig ->
                 config.insecurePort = insecurePort
                 config.securePort = securePort
                 config.pemFromString(Server.CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING)
@@ -381,7 +379,7 @@ class SSLConfigTests : IntegrationTestClass() {
         val securePort = ports.getAndIncrement()
         val https = HTTPS_URL_WITH_PORT.apply(securePort)
         try {
-            createTestApp { config: SSLConfig ->
+            createTestApp { config: SslConfig ->
                 config.insecure = false
                 config.securePort = securePort
                 config.pemFromString(Server.CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING)
@@ -400,7 +398,7 @@ class SSLConfigTests : IntegrationTestClass() {
         val securePort = ports.getAndIncrement()
         val https = HTTPS_URL_WITH_PORT.apply(securePort)
         try {
-            createTestApp { config: SSLConfig ->
+            createTestApp { config: SslConfig ->
                 config.insecure = false
                 config.securePort = securePort
                 config.pemFromString(Server.CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING)
@@ -415,8 +413,8 @@ class SSLConfigTests : IntegrationTestClass() {
 
     @Test
     fun `Test no identity loaded`() {
-        Assertions.assertThrows(SSLConfigException::class.java) {
-            createTestApp { config: SSLConfig ->
+        Assertions.assertThrows(SslConfigException::class.java) {
+            createTestApp { config: SslConfig ->
                 config.insecure = false
                 config.securePort = 8443
             }.start()
@@ -428,8 +426,8 @@ class SSLConfigTests : IntegrationTestClass() {
                     it.securePort = 8443
                 }.start()
                 return@assertTrue false
-            } catch (e: SSLConfigException) {
-                return@assertTrue e.message?.contains(SSLConfigException.Types.MISSING_CERT_AND_KEY_FILE.message) == true
+            } catch (e: SslConfigException) {
+                return@assertTrue e.message?.contains(SslConfigException.Types.MISSING_CERT_AND_KEY_FILE.message) == true
             }
         }
     }

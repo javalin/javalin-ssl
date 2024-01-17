@@ -2,8 +2,8 @@ package io.javalin.community.ssl.certs
 
 import io.javalin.Javalin
 import io.javalin.community.ssl.IntegrationTestClass
-import io.javalin.community.ssl.SSLConfig
-import io.javalin.community.ssl.SSLPlugin
+import io.javalin.community.ssl.SslConfig
+import io.javalin.community.ssl.SslPlugin
 import io.javalin.community.ssl.TrustConfig
 import io.javalin.config.JavalinConfig
 import io.javalin.http.Context
@@ -110,7 +110,7 @@ class CertificateAuthorityTests : IntegrationTestClass() {
         }
         val securePort = ports.getAndIncrement()
         val url = HTTPS_URL_WITH_PORT.apply(securePort)
-        val sslPlugin = SSLPlugin { config: SSLConfig ->
+        val sslPlugin = SslPlugin { config: SslConfig ->
             config.insecure = false
             config.securePort = securePort
             config.pemFromClasspath(SERVER_CERT_NAME, SERVER_KEY_NAME)
@@ -127,7 +127,7 @@ class CertificateAuthorityTests : IntegrationTestClass() {
                 }
             }.start().let { _ ->
                 testSuccessfulEndpoint(url, client.get()) // works
-                sslPlugin.reload { config: SSLConfig ->
+                sslPlugin.reload { config: SslConfig ->
                     config.pemFromClasspath(SERVER_CERT_NAME, SERVER_KEY_NAME)
                     config.withTrustConfig { trustConfig: TrustConfig ->
                         trustConfig.certificateFromClasspath(Server.CERTIFICATE_FILE_NAME) // this is some other certificate
@@ -137,7 +137,7 @@ class CertificateAuthorityTests : IntegrationTestClass() {
                     url,
                     client.get()
                 ) // fails because the server now has a different trust material
-                sslPlugin.reload { config: SSLConfig ->
+                sslPlugin.reload { config: SslConfig ->
                     config.pemFromClasspath(SERVER_CERT_NAME, SERVER_KEY_NAME)
                     config.withTrustConfig { trustConfig: TrustConfig ->
                         trustConfig.certificateFromClasspath(ROOT_CERT_NAME) // back to the original certificate
@@ -178,7 +178,7 @@ class CertificateAuthorityTests : IntegrationTestClass() {
             val securePort = ports.getAndIncrement()
             val url = HTTPS_URL_WITH_PORT.apply(securePort)
             try {
-                createTestApp { config: SSLConfig ->
+                createTestApp { config: SslConfig ->
                     config.insecure = false
                     config.securePort = securePort
                     config.pemFromClasspath(SERVER_CERT_NAME, SERVER_KEY_NAME)
@@ -198,7 +198,7 @@ class CertificateAuthorityTests : IntegrationTestClass() {
             val securePort = ports.getAndIncrement()
             val url = HTTPS_URL_WITH_PORT.apply(securePort)
             try {
-                createTestApp { config: SSLConfig ->
+                createTestApp { config: SslConfig ->
                     config.insecure = false
                     config.securePort = securePort
                     config.pemFromClasspath(SERVER_CERT_NAME, SERVER_KEY_NAME)

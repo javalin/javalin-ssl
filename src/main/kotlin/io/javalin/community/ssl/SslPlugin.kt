@@ -16,12 +16,12 @@ import java.util.function.Consumer
 
 /**
  * Plugin to add SSL support to Javalin.
- * The configuration is done via the Consumer<SSLConfig> passed to the constructor.
+ * The configuration is done via the Consumer<SslConfig> passed to the constructor.
  * The plugin will add the connectors to the server and apply the necessary handlers.
  *
  * If you want to reload the SSLContextFactory, you can call the reload method, by keeping a reference to the plugin instance.
  */
-class SSLPlugin (userConfig: Consumer<SSLConfig>) : Plugin<SSLConfig>(userConfig,SSLConfig()) {
+class SslPlugin (userConfig: Consumer<SslConfig>) : Plugin<SslConfig>(userConfig,SslConfig()) {
 
     private var sslFactory: SSLFactory? = null
 
@@ -43,8 +43,8 @@ class SSLPlugin (userConfig: Consumer<SSLConfig>) : Plugin<SSLConfig>(userConfig
      * Reload the SSL configuration with the new certificates and/or keys.
      * @param newConfig The new configuration.
      */
-    fun reload(newConfig: Consumer<SSLConfig>) {
-        val conf = SSLConfig()
+    fun reload(newConfig: Consumer<SslConfig>) {
+        val conf = SslConfig()
         newConfig.accept(conf)
         checkNotNull(sslFactory) { "Cannot reload before the plugin has been applied to a Javalin instance, a server has been patched or if the ssl connector is disabled." }
         val newFactory = SSLUtils.getSslFactory(conf, true)
@@ -52,7 +52,7 @@ class SSLPlugin (userConfig: Consumer<SSLConfig>) : Plugin<SSLConfig>(userConfig
     }
 
 
-    private fun createConnectors(config: SSLConfig): List<BiFunction<Server, HttpConfiguration, Connector>> {
+    private fun createConnectors(config: SslConfig): List<BiFunction<Server, HttpConfiguration, Connector>> {
 
         val sslContextFactory: SslContextFactory.Server?
         if (config.secure) {

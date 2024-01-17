@@ -9,7 +9,6 @@ import okhttp3.Request
 import okhttp3.tls.HandshakeCertificates
 import okhttp3.tls.decodeCertificatePem
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -23,7 +22,7 @@ import javax.net.ssl.HostnameVerifier
 import javax.net.ssl.SSLSession
 
 @Tag("integration")
-class SSLPluginTest : IntegrationTestClass() {
+class SslPluginTest : IntegrationTestClass() {
     @Test
      fun `Test the reload of a pem identity`() {
         val securePort = ports.getAndIncrement()
@@ -50,7 +49,7 @@ class SSLPluginTest : IntegrationTestClass() {
                     clientCertificates.trustManager
                 ).hostnameVerifier(it).build()
             }
-        val sslPlugin = SSLPlugin { sslConfig: SSLConfig ->
+        val sslPlugin = SslPlugin { sslConfig: SslConfig ->
             sslConfig.insecure = false
             sslConfig.securePort = securePort
             sslConfig.pemFromString(Server.NORWAY_CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING)
@@ -72,7 +71,7 @@ class SSLPluginTest : IntegrationTestClass() {
                 Assertions.assertTrue(cert.getIssuerX500Principal().name.contains("Bergen"))
 
                 // Reload the identity
-                sslPlugin.reload { newConf: SSLConfig ->
+                sslPlugin.reload { newConf: SslConfig ->
                     newConf.pemFromString(
                         Server.CERTIFICATE_AS_STRING,
                         Server.NON_ENCRYPTED_KEY_AS_STRING
@@ -141,7 +140,7 @@ class SSLPluginTest : IntegrationTestClass() {
                     clientCertificates.trustManager
                 ).hostnameVerifier(it).build()
             }
-        val sslPlugin = SSLPlugin { sslConfig: SSLConfig ->
+        val sslPlugin = SslPlugin { sslConfig: SslConfig ->
             sslConfig.insecure = false
             sslConfig.securePort = securePort
             sslConfig.keystoreFromPath(norwayKeyStorePath, Server.KEY_STORE_PASSWORD)
@@ -163,7 +162,7 @@ class SSLPluginTest : IntegrationTestClass() {
                 Assertions.assertTrue(cert.getIssuerX500Principal().name.contains("Bergen"))
 
                 // Reload the identity
-                sslPlugin.reload { newConf: SSLConfig ->
+                sslPlugin.reload { newConf: SslConfig ->
                     newConf.keystoreFromPath(
                         vigoKeyStorePath,
                         Server.KEY_STORE_PASSWORD
@@ -203,7 +202,7 @@ class SSLPluginTest : IntegrationTestClass() {
      fun `Test that the reload of a server with no SSL connector fails`() {
         val insecurePort = ports.getAndIncrement()
         val http = HTTP_URL_WITH_PORT.apply(insecurePort)
-        val sslPlugin = SSLPlugin { sslConfig: SSLConfig ->
+        val sslPlugin = SslPlugin { sslConfig: SslConfig ->
             sslConfig.secure = false
             sslConfig.insecurePort = insecurePort
         }
@@ -218,7 +217,7 @@ class SSLPluginTest : IntegrationTestClass() {
                 val res = OkHttpClient().newCall(Request.Builder().url(http).build()).execute()
                 Assertions.assertTrue(res.isSuccessful)
                 Assertions.assertThrows(IllegalStateException::class.java) {
-                    sslPlugin.reload { newConf: SSLConfig ->
+                    sslPlugin.reload { newConf: SslConfig ->
                         newConf.pemFromString(
                             Server.CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING
                         )
@@ -232,12 +231,12 @@ class SSLPluginTest : IntegrationTestClass() {
 
     @Test
      fun `Test that the reload of a non started server fails`() {
-        val sslPlugin = SSLPlugin { sslConfig: SSLConfig ->
+        val sslPlugin = SslPlugin { sslConfig: SslConfig ->
             sslConfig.secure = false
             sslConfig.insecurePort = ports.getAndIncrement()
         }
         Assertions.assertThrows(IllegalStateException::class.java) {
-            sslPlugin.reload { newConf: SSLConfig ->
+            sslPlugin.reload { newConf: SslConfig ->
                 newConf.pemFromString(
                     Server.CERTIFICATE_AS_STRING, Server.NON_ENCRYPTED_KEY_AS_STRING
                 )

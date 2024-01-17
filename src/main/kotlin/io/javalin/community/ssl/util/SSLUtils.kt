@@ -1,7 +1,7 @@
 package io.javalin.community.ssl.util
 
-import io.javalin.community.ssl.SSLConfig
-import io.javalin.community.ssl.SSLConfigException
+import io.javalin.community.ssl.SslConfig
+import io.javalin.community.ssl.SslConfigException
 import io.javalin.community.ssl.TrustConfig
 import nl.altindag.ssl.SSLFactory
 import nl.altindag.ssl.jetty.util.JettySslUtils
@@ -31,7 +31,7 @@ object SSLUtils {
      * @param config The config to use.
      * @return The created [SSLFactory].
      */
-    fun getSslFactory(config: SSLConfig): SSLFactory {
+    fun getSslFactory(config: SslConfig): SSLFactory {
         return getSslFactory(config, false)
     }
 
@@ -42,7 +42,7 @@ object SSLUtils {
      * @param reloading Whether the SSLFactory is being reloaded or is the first time.
      * @return The created [SSLFactory].
      */
-    fun getSslFactory(config: SSLConfig, reloading: Boolean): SSLFactory {
+    fun getSslFactory(config: SslConfig, reloading: Boolean): SSLFactory {
         val builder = SSLFactory.builder()
 
         //Add the identity information
@@ -68,14 +68,14 @@ object SSLUtils {
      * Helper method to parse the given config and add Identity Material to the given builder.
      *
      * @param config The config to use.
-     * @throws SSLConfigException if the key configuration is invalid.
+     * @throws SslConfigException if the key configuration is invalid.
      */
-    @Throws(SSLConfigException::class)
-    private fun parseIdentity(config: SSLConfig, builder: SSLFactory.Builder) {
+    @Throws(SslConfigException::class)
+    private fun parseIdentity(config: SslConfig, builder: SSLFactory.Builder) {
         when(config.pvt.loadedIdentity){
-            SSLConfig.LoadedIdentity.NONE -> throw SSLConfigException(SSLConfigException.Types.MISSING_CERT_AND_KEY_FILE)
-            SSLConfig.LoadedIdentity.KEY_MANAGER -> builder.withIdentityMaterial(config.pvt.keyManager)
-            SSLConfig.LoadedIdentity.KEY_STORE -> builder.withIdentityMaterial(config.pvt.keyStore, config.pvt.identityPassword!!.toCharArray())
+            SslConfig.LoadedIdentity.NONE -> throw SslConfigException(SslConfigException.Types.MISSING_CERT_AND_KEY_FILE)
+            SslConfig.LoadedIdentity.KEY_MANAGER -> builder.withIdentityMaterial(config.pvt.keyManager)
+            SslConfig.LoadedIdentity.KEY_STORE -> builder.withIdentityMaterial(config.pvt.keyStore, config.pvt.identityPassword!!.toCharArray())
         }
     }
 

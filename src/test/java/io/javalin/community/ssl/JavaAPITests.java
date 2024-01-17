@@ -14,7 +14,7 @@ public class JavaAPITests {
         InputStream keystoreInputStream = null;
         String keyPassword = null;
 
-        SSLPlugin plugin = new SSLPlugin(conf ->{
+        SslPlugin plugin = new SslPlugin(conf ->{
             // Connection options
             conf.host = null;                                                           // Host to bind to, by default it will bind to all interfaces
             conf.insecure = true;                                                       // Toggle the default http (insecure) connector
@@ -26,7 +26,7 @@ public class JavaAPITests {
             conf.redirect = false;                                                      // Redirect all http requests to https
 
             conf.sniHostCheck = true;                                                   // Enable SNI hostname verification
-            conf.tlsConfig = TLSConfig.Companion.getINTERMEDIATE();                     // Set the TLS configuration. (by default it uses Mozilla's intermediate configuration)
+            conf.tlsConfig = TlsConfig.Companion.getINTERMEDIATE();                     // Set the TLS configuration. (by default it uses Mozilla's intermediate configuration)
 
             // PEM loading options (mutually exclusive)
             conf.pemFromPath("/path/to/cert.pem", "/path/to/key.pem");                  // load from the given paths
@@ -49,7 +49,7 @@ public class JavaAPITests {
             conf.withTrustConfig(trust -> trust.pemFromString("cert"));                 // Set the trust configuration, explained below. (by default all clients are trusted)
         });
 
-        SSLPlugin trustPlugin = new SSLPlugin(conf ->{
+        SslPlugin trustPlugin = new SslPlugin(conf ->{
             conf.withTrustConfig(trust ->{
                 // Certificate loading options (PEM/DER/P7B)
                 trust.certificateFromPath("path/to/certificate.pem");              // load a PEM/DER/P7B cert from the given path

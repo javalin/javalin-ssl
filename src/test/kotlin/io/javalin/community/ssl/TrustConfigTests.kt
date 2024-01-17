@@ -8,7 +8,6 @@ import okhttp3.tls.HandshakeCertificates
 import okhttp3.tls.HeldCertificate
 import okhttp3.tls.decodeCertificatePem
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.IOException
@@ -22,9 +21,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.function.Consumer
 import java.util.function.Supplier
-import javax.net.ssl.HostnameVerifier
 import javax.net.ssl.SSLContext
-import javax.net.ssl.SSLSession
 
 @Tag("integration")
 class TrustConfigTests : IntegrationTestClass() {
@@ -33,7 +30,7 @@ class TrustConfigTests : IntegrationTestClass() {
         val unauthClient = client //This is the client without the client certificate
         val securePort = ports.getAndIncrement()
         val url = HTTPS_URL_WITH_PORT.apply(securePort)
-        createTestApp { config: SSLConfig ->
+        createTestApp { config: SslConfig ->
             config.insecure = false
             config.securePort = securePort
             config.http2 = false // Disable HTTP/2 to avoid "connection closed" errors in tests due to connection reuse
@@ -53,7 +50,7 @@ class TrustConfigTests : IntegrationTestClass() {
      fun `Client with a wrong certificate should not be able to access the server`() {
         val securePort = ports.getAndIncrement()
         val url = HTTPS_URL_WITH_PORT.apply(securePort)
-        createTestApp { config: SSLConfig ->
+        createTestApp { config: SslConfig ->
             config.insecure = false
             config.securePort = securePort
             config.http2 = false // Disable HTTP/2 to avoid "connection closed" errors in tests due to connection reuse
@@ -292,7 +289,7 @@ class TrustConfigTests : IntegrationTestClass() {
             val securePort = ports.getAndIncrement()
             val url = HTTPS_URL_WITH_PORT.apply(securePort)
             try {
-                createTestApp { config: SSLConfig ->
+                createTestApp { config: SslConfig ->
                     config.insecure = false
                     config.securePort = securePort
                     config.pemFromString(Client.SERVER_CERTIFICATE_AS_STRING, Client.SERVER_PRIVATE_KEY_AS_STRING)

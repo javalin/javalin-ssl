@@ -1,6 +1,6 @@
 package io.javalin.community.ssl.util
 
-import io.javalin.community.ssl.SSLConfig
+import io.javalin.community.ssl.SslConfig
 import org.eclipse.jetty.alpn.server.ALPNServerConnectionFactory
 import org.eclipse.jetty.http2.server.HTTP2CServerConnectionFactory
 import org.eclipse.jetty.http2.server.HTTP2ServerConnectionFactory
@@ -10,7 +10,7 @@ import org.eclipse.jetty.util.ssl.SslContextFactory
 /**
  * Helper class to create the requested [ServerConnector]s from the given config.
  */
-class ConnectorFactory (private var config: SSLConfig, private var sslContextFactory: SslContextFactory.Server?) {
+class ConnectorFactory (private var config: SslConfig, private var sslContextFactory: SslContextFactory.Server?) {
 
     /**
      * Create and return an insecure connector to the server.
