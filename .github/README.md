@@ -2,8 +2,8 @@
 
 * [:heart: Sponsor Javalin](https://github.com/sponsors/tipsy)
 * The main project webpage is [javalin.io](https://javalin.io)
-* Chat on Discord: https://discord.gg/sgak4e5NKv
-* License summary: https://tldrlegal.com/license/apache-license-2.0-(apache-2.0)
+* Chat on Discord: <https://discord.gg/sgak4e5NKv>
+* License summary: <https://tldrlegal.com/license/apache-license-2.0-(apache-2.0)>
 
 # SSL Plugin [![GitHub Workflow Status (branch)](https://img.shields.io/github/actions/workflow/status/javalin/javalin-ssl/main.yaml?branch=main&label=main&logo=githubactions&logoColor=white)](https://github.com/javalin/javalin-ssl/actions?query=branch%3Amain) [![GitHub Workflow Status (branch)](https://img.shields.io/github/actions/workflow/status/javalin/javalin-ssl/main.yaml?branch=dev&label=dev&logo=githubactions&logoColor=white)](https://github.com/javalin/javalin-ssl/actions?query=branch%3Adev) [![Coverage](https://codecov.io/gh/javalin/javalin-ssl/branch/dev/graphs/badge.svg)](https://app.codecov.io/gh/javalin/javalin-ssl) [![javadoc](https://javadoc.io/badge2/io.javalin.community.ssl/ssl-plugin/javadoc.svg)](https://javadoc.io/doc/io.javalin.community.ssl/ssl-plugin)
 
@@ -15,23 +15,23 @@ If you're not familiar with the HTTPS protocol we have a great guide at the [Jav
 
 [![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/javalin/javalin-ssl?label=Latest%20Release)](https://github.com/javalin/javalin-ssl/releases) [![Maven metadata URL](https://img.shields.io/maven-metadata/v?metadataUrl=https%3A%2F%2Frepo.reposilite.com%2Fsnapshots%2Fio%2Fjavalin%2Fcommunity%2Fssl%2Fssl-plugin%2Fmaven-metadata.xml&label=Latest%20Snapshot)](https://repo.reposilite.com/#/snapshots/io/javalin/community/ssl/ssl-plugin)
 
-
 As simple as adding a dependency:
+
 ### Maven
 
 ```xml
 <dependency>
   <groupId>io.javalin.community.ssl</groupId>
   <artifactId>ssl-plugin</artifactId>
-  <version>5.6.3</version>
+  <version>6.0.0</version>
 </dependency>
 ```
+
 ### Gradle
 
 ```kotlin
-implementation('io.javalin.community.ssl:ssl-plugin:5.6.3')
+implementation('io.javalin.community.ssl:ssl-plugin:6.0.0')
 ```
-
 
 ## Configuration
 
@@ -54,7 +54,7 @@ Javalin.create(config->{
 ```kotlin
 Javalin.create { config ->
     ... // your Javalin config here
-    config.registerPlugin(SSL) {
+    config.registerPlugin(SslPlugin{
         ... // your SSL configuration here
         it.pemFromPath("/path/to/cert.pem", "/path/to/key.pem")
     }
@@ -110,6 +110,7 @@ If you want to verify the client certificates (such as mTLS) you can set the tru
 In contrast to the identity configuration, you can load multiple certificates from different sources.
 
 By adding a `TrustConfig` to the `SslPlugin` you will enable client certificate verification.
+
 ```java
 config.plugins.register(new SslPlugin(ssl->{
     ssl.pemFromPath("/path/to/cert.pem","/path/to/key.pem"); // Load our identity data
@@ -135,8 +136,8 @@ trustStoreFromClasspath("truststore.jks", "password");       // load a trust sto
 trustStoreFromInputStream(inputStream, "password");          // load a trust store from the given input stream
 ```
 
-
 #### Hot reloading
+
 Certificate reloading is supported, if you want to replace the certificate you can simply call `SslPlugin.reload()` with the new configuration.
 
 ```kotlin
@@ -161,23 +162,21 @@ sslPlugin.reload {
         trust.certificateFromPath("path/to/new/certificate.pem");
     }
 }
-``` 
-
-
+```
 
 ## Notes
 
-- HTTP/2 **can** be used over an insecure connection.
-- If Jetty responds with an `HTTP ERROR 400 Invalid SNI`, you can disable SNI verification by
+* HTTP/2 **can** be used over an insecure connection.
+* If Jetty responds with an `HTTP ERROR 400 Invalid SNI`, you can disable SNI verification by
   setting `sniHostCheck = false`.
-- Minimizing your jar can lead to issues, [more info](https://github.com/javalin/javalin-ssl/issues/59).   
+* Minimizing your jar can lead to issues, [more info](https://github.com/javalin/javalin-ssl/issues/59).
 
 ## Depends on
 
 | Package                                       | Version | License                                                                                                              |
 |-----------------------------------------------|---------|----------------------------------------------------------------------------------------------------------------------|
-| [Javalin](https://github.com/javalin/javalin) | `5.6.3` | [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) |
- | [SSLContext Kickstart](https://github.com/Hakky54/sslcontext-kickstart) | `8.1.4` | [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) |
+| [Javalin](https://github.com/javalin/javalin) | `6.0.0` | [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) |
+ | [SSLContext Kickstart](https://github.com/Hakky54/sslcontext-kickstart) | `8.3.0` | [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) |
 
 ## Contributing
 
@@ -185,11 +184,6 @@ Contributions are welcome! Open an issue or pull request if you have a suggestio
 
 All development is carried out on the dev branch, main is only used for releases.
 
-
 ## License
 
 This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details
-
-
-
-

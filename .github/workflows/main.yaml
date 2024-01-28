@@ -19,7 +19,7 @@ jobs:
       - name: Set up JDK ${{ matrix.java_version }}
         uses: actions/setup-java@v4.0.0
         with:
-          distribution: 'zulu'
+          distribution: "zulu"
           java-version: ${{ matrix.java_version }}
       - name: Validate Wrapper
         uses: gradle/wrapper-validation-action@v1
@@ -37,8 +37,8 @@ jobs:
       - name: Setup Java JDK
         uses: actions/setup-java@v4.0.0
         with:
-          distribution: 'temurin'
-          java-version: '17'
+          distribution: "temurin"
+          java-version: "17"
 
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -71,15 +71,15 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v4.0.0
         with:
-          distribution: 'zulu'
-          java-version: '17'
+          distribution: "zulu"
+          java-version: "17"
 
       - name: Generate version
         uses: HardNorth/github-version-generate@v1.3.0
         with:
           version-source: file
           version-file: build.gradle.kts
-          version-file-extraction-pattern: '(?<=version\s*=\s*"")\S+(?="")'
+          version-file-extraction-pattern: '(?<=version\s*=\s*")\S+(?=")'
 
       - name: Validate Wrapper
         uses: gradle/wrapper-validation-action@v1
@@ -87,11 +87,11 @@ jobs:
       - name: Publish to Reposilite
         uses: gradle/gradle-build-action@v2.11.1
         env:
-          MAVEN_NAME: '${{ secrets.MAVEN_NAME }}'
-          MAVEN_TOKEN: '${{ secrets.MAVEN_TOKEN }}'
-          ORG_GRADLE_PROJECT_signingKey: '${{ secrets.GPG_KEY }}'
-          ORG_GRADLE_PROJECT_signingPassword: '${{ secrets.GPG_PASSPHRASE }}'
-          ORG_GRADLE_PROJECT_signingKeyId: '${{ secrets.GPG_KEYID }}'
+          MAVEN_NAME: "${{ secrets.MAVEN_NAME }}"
+          MAVEN_TOKEN: "${{ secrets.MAVEN_TOKEN }}"
+          ORG_GRADLE_PROJECT_signingKey: "${{ secrets.GPG_KEY }}"
+          ORG_GRADLE_PROJECT_signingPassword: "${{ secrets.GPG_PASSPHRASE }}"
+          ORG_GRADLE_PROJECT_signingKeyId: "${{ secrets.GPG_KEYID }}"
         with:
           arguments: publishMavenPublicationToReposiliteRepository
 
@@ -99,11 +99,11 @@ jobs:
         if: "!contains(env.CURRENT_VERSION, 'SNAPSHOT')"
         uses: gradle/gradle-build-action@v2.11.1
         env:
-          ORG_GRADLE_PROJECT_sonatypeUsername: '${{ secrets.ORG_GRADLE_PROJECT_SONATYPEUSERNAME }}'
-          ORG_GRADLE_PROJECT_sonatypePassword: '${{ secrets.ORG_GRADLE_PROJECT_SONATYPEPASSWORD }}'
-          ORG_GRADLE_PROJECT_signingKey: '${{ secrets.GPG_KEY }}'
-          ORG_GRADLE_PROJECT_signingPassword: '${{ secrets.GPG_PASSPHRASE }}'
-          ORG_GRADLE_PROJECT_signingKeyId: '${{ secrets.GPG_KEYID }}'
+          ORG_GRADLE_PROJECT_sonatypeUsername: "${{ secrets.ORG_GRADLE_PROJECT_SONATYPEUSERNAME }}"
+          ORG_GRADLE_PROJECT_sonatypePassword: "${{ secrets.ORG_GRADLE_PROJECT_SONATYPEPASSWORD }}"
+          ORG_GRADLE_PROJECT_signingKey: "${{ secrets.GPG_KEY }}"
+          ORG_GRADLE_PROJECT_signingPassword: "${{ secrets.GPG_PASSPHRASE }}"
+          ORG_GRADLE_PROJECT_signingKeyId: "${{ secrets.GPG_KEYID }}"
         with:
           arguments: publishToSonatype closeAndReleaseStagingRepository
 
@@ -164,8 +164,8 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v4.0.0
         with:
-          distribution: 'zulu'
-          java-version: '17'
+          distribution: "zulu"
+          java-version: "17"
 
       - name: Validate Wrapper
         uses: gradle/wrapper-validation-action@v1
@@ -173,10 +173,10 @@ jobs:
       - name: Publish to Reposilite
         uses: gradle/gradle-build-action@v2.11.1
         env:
-          MAVEN_NAME: '${{ secrets.MAVEN_NAME }}'
-          MAVEN_TOKEN: '${{ secrets.MAVEN_TOKEN }}'
-          ORG_GRADLE_PROJECT_signingKey: '${{ secrets.GPG_KEY }}'
-          ORG_GRADLE_PROJECT_signingPassword: '${{ secrets.GPG_PASSPHRASE }}'
-          ORG_GRADLE_PROJECT_signingKeyId: '${{ secrets.GPG_KEYID }}'
+          MAVEN_NAME: "${{ secrets.MAVEN_NAME }}"
+          MAVEN_TOKEN: "${{ secrets.MAVEN_TOKEN }}"
+          ORG_GRADLE_PROJECT_signingKey: "${{ secrets.GPG_KEY }}"
+          ORG_GRADLE_PROJECT_signingPassword: "${{ secrets.GPG_PASSPHRASE }}"
+          ORG_GRADLE_PROJECT_signingKeyId: "${{ secrets.GPG_KEYID }}"
         with:
           arguments: publishMavenPublicationToReposiliteRepository
