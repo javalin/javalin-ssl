@@ -23,13 +23,13 @@ As simple as adding a dependency:
 <dependency>
   <groupId>io.javalin.community.ssl</groupId>
   <artifactId>ssl-plugin</artifactId>
-  <version>5.6.3</version>
+  <version>6.0.0</version>
 </dependency>
 ```
 ### Gradle
 
 ```kotlin
-implementation('io.javalin.community.ssl:ssl-plugin:5.6.3')
+implementation('io.javalin.community.ssl:ssl-plugin:6.0.0')
 ```
 
 
@@ -176,8 +176,8 @@ sslPlugin.reload {
 
 | Package                                       | Version | License                                                                                                              |
 |-----------------------------------------------|---------|----------------------------------------------------------------------------------------------------------------------|
-| [Javalin](https://github.com/javalin/javalin) | `5.6.3` | [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) |
- | [SSLContext Kickstart](https://github.com/Hakky54/sslcontext-kickstart) | `8.1.4` | [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) |
+| [Javalin](https://github.com/javalin/javalin) | `6.0.0` | [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) |
+ | [SSLContext Kickstart](https://github.com/Hakky54/sslcontext-kickstart) | `8.3.0` | [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) |
 
 ## Contributing
 
