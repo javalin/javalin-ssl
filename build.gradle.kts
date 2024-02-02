@@ -40,18 +40,17 @@ dependencies {
     val kotlinVersion = "1.9.0"
 
     val junit = "5.10.1"
+    val slf4j = "2.0.11"
     val okhttp = "4.12.0"
 
     compileOnly("org.jetbrains:annotations:$annotations")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
-
     compileOnly("io.javalin:javalin:$javalin")
-    implementation(platform("io.javalin:javalin-parent:$javalin")) //Javalin BOM
 
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
+    implementation(platform("io.javalin:javalin-parent:$javalin")) //Javalin BOM
     implementation("org.eclipse.jetty.http2:http2-server")
     implementation("org.eclipse.jetty:jetty-alpn-conscrypt-server")
     implementation("org.eclipse.jetty:jetty-alpn-java-server")
-
     implementation("io.github.hakky54:sslcontext-kickstart:$sslContextKickstart")
     implementation("io.github.hakky54:sslcontext-kickstart-for-jetty:$sslContextKickstart")
     implementation("io.github.hakky54:sslcontext-kickstart-for-pem:$sslContextKickstart")
@@ -59,7 +58,7 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit")
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junit")
     testImplementation("io.javalin:javalin:$javalin")
-    testImplementation("org.slf4j:slf4j-simple:2.0.11")
+    testImplementation("org.slf4j:slf4j-simple:$slf4j")
     testImplementation("com.squareup.okhttp3:okhttp:$okhttp")
     testImplementation("com.squareup.okhttp3:okhttp-tls:$okhttp")
 
@@ -146,6 +145,8 @@ nexusPublishing {
 }
 
 tasks.register<Jar>("dokkaJavadocJar") {
+    group = "documentation"
+    description = "Generates a jar file containing the generated Javadoc API documentation."
     dependsOn(tasks.dokkaJavadoc)
     from(tasks.dokkaJavadoc.flatMap { it.outputDirectory })
     archiveClassifier.set("javadoc")
@@ -157,6 +158,13 @@ java {
     withSourcesJar()
     //withJavadocJar()
     modularity.inferModulePath.set(true)
+}
+
+tasks.compileJava {
+    options.compilerArgumentProviders.add(CommandLineArgumentProvider {
+        // Provide compiled Kotlin classes to javac – needed for Java/Kotlin mixed sources to work
+        listOf("--patch-module", "io.javalin.community.ssl=${sourceSets["main"].output.asPath}")
+    })
 }
 
 kotlin {

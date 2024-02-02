@@ -2,7 +2,7 @@ module io.javalin.community.ssl {
   exports io.javalin.community.ssl;
   exports io.javalin.community.ssl.util;
 
-  requires io.javalin;
+  requires transitive io.javalin;
   requires org.eclipse.jetty.server;
   requires org.eclipse.jetty.alpn.server;
   requires org.eclipse.jetty.http2.server;
