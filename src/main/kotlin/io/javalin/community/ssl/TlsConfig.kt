@@ -26,6 +26,7 @@ class TlsConfig(
         /**
          * For modern clients that support TLS 1.3, with no need for backwards compatibility
          */
+        @JvmField
         val MODERN = TlsConfig(
             arrayOf(
                 "TLS_AES_128_GCM_SHA256",
@@ -37,6 +38,7 @@ class TlsConfig(
         /**
          * Recommended configuration for a general-purpose server
          */
+        @JvmField
         val INTERMEDIATE = TlsConfig(
             arrayOf(
                 "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256",
@@ -54,6 +56,7 @@ class TlsConfig(
         /**
          * For services accessed by very old clients or libraries, such as Internet Explorer 8 (Windows XP), Java 6, or OpenSSL 0.9.8
          */
+        @JvmField
         val OLD = TlsConfig(
             arrayOf(
                 "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256",
