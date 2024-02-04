@@ -34,6 +34,8 @@ class TlsConfig(
                 "TLS_CHACHA20_POLY1305_SHA256"),
             arrayOf("TLSv1.3")
         )
+        @Deprecated("Use TlsConfig.MODERN instead", ReplaceWith("TlsConfig.MODERN"))
+        fun getMODERN(): TlsConfig = MODERN
 
         /**
          * Recommended configuration for a general-purpose server
@@ -52,6 +54,8 @@ class TlsConfig(
                 "TLS_DHE_RSA_WITH_CHACHA20_POLY1305_SHA256"
             ), arrayOf("TLSv1.3","TLSv1.2")
         )
+        @Deprecated("Use TlsConfig.INTERMEDIATE instead", ReplaceWith("TlsConfig.INTERMEDIATE"))
+        fun getINTERMEDIATE(): TlsConfig = INTERMEDIATE
 
         /**
          * For services accessed by very old clients or libraries, such as Internet Explorer 8 (Windows XP), Java 6, or OpenSSL 0.9.8
@@ -87,5 +91,7 @@ class TlsConfig(
                 "TLS_RSA_WITH_3DES_EDE_CBC_SHA"
             ), arrayOf("TLSv1.3","TLSv1.2", "TLSv1.1", "TLSv1")
         )
+        @Deprecated("Use TlsConfig.OLD instead", ReplaceWith("TlsConfig.OLD"))
+        fun getOLD(): TlsConfig = OLD
     }
 }
