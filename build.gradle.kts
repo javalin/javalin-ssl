@@ -34,7 +34,7 @@ repositories {
 
 dependencies {
     val javalin = "6.0.2-SNAPSHOT"
-    val sslContextKickstart = "8.3.0"
+    val sslContextKickstart = "8.3.1"
 
     val annotations = "24.1.0"
     val kotlinVersion = "1.9.0"
