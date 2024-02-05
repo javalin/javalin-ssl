@@ -52,11 +52,12 @@ jobs:
           arguments: jacocoTestReport
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3.1.5
+        uses: codecov/codecov-action@v4.0.1
         with:
           files: "${{ github.workspace }}/build/reports/jacoco/test/jacocoTestReport.xml"
           verbose: true
-          token: "${{ secrets.CODECOV_TOKEN }}"
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
   publish-release:
     #TODO Support releases on 5.x
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && github.repository == 'javalin/javalin-ssl'
