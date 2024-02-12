@@ -40,7 +40,7 @@ dependencies {
     val kotlinVersion = "1.9.0"
 
     val junit = "5.10.2"
-    val slf4j = "2.0.11"
+    val slf4j = "2.0.12"
     val okhttp = "4.12.0"
 
     compileOnly("org.jetbrains:annotations:$annotations")
