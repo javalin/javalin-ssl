@@ -16,7 +16,7 @@ plugins {
 
 group = "io.javalin.community.ssl"
 //Must be formatted following the RegEx: /version\s*=\s*"\S+"/g
-version = "6.1.0"
+version = "6.1.1-SNAPSHOT"
 
 jacoco {
     toolVersion = "0.8.8"
@@ -33,7 +33,7 @@ repositories {
 }
 
 dependencies {
-    val javalin = "6.1.0"
+    val javalin = "6.1.1-SNAPSHOT"
     val sslContextKickstart = "8.3.1"
 
     val annotations = "24.1.0"
