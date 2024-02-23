@@ -9,7 +9,7 @@ plugins {
 
 group = 'io.javalin.community.ssl'
 //Must be formatted following the RegEx: /version\s*=\s*'\S+'/g
-version = '5.6.3'
+version = '5.6.4-SNAPSHOT'
 
 jacoco {
     toolVersion = '0.8.8'
@@ -42,11 +42,11 @@ configurations {
 }
 
 dependencies {
-    def javalin = "5.6.2"
-    def junit = '5.10.0'
-    def sslContextKickstart = '8.1.5'
-    def okhttp = "4.11.0"
-    def annotations = "24.0.1"
+    def javalin = "5.6.4-SNAPSHOT"
+    def junit = '5.10.2'
+    def sslContextKickstart = '8.3.2'
+    def okhttp = "4.12.0"
+    def annotations = "24.1.0"
 
     compileOnly("org.jetbrains:annotations:$annotations")
 
@@ -56,7 +56,6 @@ dependencies {
     implementation("org.eclipse.jetty.http2:http2-server")
     implementation("org.eclipse.jetty:jetty-alpn-conscrypt-server")
     implementation("org.eclipse.jetty:jetty-alpn-java-server")
-    //implementation("org.eclipse.jetty.http3:http3-server")
 
     implementation("io.github.hakky54:sslcontext-kickstart:$sslContextKickstart")
     implementation("io.github.hakky54:sslcontext-kickstart-for-jetty:$sslContextKickstart")

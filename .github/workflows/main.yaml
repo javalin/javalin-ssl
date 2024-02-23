@@ -12,7 +12,7 @@ jobs:
       fail-fast: false
       matrix:
         java_version: [11, 17, 18] # Test all LTS releases and the latest one
-        os: [windows-latest, macOS-latest, ubuntu-latest]
+        os: [windows-latest, macOS-13, macOS-14, ubuntu-latest]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -28,41 +28,8 @@ jobs:
         uses: gradle/gradle-build-action@v2.7.0
         with:
           arguments: check
-  coverage:
-    runs-on: ubuntu-latest
-    needs:
-      - test
-    name: "📄 Codecov Report"
-    strategy:
-      matrix:
-        test-type: [unit, integration]
-    steps:
-      - name: Setup Java JDK
-        uses: actions/setup-java@v3.12.0
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      - name: Checkout Code
-        uses: actions/checkout@v3
-
-      - name: Validate Wrapper
-        uses: gradle/wrapper-validation-action@v1
-
-      - name: Setup and Run Gradle
-        uses: gradle/gradle-build-action@v2.7.0
-        with:
-          arguments: ${{ matrix.test-type }}TestsCoverageReport
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3.1.4
-        with:
-          files: "${{ github.workspace }}/build/reports/jacoco/${{ matrix.test-type }}TestsCoverageReport/${{ matrix.test-type }}TestsCoverageReport.xml"
-          flags: "${{ matrix.test-type }}Tests"
-          verbose: true
-          token: "${{ secrets.CODECOV_TOKEN }}"
   publish:
-    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && github.repository == 'javalin/javalin-ssl'
+    if: github.ref == 'refs/heads/5.x' && github.event_name != 'pull_request' && github.repository == 'javalin/javalin-ssl'
     needs:
       - test
     name: "🛫 Publish to maven repo"
@@ -75,7 +42,7 @@ jobs:
         uses: actions/setup-java@v3.12.0
         with:
           distribution: 'zulu'
-          java-version: '17'
+          java-version: '11'
 
       - name: Generate version
         uses: HardNorth/github-version-generate@v1.3.0
@@ -110,48 +77,13 @@ jobs:
         with:
           arguments: publishToSonatype closeAndReleaseStagingRepository
 
-      - name: Create Pre-Release
-        if: contains(env.CURRENT_VERSION, 'SNAPSHOT')
-        uses: ncipollo/release-action@v1.12.0
-        with:
-          tag: ${{ env.CURRENT_VERSION }}
-          generateReleaseNotes: true
-          commit: main
-          prerelease: true
-          body: |
-            ## Download Instructions
-            ### Maven
-            ```xml
-            <repository>
-              <id>reposilite-repository-snapshots</id>
-              <name>Reposilite Repository</name>
-              <url>https://maven.reposilite.com/snapshots</url>
-            </repository>
-            ```
-            ```xml
-            <dependency>
-              <groupId>io.javalin.community.ssl</groupId>
-              <artifactId>ssl-plugin</artifactId>
-              <version>${{ env.CURRENT_VERSION }}</version>
-            </dependency>
-            ```
-            ### Gradle
-            ```groovy
-            maven {
-              url "https://maven.reposilite.com/snapshots"
-            }
-            ```
-            ```groovy
-              implementation('io.javalin.community.ssl:ssl-plugin:${{ env.CURRENT_VERSION }}')
-            ```
-
       - name: Create Release
         if: "!contains(env.CURRENT_VERSION, 'SNAPSHOT')"
         uses: ncipollo/release-action@v1.12.0
         with:
           tag: ${{ env.CURRENT_VERSION }}
           generateReleaseNotes: true
-          commit: main
+          commit: 5.x
           body: |
             ## Download Instructions
             ### Maven
